@@ -1,6 +1,21 @@
 
 # README #
 
+================
+Industrial CI
+================
+.. image:: https://travis-ci.com/ros-industrial/industrial_ci.svg?branch=master
+    :target: https://travis-ci.com/ros-industrial/industrial_ci
+    :alt: Travis CI status
+.. image:: https://github.com/ros-industrial/industrial_ci/workflows/CI/badge.svg?branch=master
+    :target: https://github.com/ros-industrial/industrial_ci/actions
+    :alt: GitHub Actions status
+.. image:: https://gitlab.com/ipa-mdl/industrial_ci/badges/master/pipeline.svg
+    :target: https://gitlab.com/ipa-mdl/industrial_ci/commits/master
+    :alt: Gitlab CI status
+.. image:: https://img.shields.io/badge/License-Apache%202.0-blue.svg
+    :target: https://opensource.org/licenses/Apache-2.0
+    :alt: License
 
 Travis CI Kinetic Build: [![Build Status](https://travis-ci.org/CNR-STIIMA-IRAS/rosdyn.svg?branch=master)](https://travis-ci.org/CNR-STIIMA-IRAS/cnr_logger)
 Travis CI Kinetic Build: [![Build Status](https://travis-ci.org/CNR-STIIMA-IRAS/rosdyn.svg?branch=master)](https://travis-ci.org/CNR-STIIMA-IRAS/cnr_logger)
