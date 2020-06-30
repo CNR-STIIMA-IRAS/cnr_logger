@@ -1,7 +1,7 @@
 
 # README #
 
-Travis CI Kinetic Build: [![Build Status](https://travis-ci.org/github/CNR-STIIMA-IRAS/cnr_logger.svg?branch=master)](https://travis-ci.org/github/CNR-STIIMA-IRAS/cnr_logger)
+[![melodic](https://travis-ci.org/CNR-STIIMA-IRAS/cnr_logger.svg?branch=master)](https://travis-ci.org/CNR-STIIMA-IRAS/cnr_logger)
 
 ### What is this repository for? ###
 
