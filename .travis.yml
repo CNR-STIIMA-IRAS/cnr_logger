@@ -12,9 +12,6 @@ notifications:
 
 matrix:
   include:
-    - name: "Xenial kinetic"
-      dist: xenial
-      env: ROS_DISTRO=kinetic UPSTREAM_WORKSPACE=file
     - name: "Melodic Morenia"
       dist: melodic
       env: ROS_DISTRO="melodic" UPSTREAM_WORKSPACE=file
