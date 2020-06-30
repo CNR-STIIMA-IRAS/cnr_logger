@@ -1,6 +1,10 @@
 
 # README #
 
+
+Travis CI Kinetic Build: [![Build Status](https://travis-ci.org/CNR-STIIMA-IRAS/rosdyn.svg?branch=master)](https://travis-ci.org/CNR-STIIMA-IRAS/cnr_logger)
+Travis CI Kinetic Build: [![Build Status](https://travis-ci.org/CNR-STIIMA-IRAS/rosdyn.svg?branch=master)](https://travis-ci.org/CNR-STIIMA-IRAS/cnr_logger)
+
 ### What is this repository for? ###
 
 * The package has been designed to have a loger separated from the standard ros logging functions. It uses the same core library, log4cxx. The main difference consists of that you can enable or disable the logging to screen and/or to file just using a parameter.
