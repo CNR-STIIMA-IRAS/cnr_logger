@@ -7,7 +7,7 @@ Travis     | [![Build Status](https://travis-ci.org/CNR-STIIMA-IRAS/cnr_logger.s
 
 ### What is this repository for? ###
 
-* The package has been designed to have a loger separated from the standard ros logging functions. It uses the same core library, log4cxx. The main difference consists of that you can enable or disable the logging to screen and/or to file just using a parameter.
+* The package has been designed to have a logger separated from the standard ros logging functions. It uses the same core library, log4cxx. The main difference consists of that you can enable or disable the logging to screen and/or to file just using a parameter.
 
 ### How do I get set up? ###
 
@@ -22,13 +22,13 @@ Travis     | [![Build Status](https://travis-ci.org/CNR-STIIMA-IRAS/cnr_logger.s
 
   ~/levels: [ debug|info|warn|error|fatal, ..]    # Optional
                                                   # A vector where you can select the verbosity level for each appender.
-                                                  # If not present, or if the size of the vecotr is different to the dimension of the appenders,
+                                                  # If not present, or if the size of the vector is different from the dimension of the appenders,
                                                   # the default value is superimposed.
                                                   # Default: 'debug' for all the appenders
 
   ~/pattern_layout: '...'                         # Optional
                                                   # look at https://svn.apache.org/repos/asf/logging/site/trunk/docs/log4cxx/apidocs/classlog4cxx_1_1_pattern_layout.html"
-                                                  # This allow you to define the log pattern.
+                                                  # This allows you to define the log pattern.
                                                   # Default is: [%5p] [%d{HH:mm:ss,SSS}][%r][%M:%L]: %m%n
 
   ~/file_name: 'file_name'                        # Optional
@@ -37,11 +37,11 @@ Travis     | [![Build Status](https://travis-ci.org/CNR-STIIMA-IRAS/cnr_logger.s
                                                   # Default: ~/.ros/log/[logger_id].log
 
   ~/append_date_to_file_name: true|false          # Optional
-                                                  # The name file will be appended with the YYMMDD-HH:MM::SS of creation
+                                                  # The named file will be appended with the YYMMDD-HH:MM::SS of creation
                                                   # Default: false
 
   ~/append_to_file: true|false                    # Optional
-                                                  # If true, the content is ppended to file. The new content start with a clear header (with data and start time).
+                                                  # If true, the content is appended to file. The new content starts with a clear header (with data and start time).
                                                   # If not, the log file is overwritten.
                                                   # Default: true
 ```
@@ -55,9 +55,9 @@ TraceLogger( const std::string& logger_id, const std::string& param_namespace, c
 ```
 
 The first does not initialize the instance of the class, and the function `init()` must be called afterwards.
-The second initializes the the instance of the class.
+The second initializes the instance of the class.
 
-If the inizialization failed, the class superimpose default values unlsess the user explicitely indicates to not use the default values.
+If the initialization failed, the class superimpose default values unless the user explicitly indicates to not use the default values.
 
 
 * Example of usage
@@ -92,7 +92,7 @@ If the inizialization failed, the class superimpose default values unlsess the u
 
 ### Utilities with the package
 
-* The ANsi Color are defined as inline function
+* The ANSI Colors are defined as an inline function
 
 ```
 inline std::string RESET        ( ) { return "\033[0m";         }
@@ -177,4 +177,3 @@ inline std::string BOLDWHITE    ( ) { return "\033[1m\033[37m"; }
 ### Who do I talk to? ###
 
 * nicola.pedrocchi@stiima.cnr.it
-
