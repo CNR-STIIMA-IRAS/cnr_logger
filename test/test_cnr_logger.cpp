@@ -36,32 +36,62 @@
 #include <iostream>
 #include <ros/ros.h>
 #include <cnr_logger/cnr_logger.h>
+#include <gtest/gtest.h>
 
-int main(int argc, char* argv[])
+std::shared_ptr<cnr_logger::TraceLogger> logger;
+std::shared_ptr<cnr_logger::TraceLogger> logger2;
+
+// Declare a test
+TEST(TestSuite, fullConstructor)
 {
-  ros::init(argc, argv, "cnr_logger_test");
-  ros::NodeHandle nh;
 
-  cnr_logger::TraceLogger logger("log1", "/");
-  cnr_logger::TraceLogger logger2("log2", "/pippo");
+  EXPECT_NO_FATAL_FAILURE( logger.reset( new cnr_logger::TraceLogger("log1", "/file_and_screen_different_appenders") ) );
+  EXPECT_NO_FATAL_FAILURE( logger2.reset( new cnr_logger::TraceLogger("log2", "/file_and_screen_same_appender") ) );
 
-  while (ros::ok())
+  EXPECT_TRUE ( logger->logFile() );
+  EXPECT_TRUE ( logger->logScreen() );
+  EXPECT_FALSE( logger->logSyncFileAndScreen() );
+
+  EXPECT_FALSE( logger2->logFile() );
+  EXPECT_FALSE( logger2->logScreen() );
+  EXPECT_TRUE ( logger2->logSyncFileAndScreen() );
+
+  EXPECT_NO_FATAL_FAILURE( logger.reset() );
+  EXPECT_NO_FATAL_FAILURE( logger2.reset() );
+}
+
+TEST(TestSuite, partialConstructor)
+{
+  EXPECT_NO_FATAL_FAILURE( logger.reset( new cnr_logger::TraceLogger("log1") ) );
+  EXPECT_TRUE( logger->init( "/file_and_screen_different_appenders" ) );
+  EXPECT_NO_FATAL_FAILURE( logger.reset() );
+}
+
+// Declare another test
+TEST(TestSuite, flushInfoDebug)
+{
+  EXPECT_NO_FATAL_FAILURE( logger.reset( new cnr_logger::TraceLogger("log1", "/only_file_streamer") ) );
+  EXPECT_NO_FATAL_FAILURE( logger2.reset( new cnr_logger::TraceLogger("log2", "/file_and_screen_same_appender") ) );
+
+  for(size_t i=0;i<10;i++)
   {
-//    ROS_INFO("Ciao-ros-info");
-//    ROS_DEBUG("Ciao-ros-debug");
+    CNR_INFO(*logger, "Ciao-log-1-info");
+    CNR_DEBUG(*logger, "Ciao-log-1-debug");
 
-    CNR_INFO(logger, "Ciao-log-1-info");
-    CNR_DEBUG(logger, "Ciao-log-1-debug");
-
-//    CNR_INFO_THROTTLE (logger,5, "*** THROTTLE *** Ciao-log-1-info");
-//    CNR_DEBUG_THROTTLE (logger,5, "*** THROTTLE *** Ciao-log-1-debug");
-
-    CNR_INFO(logger2, "Ciao-log-2-info");
-    CNR_DEBUG(logger2, "Ciao-log-2-debug");
+    CNR_INFO(*logger2, "Ciao-log-2-info");
+    CNR_DEBUG(*logger2, "Ciao-log-2-debug");
 
     ros::spinOnce();
     ros::Duration(1.0).sleep();
   }
+  EXPECT_NO_FATAL_FAILURE( logger.reset() );
+  EXPECT_NO_FATAL_FAILURE( logger2.reset() );
+}
 
-  return 1;
+// Run all the tests that were declared with TEST()
+int main(int argc, char **argv){
+  testing::InitGoogleTest(&argc, argv);
+  ros::init(argc, argv, "cnr_logger_tester");
+  ros::NodeHandle nh;
+  return RUN_ALL_TESTS();
 }

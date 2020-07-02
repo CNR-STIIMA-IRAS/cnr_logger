@@ -67,19 +67,52 @@ If the initialization failed, the class superimpose default values unless the us
   #include <ros/ros.h>
   #include <cnr_logger/cnr_logger.h>
 
+  std::shared_ptr<cnr_logger::TraceLogger> logger;
+  void return_void_ok()
+  {
+    CNR_TRACE_START(*logger);
+    // some stuff
+    CNR_RETURN_OK(*logger, void() );
+  }
+
+  void return_void_not_ok()
+  {
+    CNR_TRACE_START(*logger);
+    // some stuff
+    CNR_RETURN_NOT_OK(*logger, void() );
+  }
+
+  void return_bool()
+  {
+    CNR_TRACE_START(*logger);
+    // some stuff
+    bool ret = true;
+    CNR_RETURN_BOOL(*logger, true );
+  }
+
+  void return_true()
+  {
+    CNR_TRACE_START(*logger);
+    // some stuff
+    bool ret = true;
+    CNR_RETURN_TRUE(*logger );
+  }
+
   int main(int argc, char* argv[] )
   {
     ros::init(argc, argv, "cnr_logger_test" );
     ros::NodeHandle nh;
 
-    cnr_logger::TraceLogger logger( "log1", "/");       // first parameters is an ID for the logger, the second parameter is the namespace where find the configuration parameters
+    logger.reset( new cnr_logger::TraceLogger ( "log1", "/") );    // the first parameters is an ID for the logger,
+                                                                   // the second parameter is the namespace where
+                                                                   // to find the configuration parameters
     while( ros::ok() )
     {
       ROS_INFO("Ciao-ros-info");
       ROS_DEBUG("Ciao-ros-debug");
 
-      LOG4CXX_INFO (logger(),"Ciao-log-1-info");
-      LOG4CXX_DEBUG(logger(),"Ciao-log-1-debug");
+      LOG4CXX_INFO (*logger,"Ciao-log-1-info");
+      LOG4CXX_DEBUG(*logger,"Ciao-log-1-debug");
 
       ros::spinOnce();
       ros::Duration(1.0).sleep();

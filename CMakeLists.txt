@@ -25,11 +25,12 @@ roslint_cpp( src/cnr_logger.cpp )
 #############
 
 ## Add gtest based cpp test target and link libraries
- add_executable(${PROJECT_NAME}-test test/test_cnr_logger.cpp)
- target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME} ${catkin_LIBRARIES})
+if(CATKIN_ENABLE_TESTING)
+  find_package(rostest REQUIRED)
+  add_rostest_gtest(${PROJECT_NAME}_test test/test.launch test/test_cnr_logger.cpp)
+  target_link_libraries(${PROJECT_NAME}_test ${PROJECT_NAME} ${catkin_LIBRARIES})
+endif()
 
-## Add folders to be run by python nosetests
-# catkin_add_nosetests(test)
 
 ## Mark cpp header files for installation
  install(DIRECTORY include/${PROJECT_NAME}/
