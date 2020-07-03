@@ -1,7 +1,7 @@
 #!/bin/bash
 # Export CI environment info: https://github.com/mikeferguson/code_coverage
 
-#cd ~/catkin_ws
+cd ~/catkin_ws
 
 export PROJECT_NAME="cnr_logger"
 export CODECOV_TOKEN="dc6c3b82-47d4-4d2d-99a4-0aa76a4640ef"
