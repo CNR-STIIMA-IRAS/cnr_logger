@@ -22,5 +22,5 @@ rm "build/$PROJECT_NAME/robot_calibration_coverage_report.info.removed"
 
 curl -s https://codecov.io/bash > .codecov
 chmod +x .codecov
-./.codecov -s "build/$PROJECT_NAME/" -t $CODECOV_TOKEN
+./.codecov -s "build/$PROJECT_NAME/" -t $CODECOV_TOKEN -x
 
