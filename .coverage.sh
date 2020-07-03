@@ -28,6 +28,6 @@ echo "==================================================================="
 CODECOV_WORKING_DIR="build/$PROJECT_NAME/"$PROJECT_NAME"_coverage_report/codecov"
 mkdir -p $CODECOV_WORKING_DIR
 cd $CODECOV_WORKING_DIR
-source "$1/src/$PROJECT_NAME/.codecov" -s "$1/build/$PROJECT_NAME/" -t $CODECOV_TOKEN -X coveragepy
+source "$1/src/$PROJECT_NAME/.codecov" -s "$1/build/$PROJECT_NAME/" -t $CODECOV_TOKEN -X coveragepy -v
 cd $1
 echo "==================================================================="
