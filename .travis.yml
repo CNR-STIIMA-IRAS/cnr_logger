@@ -89,5 +89,5 @@ script:
   - catkin_make run_tests && catkin_test_results
 
 after_success:
-  - ln -s /.ros/test_results/cnr_logger/rostest-test_test.xml coverage.xml
+  - ln -s ~/.ros/test_results/cnr_logger/rostest-test_test.xml coverage.xml
   - bash <(curl -s https://codecov.io/bash)
