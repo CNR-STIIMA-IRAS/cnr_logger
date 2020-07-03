@@ -1672,14 +1672,13 @@ else
       i=$i+1
       say "${e}->${x}  Pinging Codecov"
       say "$url/upload/v4?$queryNoToken"
-      echo "$curl_s -X POST $curlargs $cacert -H 'X-Reduced-Redundancy: false' -H 'X-Content-Type: application/x-gzip' $url/upload/v4?$query"
       res=$(curl "$curl_s" -X POST "$curlargs" "$cacert" -H 'X-Reduced-Redundancy: false' -H 'X-Content-Type: application/x-gzip' "$url/upload/v4?$query" || true)
       # a good replay is "https://codecov.io" + "\n" + "https://codecov.s3.amazonaws.com/..."
       status=$(echo "$res" | head -1 | grep 'HTTP ' | cut -d' ' -f2)
       if [ "$status" = "" ];
       then
         s3target=$(echo "$res" | sed -n 2p)
-        say "${e}->${x}  +++ Uploading to"
+        say "${e}->${x} Uploading to"
         say "${s3target}"
 
         if [ "$curlawsargs" != "" ];

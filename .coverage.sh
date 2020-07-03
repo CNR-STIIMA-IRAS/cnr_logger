@@ -3,7 +3,8 @@
 
 echo "Total Arguments:" $#
 echo "All Arguments values:" $@
-
+CWD=$(pwd)
+echo $CWD
 cd $1
 
 export PROJECT_NAME="cnr_logger"
@@ -28,6 +29,7 @@ echo "==================================================================="
 CODECOV_WORKING_DIR="build/$PROJECT_NAME/"$PROJECT_NAME"_coverage_report/codecov"
 mkdir -p $CODECOV_WORKING_DIR
 cd $CODECOV_WORKING_DIR
-source "$1/src/$PROJECT_NAME/.codecov" -s "$1/build/$PROJECT_NAME/" -t $CODECOV_TOKEN -X coveragepy -v
-cd $1
+"$1/src/$PROJECT_NAME/./.codecov" -s "$1/build/$PROJECT_NAME/" -t $CODECOV_TOKEN -X coveragepy
+echo $?
+cd $CWD
 echo "==================================================================="
