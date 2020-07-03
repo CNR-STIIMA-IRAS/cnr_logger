@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuites tests="3" failures="0" disabled="0" errors="0" timestamp="2020-07-02T17:12:03" time="10.045" name="AllTests">
-  <testsuite name="TestSuite" tests="3" failures="0" disabled="0" errors="0" time="10.045">
-    <testcase name="fullConstructor" status="run" time="0.019" classname="TestSuite" />
-    <testcase name="partialConstructor" status="run" time="0.007" classname="TestSuite" />
-    <testcase name="flushInfoDebug" status="run" time="10.019" classname="TestSuite" />
-  </testsuite>
-</testsuites>
