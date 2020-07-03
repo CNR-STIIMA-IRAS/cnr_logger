@@ -20,10 +20,10 @@ matrix:
   include:
     - name: "Kinetic Kame"
       dist: xenial
-      env: ROS_DISTRO="kinetic" UPSTREAM_WORKSPACE=file 
+      env: ROS_DISTRO="kinetic" UPSTREAM_WORKSPACE=file
     - name: "Melodic Morenia"
       dist: beaver
-      env: ROS_DISTRO="melodic" UPSTREAM_WORKSPACE=file 
+      env: ROS_DISTRO="melodic" UPSTREAM_WORKSPACE=file
 
 env:
   global:
@@ -32,7 +32,7 @@ env:
     - ROSINSTALL_FILE=$CI_SOURCE_PATH/dependencies.rosinstall
     - CATKIN_OPTIONS=$CI_SOURCE_PATH/catkin.options
     - ROS_PARALLEL_JOBS='-j8'
-    - UPSTREAM_WORKSPACE=".upstream.repos"ù
+    - UPSTREAM_WORKSPACE=".upstream.repos"
     - ADDITIONAL_DEBS="curl"
     - CMAKE_ARGS="-DENABLE_COVERAGE_TESTING=ON -DCMAKE_BUILD_TYPE=Debug"
     - PROJECT_NAME="cnr_logger"
@@ -99,5 +99,5 @@ script:
 
 after_success:
   - cd $CI_SOURCE_PATH
-  - source ./.codecov.sh
+  - source ./.coverage.sh ~/catkin_ws
 
