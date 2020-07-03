@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuite errors="0" failures="0" name="unittest.suite.TestSuite" tests="1" time="10.700"><testcase classname="rostest.runner.RosTest" name="testcnr_logger_test" time="10.6997" /><system-out>&lt;![CDATA[
+[ROSTEST]setup[test/test.launch] run_id[62ab05e6-bc76-11ea-a9f5-00155db18be4] starting
+&amp;#x001B;[1mstarted roslaunch server http://MI-IRAS-147-NB:33213/&amp;#x001B;[0m
+
+SUMMARY
+========
+
+PARAMETERS
+ * /file_and_screen_different_appenders/appenders: ['file', 'screen']
+ * /file_and_screen_different_appenders/file_name: ciao
+ * /file_and_screen_different_appenders/levels: ['debug', 'info']
+ * /file_and_screen_same_appender/appenders: ['file', 'screen']
+ * /file_and_screen_same_appender/file_name: ciao
+ * /file_and_screen_same_appender/levels: ['debug', 'debug']
+ * /only_file_streamer/appenders: ['file']
+ * /only_file_streamer/file_name: ciao
+ * /only_file_streamer/levels: ['debug']
+ * /rosdistro: melodic
+ * /rosversion: 1.14.6
+
+NODES
+
+[ROSTEST]setup[test/test.launch] run_id[62ab05e6-bc76-11ea-a9f5-00155db18be4] done
+[ROSTEST]Running test [cnr_logger_test]
+&amp;#x001B;[1mROS_MASTER_URI=http://MI-IRAS-147-NB:42515/&amp;#x001B;[0m
+&amp;#x001B;[1msetting /run_id to 62ab05e6-bc76-11ea-a9f5-00155db18be4&amp;#x001B;[0m
+[ROSTEST]removing previous test results file [/home/wsl/.ros/test_results/cnr_logger/rosunit-cnr_logger_test.xml]
+[ROSTEST]running test cnr_logger_test
+&amp;#x001B;[1mprocess[cnr_logger_test-1]: started with pid [12455]&amp;#x001B;[0m
+&amp;#x001B;[1m[cnr_logger_test-1] process has finished cleanly
+log file: /home/wsl/.ros/log/62ab05e6-bc76-11ea-a9f5-00155db18be4/cnr_logger_test-1*.log&amp;#x001B;[0m
+[ROSTEST]test [cnr_logger_test] finished
+[ROSTEST]test [cnr_logger_test] results are in [/home/wsl/.ros/test_results/cnr_logger/rosunit-cnr_logger_test.xml]
+[ROSTEST]test [cnr_logger_test] results summary: 0 errors, 0 failures, 3 tests
+[ROSTEST][ROSTEST] test [cnr_logger_test] done
+[ROSTEST]tearDown[test/test.launch]
+shutting down processing monitor...
+... shutting down processing monitor complete
+[ROSTEST]rostest teardown test/test.launch complete
+
+]]&gt;</system-out><system-err>&lt;![CDATA[
+WARNING: Metapackage "cnr_hardware_interfaces" should not have other dependencies besides a buildtool_depend on catkin and exec_depends.
+
+]]&gt;</system-err></testsuite>
