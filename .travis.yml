@@ -98,5 +98,6 @@ script:
   - catkin_make run_tests && catkin_test_results
 
 after_success:
+  - cd $CI_SOURCE_PATH
   - source ./.codecov.sh
-  
+

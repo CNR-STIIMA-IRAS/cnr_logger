@@ -1,5 +1,5 @@
 #!/bin/bash
-# Export CI environment info
+# Export CI environment info: https://github.com/mikeferguson/code_coverage
 
 cd ~/catkin_ws
 
