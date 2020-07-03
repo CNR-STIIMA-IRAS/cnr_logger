@@ -7,13 +7,16 @@ CWD=$(pwd)
 echo $CWD
 cd $1
 
-export PROJECT_NAME="cnr_logger"
-export CODECOV_TOKEN="dc6c3b82-47d4-4d2d-99a4-0aa76a4640ef"
+PROJECT_NAME=$2
+CODECOV_TOKEN=$3
+PROJECT_NAME_COVER_REPORT="$PACKAGE_NAME"_coverage_report"
+
+
 echo "Generating coverage for $PROJECT_NAME"
+echo "Cover report target $PROJECT_NAME_COVER_REPORT"
+echo "Token $CODECOV_TOKEN"
 
-export PROJECT_NAME_COVER_REPORT= $PACKAGE_NAME"_coverage_report"
-
-catkin_make -DENABLE_COVERAGE_TESTING=ON -DCMAKE_BUILD_TYPE=Debug $PROJECT_NAME_COVER_REPORT
+catkin build PACKAGE_NAME -v --no-deps --catkin-make-args "PROJECT_NAME_COVER_REPORT" 
 
 echo "Uploading coverage results to codecov.io"
 

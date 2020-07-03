@@ -34,7 +34,6 @@ env:
     - ROS_PARALLEL_JOBS='-j8'
     - UPSTREAM_WORKSPACE=".upstream.repos"
     - ADDITIONAL_DEBS="curl"
-    - CMAKE_ARGS="-DENABLE_COVERAGE_TESTING=ON -DCMAKE_BUILD_TYPE=Debug"
     - PROJECT_NAME="cnr_logger"
     # Set the python path manually to include /usr/-/python2.7/dist-packages
     # as this is where apt-get installs python packages.
@@ -48,7 +47,7 @@ before_install:
   - sudo apt-get update -qq
   - sudo apt-get install dpkg
   - sudo apt-get install -y git
-  - sudo apt-get install -y python-catkin-pkg python-rosdep python-wstool ros-$ROS_DISTRO-ros-base
+  - sudo apt-get install -y python-catkin-pkg python-rosdep python-wstool python-catkin-tools ros-$ROS_DISTRO-ros-base
   - source /opt/ros/$ROS_DISTRO/setup.bash
   # Prepare rosdep to install dependencies.
   - sudo rosdep init
@@ -58,12 +57,11 @@ before_install:
 # Create a catkin workspace with the package under integration.
 install:
   - mkdir -p ~/catkin_ws/src
-  - cd ~/catkin_ws/src
-  - catkin_init_workspace
+  - cd ~/catkin_ws
+  - catkin init -t src
   # Create the devel/setup.bash (run catkin_make with an empty workspace) and
   # source it to set the path variables.
-  - cd ~/catkin_ws
-  - catkin_make
+  - catkin build -cs 
   - source devel/setup.bash
   # Add the package under integration to the workspace using a symlink.
   - cd ~/catkin_ws/src
@@ -99,5 +97,5 @@ script:
   - catkin_make run_tests && catkin_test_results
 
 after_success:
-  - source "$CI_SOURCE_PATH"/.coverage.sh ~/catkin_ws
+  - source "$CI_SOURCE_PATH"/.coverage.sh ~/catkin_ws $PROJECT_NAME $CODECOV_TOKEN
 

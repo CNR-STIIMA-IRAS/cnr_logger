@@ -67,16 +67,25 @@ TEST(TestSuite, partialConstructor)
   EXPECT_NO_FATAL_FAILURE( logger.reset() );
 }
 
+TEST(TestSuite, wrongConstructor)
+{
+  EXPECT_NO_FATAL_FAILURE( logger.reset( new cnr_logger::TraceLogger("log1") ) );
+  EXPECT_FALSE( logger->init( "/this_namespace_does_not_exist" ) );
+  EXPECT_NO_FATAL_FAILURE( logger.reset() );
+}
+
 // Declare another test
 TEST(TestSuite, flushInfoDebug)
 {
-  EXPECT_NO_FATAL_FAILURE( logger.reset( new cnr_logger::TraceLogger("log1", "/only_file_streamer") ) );
+  EXPECT_NO_FATAL_FAILURE( logger.reset( new cnr_logger::TraceLogger("log1", "/only_file_streamer", true) ) );
   EXPECT_NO_FATAL_FAILURE( logger2.reset( new cnr_logger::TraceLogger("log2", "/file_and_screen_same_appender") ) );
-
+  
   for(size_t i=0;i<10;i++)
   {
-    CNR_INFO(*logger, "Ciao-log-1-info");
+    CNR_INFO (*logger, "Ciao-log-1-info");
     CNR_DEBUG(*logger, "Ciao-log-1-debug");
+    CNR_FATAL(*logger, "Ciao-log-1-debug");
+    CNR_TRACE(*logger, "Ciao-log-1-debug");
 
     CNR_INFO(*logger2, "Ciao-log-2-info");
     CNR_DEBUG(*logger2, "Ciao-log-2-debug");
