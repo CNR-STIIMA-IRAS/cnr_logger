@@ -90,4 +90,4 @@ script:
 
 after_success:
   - ln -s ~/.ros/test_results/cnr_logger/rostest-test_test.xml coverage.xml
-  - bash <(curl -s https://codecov.io/bash)
+  - codecov.sh
