@@ -16,12 +16,10 @@ rm "build/$PROJECT_NAME/robot_calibration_coverage_report.info.cleaned"
 rm "build/$PROJECT_NAME/robot_calibration_coverage_report.info.removed"
 
 # Actually upload coverage information
-bash <(curl -s https://codecov.io/bash) -s "$ws/build/$PROJECT_NAME/"
+#bash <(curl -s https://codecov.io/bash) -s "$ws/build/$PROJECT_NAME/"
 
-#curl -s https://codecov.io/bash > .codecov
-#chmod +x .codecov
-#./.codecov
+curl -s https://codecov.io/bash > .codecov
+chmod +x .codecov
+./.codecov -s "$ws/build/$PROJECT_NAME/" -t %CODECOV_TOKEN
 
-
-#ci_env=`bash <(curl -s https://codecov.io/env)`
-#export DOCKER_RUN_OPTS="$DOCKER_RUN_OPTS $ci_env"
++
