@@ -1,21 +1,24 @@
 
 # README #
 
+## CI ##
+
 service    | Kinetic | Melodic | Master
 ---------- | ------- | ------- | ------
 Travis     | [![Build Status](https://travis-ci.org/CNR-STIIMA-IRAS/cnr_logger.svg?branch=kinetic-devel)](https://travis-ci.org/CNR-STIIMA-IRAS/cnr_logger) | [![Build Status](https://travis-ci.org/CNR-STIIMA-IRAS/cnr_logger.svg?branch=melodic-devel)](https://travis-ci.org/CNR-STIIMA-IRAS/cnr_logger) | [![Build Status](https://travis-ci.org/CNR-STIIMA-IRAS/cnr_logger.svg?branch=master)](https://travis-ci.org/CNR-STIIMA-IRAS/cnr_logger)
 Codecov    | [![codecov](https://codecov.io/gh/CNR-STIIMA-IRAS/cnr_logger/branch/master/graph/badge.svg)](https://codecov.io/gh/CNR-STIIMA-IRAS/cnr_logger) | [![codecov](https://codecov.io/gh/CNR-STIIMA-IRAS/cnr_logger/branch/master/graph/badge.svg)](https://codecov.io/gh/CNR-STIIMA-IRAS/cnr_logger) | [![codecov](https://codecov.io/gh/CNR-STIIMA-IRAS/cnr_logger/branch/master/graph/badge.svg)](https://codecov.io/gh/CNR-STIIMA-IRAS/cnr_logger)
 
-
-### What is this repository for? ###
+## Aim ##
 
 * The package has been designed to have a logger separated from the standard ros logging functions. It uses the same core library, log4cxx. The main difference consists of that you can enable or disable the logging to screen and/or to file just using a parameter.
 
-### How do I get set up? ###
+## Usage ##
 
+### Dependencies ###
 
-* Dependencies: roscpp
-* Parameters:
+roscpp
+
+### Parameters ###
 
 ```yaml
   ~/appenders: ['file', 'screen']                 # Mandatory
@@ -47,11 +50,12 @@ Codecov    | [![codecov](https://codecov.io/gh/CNR-STIIMA-IRAS/cnr_logger/branch
                                                   # If not, the log file is overwritten.
                                                   # Default: true
 ```
-### Class initialization and usage
 
+### Class initialization and usage ###
 
 There are two constructors:
-```
+
+```cpp
 TraceLogger( const std::string& logger_id )
 TraceLogger( const std::string& logger_id, const std::string& param_namespace, const bool star_header )
 ```
@@ -61,8 +65,7 @@ The second initializes the instance of the class.
 
 If the initialization failed, the class superimpose default values unless the user explicitly indicates to not use the default values.
 
-
-* Example of usage
+#### Example of usage ####
 
 ```cpp
   #include <iostream>
@@ -124,12 +127,11 @@ If the initialization failed, the class superimpose default values unless the us
   }
 ```
 
-
-### Utilities with the package
+#### Utilities with the package ####
 
 * The ANSI Colors are defined as an inline function
 
-```
+```cpp
 inline std::string RESET        ( ) { return "\033[0m";         }
 inline std::string BLACK        ( ) { return "\033[30m";        }
 inline std::string RED          ( ) { return "\033[31m";        }
@@ -151,7 +153,7 @@ inline std::string BOLDWHITE    ( ) { return "\033[1m\033[37m"; }
 
 * The macros to be used within the code are:
 
-```
+```cpp
 // ================= STANDARD
 #define CNR_FATAL( trace_logger, args)
 #define CNR_ERROR( trace_logger, args)
