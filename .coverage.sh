@@ -16,7 +16,7 @@ echo "Generating coverage for $PROJECT_NAME"
 echo "Cover report target $PROJECT_NAME_COVER_REPORT"
 echo "Token $CODECOV_TOKEN"
 
-catkin build PACKAGE_NAME -v --no-deps --catkin-make-args $PROJECT_NAME_COVER_REPORT
+catkin build $PACKAGE_NAME -v --no-deps --catkin-make-args $PROJECT_NAME_COVER_REPORT
 
 echo "Uploading coverage results to codecov.io"
 
