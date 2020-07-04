@@ -58,7 +58,7 @@ before_install:
 install:
   - mkdir -p ~/catkin_ws/src
   - cd ~/catkin_ws
-  - catkin init -t src
+  - catkin init --workspace src
   # Create the devel/setup.bash (run catkin_make with an empty workspace) and
   # source it to set the path variables.
   - catkin build -cs 
