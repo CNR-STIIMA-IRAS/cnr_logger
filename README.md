@@ -7,7 +7,8 @@
 | Travis    | [![Build Status](https://travis-ci.org/CNR-STIIMA-IRAS/cnr_logger.svg?branch=kinetic-devel)](https://travis-ci.org/CNR-STIIMA-IRAS/cnr_logger) | [![Build Status](https://travis-ci.org/CNR-STIIMA-IRAS/cnr_logger.svg?branch=melodic-devel)](https://travis-ci.org/CNR-STIIMA-IRAS/cnr_logger)    | [![Build Status](https://travis-ci.org/CNR-STIIMA-IRAS/cnr_logger.svg?branch=master)](https://travis-ci.org/CNR-STIIMA-IRAS/cnr_logger)             |
 | Codecov   | [![codecov](https://codecov.io/gh/CNR-STIIMA-IRAS/cnr_logger/branch/master/graph/badge.svg)](https://codecov.io/gh/CNR-STIIMA-IRAS/cnr_logger) | [![codecov](https://codecov.io/gh/CNR-STIIMA-IRAS/cnr_logger/branch/master/graph/badge.svg)](https://codecov.io/gh/CNR-STIIMA-IRAS/cnr_logger) | [![codecov](https://codecov.io/gh/CNR-STIIMA-IRAS/cnr_logger/branch/master/graph/badge.svg)](https://codecov.io/gh/CNR-STIIMA-IRAS/cnr_logger) |
 
-[![Codacy Badge](https://app.codacy.com/project/badge/Grade/f2c7aa290a494b9999100e316fbd4bcc)](https://www.codacy.com/gh/CNR-STIIMA-IRAS/cnr_logger?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=CNR-STIIMA-IRAS/cnr_logger&amp;utm_campaign=Badge_Grade) !
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/f2c7aa290a494b9999100e316fbd4bcc)](https://www.codacy.com/gh/CNR-STIIMA-IRAS/cnr_logger?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=CNR-STIIMA-IRAS/cnr_logger&amp;utm_campaign=Badge_Grade)
+
 
 ## Aim ##
 
