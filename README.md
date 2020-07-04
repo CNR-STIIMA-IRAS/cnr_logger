@@ -212,4 +212,4 @@ The macros to be used within the code are:
 
 ### Contact ###
 
-<nicola.pedrocchi@stiima.cnr.it>
+<mailto:nicola.pedrocchi@stiima.cnr.it>
