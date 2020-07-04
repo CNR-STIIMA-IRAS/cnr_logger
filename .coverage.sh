@@ -14,7 +14,7 @@ PROJECT_NAME_COVER_REPORT=$PROJECT_NAME"_coverage_report"
 
 echo "Generating coverage for $PROJECT_NAME"
 echo "Cover report target $PROJECT_NAME_COVER_REPORT"
-echo "Token $CODECOV_TOKEN"
+echo "Codecov Token $CODECOV_TOKEN"
 
 catkin build -v --no-deps $PACKAGE_NAME --catkin-make-args $PROJECT_NAME_COVER_REPORT
 
