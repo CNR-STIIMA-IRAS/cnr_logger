@@ -11,7 +11,6 @@ PROJECT_NAME=$2
 CODECOV_TOKEN=$3
 PROJECT_NAME_COVER_REPORT=$PROJECT_NAME"_coverage_report"
 
-
 echo "Generating coverage for $PROJECT_NAME"
 echo "Cover report target $PROJECT_NAME_COVER_REPORT"
 echo "Codecov Token $CODECOV_TOKEN"
