@@ -1,12 +1,11 @@
-
 # README #
 
 ## CI ##
 
-service    | Kinetic | Melodic | Master
----------- | ------- | ------- | ------
-Travis     | [![Build Status](https://travis-ci.org/CNR-STIIMA-IRAS/cnr_logger.svg?branch=kinetic-devel)](https://travis-ci.org/CNR-STIIMA-IRAS/cnr_logger) | [![Build Status](https://travis-ci.org/CNR-STIIMA-IRAS/cnr_logger.svg?branch=melodic-devel)](https://travis-ci.org/CNR-STIIMA-IRAS/cnr_logger) | [![Build Status](https://travis-ci.org/CNR-STIIMA-IRAS/cnr_logger.svg?branch=master)](https://travis-ci.org/CNR-STIIMA-IRAS/cnr_logger)
-Codecov    | [![codecov](https://codecov.io/gh/CNR-STIIMA-IRAS/cnr_logger/branch/master/graph/badge.svg)](https://codecov.io/gh/CNR-STIIMA-IRAS/cnr_logger) | [![codecov](https://codecov.io/gh/CNR-STIIMA-IRAS/cnr_logger/branch/master/graph/badge.svg)](https://codecov.io/gh/CNR-STIIMA-IRAS/cnr_logger) | [![codecov](https://codecov.io/gh/CNR-STIIMA-IRAS/cnr_logger/branch/master/graph/badge.svg)](https://codecov.io/gh/CNR-STIIMA-IRAS/cnr_logger)
+| service    | Kinetic | Melodic | Master |
+| ---------- | ------- | ------- | ------ |
+| Travis     | [![Build Status](https://travis-ci.org/CNR-STIIMA-IRAS/cnr_logger.svg?branch=kinetic-devel)](https://travis-ci.org/CNR-STIIMA-IRAS/cnr_logger) | [![Build Status](https://travis-ci.org/CNR-STIIMA-IRAS/cnr_logger.svg?branch=melodic-devel)](https://travis-ci.org/CNR-STIIMA-IRAS/cnr_logger) | [![Build Status](https://travis-ci.org/CNR-STIIMA-IRAS/cnr_logger.svg?branch=master)](https://travis-ci.org/CNR-STIIMA-IRAS/cnr_logger) |
+| Codecov    | [![codecov](https://codecov.io/gh/CNR-STIIMA-IRAS/cnr_logger/branch/master/graph/badge.svg)](https://codecov.io/gh/CNR-STIIMA-IRAS/cnr_logger) | [![codecov](https://codecov.io/gh/CNR-STIIMA-IRAS/cnr_logger/branch/master/graph/badge.svg)](https://codecov.io/gh/CNR-STIIMA-IRAS/cnr_logger) | [![codecov](https://codecov.io/gh/CNR-STIIMA-IRAS/cnr_logger/branch/master/graph/badge.svg)](https://codecov.io/gh/CNR-STIIMA-IRAS/cnr_logger) |
 
 ## Aim ##
 

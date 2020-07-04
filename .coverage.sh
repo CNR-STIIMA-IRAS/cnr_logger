@@ -29,8 +29,8 @@ fi
 
 echo "==================================================================="
 CODECOV_WORKING_DIR="build/$PROJECT_NAME/$PROJECT_NAME_coverage_report/codecov"
-mkdir -p $CODECOV_WORKING_DIR
-cd $CODECOV_WORKING_DIR
+mkdir -p "$CODECOV_WORKING_DIR"
+cd "$CODECOV_WORKING_DIR"
 "$1/src/$PROJECT_NAME/./.codecov" -s "$1/build/$PROJECT_NAME/" -t "$CODECOV_TOKEN" -X coveragepy
 echo "Result $?"
 cd "$CWD"
