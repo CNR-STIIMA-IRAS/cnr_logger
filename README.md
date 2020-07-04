@@ -9,7 +9,7 @@
 
 ## Aim ##
 
-* The package has been designed to have a logger separated from the standard ros logging functions. It uses the same core library, log4cxx. The main difference consists of that you can enable or disable the logging to screen and/or to file just using a parameter.
+The package has been designed to have a logger separated from the standard ros logging functions. It uses the same core library, log4cxx. The main difference consists of that you can enable or disable the logging to screen and/or to file just using a parameter.
 
 ## Usage ##
 
@@ -128,7 +128,7 @@ If the initialization failed, the class superimpose default values unless the us
 
 #### Utilities with the package ####
 
-* The ANSI Colors are defined as an inline function
+The ANSI Colors are defined as an inline function
 
 ```cpp
 inline std::string RESET        ( ) { return "\033[0m";         }
@@ -150,7 +150,7 @@ inline std::string BOLDCYAN     ( ) { return "\033[1m\033[36m"; }
 inline std::string BOLDWHITE    ( ) { return "\033[1m\033[37m"; }
 ```
 
-* The macros to be used within the code are:
+The macros to be used within the code are:
 
 ```cpp
 // ================= STANDARD
@@ -212,4 +212,4 @@ inline std::string BOLDWHITE    ( ) { return "\033[1m\033[37m"; }
 
 ### Contact ###
 
-* nicola.pedrocchi@stiima.cnr.it
+  * nicola.pedrocchi@stiima.cnr.it
