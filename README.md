@@ -211,6 +211,6 @@ inline std::string BOLDWHITE    ( ) { return "\033[1m\033[37m"; }
 
 ### Contribution guidelines ###
 
-### Who do I talk to? ###
+### Contact ###
 
 * nicola.pedrocchi@stiima.cnr.it
