@@ -32,7 +32,7 @@ echo "==================================================================="
 CODECOV_WORKING_DIR="build/$PROJECT_NAME/$PROJECT_NAME_COVER_REPORT/codecov"
 mkdir -p "$CODECOV_WORKING_DIR"
 cd "$CODECOV_WORKING_DIR"
-bash <(curl -s https://codecov.io/bash) -t "$CODECOV_TOKEN" -s "$1/build/$PROJECT_NAME/" -X gcov -X coveragepy -X fix -q n.txt -Z -B master -C bb946ec4528b0bc83f76427bc124ef25447d014e
+bash <(curl -s https://codecov.io/bash) -t "$CODECOV_TOKEN" -s "$1/build/$PROJECT_NAME/" -X gcov -X coveragepy -X fix -q n.txt -Z -B master
 "Result $?"
 cd "$CWD"
 echo "==================================================================="
