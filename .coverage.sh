@@ -20,6 +20,7 @@ catkin build -v --no-deps "$PROJECT_NAME" --catkin-make-args "$PROJECT_NAME_COVE
 echo "Uploading coverage results to codecov.io"
 
 # Remove duplicated information
+ls "build/$PROJECT_NAME/$PROJECT_NAME_coverage_report.*"
 if [ -f "build/$PROJECT_NAME/$PROJECT_NAME_coverage_report.info.cleaned" ]; then
     rm "build/$PROJECT_NAME/$PROJECT_NAME_coverage_report.info.cleaned"
 fi
