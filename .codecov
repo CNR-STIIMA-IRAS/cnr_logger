@@ -1119,7 +1119,7 @@ then
   then
     if [ ! -f coverage.xml ];
     then
-      if command -v coverage >/dev/null 2>&1;
+      if command -v python-coverage >/dev/null 2>&1;
       then
         say "${e}==>${x} Python coveragepy exists ${e}disable via -X coveragepy${x}"
 
@@ -1649,8 +1649,8 @@ else
     cp "$upload_file" "$save_to"
   fi
 
-  say "${e}==>${x} Gzipping contents"
-  gzip -nf9 "$upload_file"
+  say "${e}==>${x} Gzipping contents: $upload_file"
+  gzip -nf "$upload_file"
 
   query=$(echo "${query}" | tr -d ' ')
   say "${e}==>${x} Uploading reports"
@@ -1712,7 +1712,15 @@ else
   do
     i=i+1
 
-    res=$(curl -X POST "$curlargs" "$cacert" --data-binary @"$upload_file.gz" -H 'Content-Type: text/plain' -H 'Content-Encoding: gzip' -H 'X-Content-Encoding: gzip'  -H 'Accept: text/plain' "$url/upload/v2?$query" || echo 'HTTP 500')
+    echo $url
+    echo $url"/upload/v2?"$query
+    res=$(curl -X POST "$curlargs" "$cacert" \
+      --data-binary @"$upload_file.gz"\
+      -H 'Content-Type: text/plain' \
+      -H 'Content-Encoding: gzip' \
+      -H 'X-Content-Encoding: gzip'  \
+      -H 'Accept: text/plain' \
+      "$url/upload/v2?$query" || echo 'HTTP 500')
     # HTTP 200
     # http://....
     status=$(echo "$res" | head -1 | cut -d' ' -f2)
