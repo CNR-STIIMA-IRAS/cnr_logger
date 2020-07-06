@@ -98,4 +98,3 @@ script:
 
 after_success:
   - source "$CI_SOURCE_PATH"/.coverage.sh ~/catkin_ws $PROJECT_NAME $CODECOV_TOKEN
-
