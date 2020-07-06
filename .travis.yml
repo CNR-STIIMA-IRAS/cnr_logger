@@ -31,6 +31,7 @@ env:
     - CI_SOURCE_PATH=$(pwd)
     - ROSINSTALL_FILE=$CI_SOURCE_PATH/dependencies.rosinstall
     - CATKIN_OPTIONS=$CI_SOURCE_PATH/catkin.options
+    - CMAKE_OPTIONS=$CI_SOURCE_PATH/cmake.options
     - ROS_PARALLEL_JOBS='-j8'
     - UPSTREAM_WORKSPACE=".upstream.repos"
     - ADDITIONAL_DEBS="curl"

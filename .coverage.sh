@@ -25,7 +25,7 @@ if [ -f "build/$PROJECT_NAME/$PROJECT_NAME_coverage_report.info.cleaned" ]; then
 fi
 if [ -f "build/$PROJECT_NAME/$PROJECT_NAME_coverage_report.info.removed" ]; then
     rm "build/$PROJECT_NAME/$PROJECT_NAME_coverage_report.info.removed"
-fi 
+fi
 
 echo "==================================================================="
 CODECOV_WORKING_DIR="build/$PROJECT_NAME/$PROJECT_NAME_coverage_report/codecov"
