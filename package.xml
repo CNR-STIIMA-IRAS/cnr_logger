@@ -22,6 +22,8 @@
   <build_export_depend>roscpp</build_export_depend>
   <exec_depend>rosconsole</exec_depend>
 
+  <test_depend>roscpp</test_depend>
+
   <export>
     <rosdoc config="rosdoc.yaml" />
   </export>
