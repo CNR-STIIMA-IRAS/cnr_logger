@@ -36,11 +36,14 @@ env:
     - UPSTREAM_WORKSPACE=".upstream.repos"
     - ADDITIONAL_DEBS="curl"
     - PROJECT_NAME="cnr_logger"
+    - PROJECT_NAME_COVER_REPORT=$PROJECT_NAME_coverage_report
     # Set the python path manually to include /usr/-/python2.7/dist-packages
     # as this is where apt-get installs python packages.
     - PYTHONPATH=$PYTHONPATH:/usr/lib/python2.7/dist-packages:/usr/local/lib/python2.7/dist-packages
     - CODECOV_TOKEN="dc6c3b82-47d4-4d2d-99a4-0aa76a4640ef"
     - CODECOV_URL=https://codecov.io/gh/CNR-STIIMA-IRAS
+    - CODECOV_WORKING_DIR="build/$PROJECT_NAME/$PROJECT_NAME_COVER_REPORT/codecov"
+    
 
 before_install:
   - sudo sh -c "echo \"deb http://packages.ros.org/ros/ubuntu $ROS_CI_DESKTOP main\" > /etc/apt/sources.list.d/ros-latest.list"
@@ -102,4 +105,7 @@ script:
   - catkin build $ROS_PARALLEL_JOBS --catkin-make-args run_tests && catkin_test_results
 
 after_success:
-  - source "$CI_SOURCE_PATH"/.coverage.sh ~/catkin_ws $PROJECT_NAME $CODECOV_TOKEN
+  - catkin build -v --no-deps "$PROJECT_NAME" --catkin-make-args "$PROJECT_NAME_COVER_REPORT"
+  - mkdir -p "$CODECOV_WORKING_DIR"
+  - cd "$CODECOV_WORKING_DIR"
+  - bash <(curl -s https://codecov.io/bash) -t "$CODECOV_TOKEN" -s "$1/build/$PROJECT_NAME/" -X gcov -X coveragepy 
