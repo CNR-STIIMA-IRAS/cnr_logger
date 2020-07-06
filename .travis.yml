@@ -59,7 +59,6 @@ before_install:
   - sudo rosdep init
   - rosdep update --include-eol-distros  # Support EOL distros.
 
-
 # Create a catkin workspace with the package under integration.
 install:
   - mkdir -p ~/catkin_ws/src
