@@ -54,6 +54,7 @@
 #include <log4cxx/rollingfileappender.h>
 #include <log4cxx/consoleappender.h>
 #include <log4cxx/patternlayout.h>
+#include <ros/console.h>
 
 namespace log4cxx
 {
