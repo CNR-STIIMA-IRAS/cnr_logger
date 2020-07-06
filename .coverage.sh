@@ -20,7 +20,6 @@ catkin build -v --no-deps "$PROJECT_NAME" --catkin-make-args "$PROJECT_NAME_COVE
 echo "Uploading coverage results to codecov.io"
 
 # Remove duplicated information
-ls "$1/build/$PROJECT_NAME/$PROJECT_NAME_COVER_REPORT.*"
 if [ -f "$1/build/$PROJECT_NAME/$PROJECT_NAME_COVER_REPORT.info.cleaned" ]; then
     rm "$1/build/$PROJECT_NAME/$PROJECT_NAME_COVER_REPORT.info.cleaned"
 fi
@@ -32,7 +31,7 @@ echo "==================================================================="
 CODECOV_WORKING_DIR="build/$PROJECT_NAME/$PROJECT_NAME_COVER_REPORT/codecov"
 mkdir -p "$CODECOV_WORKING_DIR"
 cd "$CODECOV_WORKING_DIR"
-bash <(curl -s https://codecov.io/bash) -t "$CODECOV_TOKEN" -s "$1/build/$PROJECT_NAME/" -X gcov -X fix -q n.txt -Z 
+bash <(curl -s https://codecov.io/bash) -t "$CODECOV_TOKEN" -s "$1/build/$PROJECT_NAME/" -X gcov -X coveragepy 
 "Result $?"
 cd "$CWD"
 echo "==================================================================="
