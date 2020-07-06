@@ -8,8 +8,6 @@
 | Codecov   | [![codecov](https://codecov.io/gh/CNR-STIIMA-IRAS/cnr_logger/branch/master/graph/badge.svg)](https://codecov.io/gh/CNR-STIIMA-IRAS/cnr_logger) | [![codecov](https://codecov.io/gh/CNR-STIIMA-IRAS/cnr_logger/branch/master/graph/badge.svg)](https://codecov.io/gh/CNR-STIIMA-IRAS/cnr_logger) | [![codecov](https://codecov.io/gh/CNR-STIIMA-IRAS/cnr_logger/branch/master/graph/badge.svg)](https://codecov.io/gh/CNR-STIIMA-IRAS/cnr_logger) |
 Codacy      | [![Codacy Badge](https://api.codacy.com/project/badge/Grade/7f1834c02aa84b959ee9b7529deb48d6)](https://app.codacy.com/gh/CNR-STIIMA-IRAS/cnr_logger?utm_source=github.com&utm_medium=referral&utm_content=CNR-STIIMA-IRAS/cnr_logger&utm_campaign=Badge_Grade_Dashboard) | [![Codacy Badge](https://api.codacy.com/project/badge/Grade/7f1834c02aa84b959ee9b7529deb48d6)](https://app.codacy.com/gh/CNR-STIIMA-IRAS/cnr_logger?utm_source=github.com&utm_medium=referral&utm_content=CNR-STIIMA-IRAS/cnr_logger&utm_campaign=Badge_Grade_Dashboard)  | [![Codacy Badge](https://api.codacy.com/project/badge/Grade/7f1834c02aa84b959ee9b7529deb48d6)](https://app.codacy.com/gh/CNR-STIIMA-IRAS/cnr_logger?utm_source=github.com&utm_medium=referral&utm_content=CNR-STIIMA-IRAS/cnr_logger&utm_campaign=Badge_Grade_Dashboard)  |
 
-
-
 ## Aim ##
 
 The package has been designed to have a logger separated from the standard ros logging functions. It uses the same core library, log4cxx. The main difference consists of that you can enable or disable the logging to screen and/or to file just using a parameter.
