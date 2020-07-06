@@ -1707,10 +1707,10 @@ else
   fi
 
   say "${e}==>${x} Uploading to Codecov"
-  i="0"
+  i=0
   while [ $i -lt 4 ]
   do
-    i=$i+1
+    i=i+1
 
     res=$(curl -X POST "$curlargs" "$cacert" --data-binary @"$upload_file.gz" -H 'Content-Type: text/plain' -H 'Content-Encoding: gzip' -H 'X-Content-Encoding: gzip'  -H 'Accept: text/plain' "$url/upload/v2?$query" || echo 'HTTP 500')
     # HTTP 200
