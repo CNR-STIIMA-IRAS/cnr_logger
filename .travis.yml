@@ -61,6 +61,7 @@ install:
   - mkdir -p ~/catkin_ws/src
   - cd ~/catkin_ws
   - catkin init --workspace src
+  - catkin config --cmake-args -DENABLE_COVERAGE_TESTING=ON -DCMAKE_BUILD_TYPE=Debug
   # Create the devel/setup.bash (run catkin_make with an empty workspace) and
   # source it to set the path variables.
   - catkin build -cs 
