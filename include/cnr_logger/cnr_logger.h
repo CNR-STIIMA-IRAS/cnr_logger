@@ -49,7 +49,6 @@
 #include <map>
 #include <string>
 #include <iostream>
-#include <ros/ros.h>
 #include <ros/file_log.h>
 #include <ros/console.h>
 

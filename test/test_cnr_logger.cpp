@@ -45,44 +45,44 @@ std::shared_ptr<cnr_logger::TraceLogger> logger2;
 TEST(TestSuite, fullConstructor)
 {
 
-  EXPECT_NO_FATAL_FAILURE( logger.reset( new cnr_logger::TraceLogger("log1", "/file_and_screen_different_appenders") ) );
-  EXPECT_NO_FATAL_FAILURE( logger2.reset( new cnr_logger::TraceLogger("log2", "/file_and_screen_same_appender") ) );
+  EXPECT_NO_FATAL_FAILURE(logger.reset(new cnr_logger::TraceLogger("log1", "/file_and_screen_different_appenders")));
+  EXPECT_NO_FATAL_FAILURE(logger2.reset(new cnr_logger::TraceLogger("log2", "/file_and_screen_same_appender")));
 
-  EXPECT_TRUE ( logger->logFile() );
-  EXPECT_TRUE ( logger->logScreen() );
-  EXPECT_FALSE( logger->logSyncFileAndScreen() );
+  EXPECT_TRUE(logger->logFile());
+  EXPECT_TRUE(logger->logScreen());
+  EXPECT_FALSE(logger->logSyncFileAndScreen());
 
-  EXPECT_FALSE( logger2->logFile() );
-  EXPECT_FALSE( logger2->logScreen() );
-  EXPECT_TRUE ( logger2->logSyncFileAndScreen() );
+  EXPECT_FALSE(logger2->logFile());
+  EXPECT_FALSE(logger2->logScreen());
+  EXPECT_TRUE(logger2->logSyncFileAndScreen());
 
-  EXPECT_NO_FATAL_FAILURE( logger.reset() );
-  EXPECT_NO_FATAL_FAILURE( logger2.reset() );
+  EXPECT_NO_FATAL_FAILURE(logger.reset());
+  EXPECT_NO_FATAL_FAILURE(logger2.reset());
 }
 
 TEST(TestSuite, partialConstructor)
 {
-  EXPECT_NO_FATAL_FAILURE( logger.reset( new cnr_logger::TraceLogger("log1") ) );
-  EXPECT_TRUE( logger->init( "/file_and_screen_different_appenders" ) );
-  EXPECT_NO_FATAL_FAILURE( logger.reset() );
+  EXPECT_NO_FATAL_FAILURE(logger.reset(new cnr_logger::TraceLogger("log1")));
+  EXPECT_TRUE(logger->init("/file_and_screen_different_appenders"));
+  EXPECT_NO_FATAL_FAILURE(logger.reset());
 }
 
 TEST(TestSuite, wrongConstructor)
 {
-  EXPECT_NO_FATAL_FAILURE( logger.reset( new cnr_logger::TraceLogger("log1") ) );
-  EXPECT_FALSE( logger->init( "/this_namespace_does_not_exist" ) );
-  EXPECT_NO_FATAL_FAILURE( logger.reset() );
+  EXPECT_NO_FATAL_FAILURE(logger.reset(new cnr_logger::TraceLogger("log1")));
+  EXPECT_FALSE(logger->init("/this_namespace_does_not_exist"));
+  EXPECT_NO_FATAL_FAILURE(logger.reset());
 }
 
 // Declare another test
 TEST(TestSuite, flushInfoDebug)
 {
-  EXPECT_NO_FATAL_FAILURE( logger.reset( new cnr_logger::TraceLogger("log1", "/only_file_streamer", true) ) );
-  EXPECT_NO_FATAL_FAILURE( logger2.reset( new cnr_logger::TraceLogger("log2", "/file_and_screen_same_appender") ) );
-  
-  for(size_t i=0;i<10;i++)
+  EXPECT_NO_FATAL_FAILURE(logger.reset(new cnr_logger::TraceLogger("log1", "/only_file_streamer", true)));
+  EXPECT_NO_FATAL_FAILURE(logger2.reset(new cnr_logger::TraceLogger("log2", "/file_and_screen_same_appender")));
+
+  for (size_t i = 0; i < 10; i++)
   {
-    CNR_INFO (*logger, "Ciao-log-1-info");
+    CNR_INFO(*logger, "Ciao-log-1-info");
     CNR_DEBUG(*logger, "Ciao-log-1-debug");
     CNR_FATAL(*logger, "Ciao-log-1-debug");
     CNR_TRACE(*logger, "Ciao-log-1-debug");
@@ -93,12 +93,13 @@ TEST(TestSuite, flushInfoDebug)
     ros::spinOnce();
     ros::Duration(1.0).sleep();
   }
-  EXPECT_NO_FATAL_FAILURE( logger.reset() );
-  EXPECT_NO_FATAL_FAILURE( logger2.reset() );
+  EXPECT_NO_FATAL_FAILURE(logger.reset());
+  EXPECT_NO_FATAL_FAILURE(logger2.reset());
 }
 
 // Run all the tests that were declared with TEST()
-int main(int argc, char **argv){
+int main(int argc, char **argv)
+{
   testing::InitGoogleTest(&argc, argv);
   ros::init(argc, argv, "cnr_logger_tester");
   ros::NodeHandle nh;
