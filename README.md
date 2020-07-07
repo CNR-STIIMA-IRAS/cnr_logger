@@ -213,4 +213,4 @@ The macros to be used within the code are:
 
 ### Contact ###
 
-<mailto:nicola.pedrocchi@stiima.cnr.it>
+<mailto:<mailto:nicola.pedrocchi@stiima.cnr.it>>
