@@ -55,6 +55,7 @@ before_install:
   - sudo apt-get install -y git
   - sudo apt-get install -y python-catkin-pkg python-rosdep python-wstool python-catkin-tools ros-$ROS_DISTRO-ros-base
   - sudo update-alternatives --install /usr/bin/gcov gcov /usr/bin/gcov-5 90
+  - sudo apt install tree
   - sudo apt install python-coverage
   - pip install codecov --user
   - source /opt/ros/$ROS_DISTRO/setup.bash
