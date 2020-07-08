@@ -106,6 +106,7 @@ script:
 
 after_success:
   - catkin build -v --no-deps "$PROJECT_NAME" --catkin-make-args "$PROJECT_NAME_COVER_REPORT"
+  - ls ~/catkin_ws/build/"$PROJECT_NAME_COVER_REPORT"
   - mkdir -p "$CODECOV_WORKING_DIR"
   - cd "$CODECOV_WORKING_DIR"
   - bash <(curl -s https://codecov.io/bash) -t "$CODECOV_TOKEN" -X gcov -X coveragepy 
