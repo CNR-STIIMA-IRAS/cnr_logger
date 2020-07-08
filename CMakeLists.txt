@@ -60,4 +60,5 @@ install(TARGETS ${PROJECT_NAME}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
+## LINT
 set(ROSLINT_CPP_OPTS "--filter=-runtime/references,-runtime/int,--max-line-length=180")
