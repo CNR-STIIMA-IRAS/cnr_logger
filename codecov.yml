@@ -1,3 +1,13 @@
+---
+ignore:
+  - "build"
+  - "devel"
+  - "test"
+  - "src/node_example/test"
+
+fixes:
+  - "src/node_example/::"
+
 codecov:
   require_ci_to_pass: yes
 
