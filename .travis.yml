@@ -107,6 +107,7 @@ script:
 
 after_success:
   - catkin build -v --no-deps "$PROJECT_NAME" --catkin-make-args "$PROJECT_NAME_COVER_REPORT"
-  - rm "build/$PROJECT_NAME/$PROJECT_NAME_COVER_REPORT.info.cleaned"
-  - rm "build/$PROJECT_NAME/$PROJECT_NAME_COVER_REPORT.info.removed"
+  - cat ~/catkin_ws/build/cnr_logger/cnr_logger_coverage_report.base
+  - rm "~/catkin_ws/build/$PROJECT_NAME/$PROJECT_NAME_COVER_REPORT.info.cleaned"
+  - rm "~/catkin_wsbuild/$PROJECT_NAME/$PROJECT_NAME_COVER_REPORT.info.removed"
   - bash <(curl -s https://codecov.io/bash) -t "$CODECOV_TOKEN" -X gcov -X coveragepy
