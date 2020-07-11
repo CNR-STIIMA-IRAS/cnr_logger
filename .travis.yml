@@ -40,8 +40,8 @@ env:
     # Set the python path manually to include /usr/-/python2.7/dist-packages
     # as this is where apt-get installs python packages.
     - PYTHONPATH=$PYTHONPATH:/usr/lib/python2.7/dist-packages:/usr/local/lib/python2.7/dist-packages
-    - CODECOV_TOKEN="dc6c3b82-47d4-4d2d-99a4-0aa76a4640ef"
-    - CODECOV_URL=https://codecov.io/gh/CNR-STIIMA-IRAS
+    #- CODECOV_TOKEN="dc6c3b82-47d4-4d2d-99a4-0aa76a4640ef"
+    #- CODECOV_URL=https://codecov.io/gh/CNR-STIIMA-IRAS
     - CODECOV_WORKING_DIR="build/$PROJECT_NAME/"
 
 before_install:
