@@ -19,13 +19,14 @@
   <build_depend>roslint</build_depend>
   <build_depend>roslaunch</build_depend>
   <build_depend>code_coverage</build_depend>
+  <build_depend>rostest</build_depend>
 
   <build_export_depend>roscpp</build_export_depend>
   <exec_depend>rosconsole</exec_depend>
   <exec_depend>roscpp</exec_depend>
 
-  <test_depend>roscpp</test_depend>
-
+  <test_depend>rostest</test_depend>
+  
   <export>
     <rosdoc config="rosdoc.yaml" />
   </export>
