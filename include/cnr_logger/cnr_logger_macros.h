@@ -188,6 +188,76 @@ inline std::string BOLDWHITE()
   return "\033[1m\033[37m";
 }
 
+inline std::string RST()
+{
+  return RESET();
+}
+inline std::string BLK()
+{
+  return BLACK();
+}
+inline std::string R()
+{
+  return RED();
+}
+inline std::string G()
+{
+  return GREE();
+}
+inline std::string Y()
+{
+  return YELLOW();
+}
+inline std::string BLE()
+{
+  return BLUE();
+}
+inline std::string M()
+{
+  return MAGENTA();
+}
+inline std::string C()
+{
+  return CYAN();
+}
+inline std::string W()
+{
+  return WHITE();
+}
+inline std::string BBLK()
+{
+  return BOLDBLACK();
+}
+inline std::string BR()
+{
+  return BOLDRED();
+}
+inline std::string BG()
+{
+  return BOLDGREEN();
+}
+inline std::string BY()
+{
+  return BOLDYELLOW();
+}
+inline std::string BBLE()
+{
+  return BOLDBLUE();
+}
+inline std::string BM()
+{
+  return BOLDMAGENTA();
+}
+inline std::string BC()
+{
+  return BOLDCYAN();
+}
+inline std::string BW()
+{
+  return BOLDWHITE();
+}
+
+
 }  // namespace cnr_logger
 
 

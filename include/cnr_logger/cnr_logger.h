@@ -127,7 +127,7 @@ public:
    */
   bool logFile()
   {
-    return (loggers_.find(FILE_STREAM)           != loggers_.end());
+    return (loggers_.find(FILE_STREAM) != loggers_.end());
   }
   /**
    * @brief Configuration getter.

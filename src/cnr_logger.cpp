@@ -89,7 +89,7 @@ bool TraceLogger::init(const std::string& param_namespace, const bool star_heade
     return false;
   }
 
-  if ((default_values) && (!check(param_namespace)))
+  if ((!default_values) && (!check(param_namespace)))
   {
     ROS_FATAL_STREAM("Any parameters is within the namespace '" << param_namespace << "'");
     return false;
