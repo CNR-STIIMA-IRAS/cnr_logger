@@ -202,7 +202,7 @@ inline std::string R()
 }
 inline std::string G()
 {
-  return GREE();
+  return GREEN();
 }
 inline std::string Y()
 {
