@@ -21,7 +21,7 @@ catkin_package( INCLUDE_DIRS include LIBRARIES ${PROJECT_NAME} )
 include_directories( include ${catkin_INCLUDE_DIRS} )
 
 ## Add gtest based cpp test target and link libraries
-add_library( ${PROJECT_NAME} src/cnr_logger.cpp )
+add_library(${PROJECT_NAME} src/${PROJECT_NAME}/cnr_logger.cpp )
 target_link_libraries( ${PROJECT_NAME} ${catkin_LIBRARIES} )
 roslint_cpp( src/cnr_logger.cpp )
 
