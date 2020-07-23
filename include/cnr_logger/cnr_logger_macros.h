@@ -267,9 +267,9 @@ do \
 { \
   if ((&(trace_logger))->logSyncFileAndScreen())\
     LOG4CXX_FATAL((&(trace_logger))->loggers_[::cnr_logger::TraceLogger::SYNC_FILE_AND_CONSOLE], args)\
-  else if ((&(trace_logger))->logFile())\
+  if ((&(trace_logger))->logFile())\
       LOG4CXX_FATAL((&(trace_logger))->loggers_[::cnr_logger::TraceLogger::FILE_STREAM], args)\
-  else if ((&(trace_logger))->logScreen())\
+  if ((&(trace_logger))->logScreen())\
       LOG4CXX_FATAL((&(trace_logger))->loggers_[::cnr_logger::TraceLogger::CONSOLE_STREAM], args)\
 } while (false)
 
@@ -278,9 +278,9 @@ do \
 {\
   if ((&(trace_logger))->logSyncFileAndScreen())\
     LOG4CXX_ERROR((&(trace_logger))->loggers_[::cnr_logger::TraceLogger::SYNC_FILE_AND_CONSOLE], args)\
-  else if ((&(trace_logger))->logFile())\
+  if ((&(trace_logger))->logFile())\
       LOG4CXX_ERROR((&(trace_logger))->loggers_[::cnr_logger::TraceLogger::FILE_STREAM], args)\
-  else if ((&(trace_logger))->logScreen())\
+  if ((&(trace_logger))->logScreen())\
       LOG4CXX_ERROR((&(trace_logger))->loggers_[::cnr_logger::TraceLogger::CONSOLE_STREAM], args)\
 } while (false)
 
@@ -289,9 +289,9 @@ do\
 {\
   if ((&(trace_logger))->logSyncFileAndScreen())\
     LOG4CXX_WARN((&(trace_logger))->loggers_[::cnr_logger::TraceLogger::SYNC_FILE_AND_CONSOLE], args)\
-  else if ((&(trace_logger))->logFile())\
+  if ((&(trace_logger))->logFile())\
       LOG4CXX_WARN((&(trace_logger))->loggers_[::cnr_logger::TraceLogger::FILE_STREAM], args)\
-  else if ((&(trace_logger))->logScreen())\
+  if ((&(trace_logger))->logScreen())\
       LOG4CXX_WARN((&(trace_logger))->loggers_[::cnr_logger::TraceLogger::CONSOLE_STREAM], args)\
 } while (false)
 
@@ -299,11 +299,17 @@ do\
 do\
 {\
   if (((&(trace_logger))->logSyncFileAndScreen())) \
+  {\
     LOG4CXX_INFO((&(trace_logger))->loggers_[::cnr_logger::TraceLogger::SYNC_FILE_AND_CONSOLE], args)\
-  else if ((&(trace_logger))->logFile()) \
+  }\
+  if ((&(trace_logger))->logFile()) \
+  {\
     LOG4CXX_INFO((&(trace_logger))->loggers_[::cnr_logger::TraceLogger::FILE_STREAM], args)\
-  else if ((&(trace_logger))->logScreen()) \
-      LOG4CXX_INFO((&(trace_logger))->loggers_[::cnr_logger::TraceLogger::CONSOLE_STREAM], args)\
+  }\
+  if ((&(trace_logger))->logScreen()) \
+  {\
+    LOG4CXX_INFO((&(trace_logger))->loggers_[::cnr_logger::TraceLogger::CONSOLE_STREAM], args)\
+  }\
 } while (false)
 
 #define CNR_INFO_ONLY_FILE(trace_logger, args)\
@@ -320,9 +326,9 @@ do\
 {\
   if ((&(trace_logger))->logSyncFileAndScreen())\
     LOG4CXX_DEBUG((&(trace_logger))->loggers_[::cnr_logger::TraceLogger::SYNC_FILE_AND_CONSOLE], args)\
-  else if ((&(trace_logger))->logFile())\
+  if ((&(trace_logger))->logFile())\
     LOG4CXX_DEBUG((&(trace_logger))->loggers_[::cnr_logger::TraceLogger::FILE_STREAM], args)\
-  else if ((&(trace_logger))->logScreen())\
+  if ((&(trace_logger))->logScreen())\
     LOG4CXX_DEBUG((&(trace_logger))->loggers_[::cnr_logger::TraceLogger::CONSOLE_STREAM], args)\
 } while (false)
 
@@ -331,9 +337,9 @@ do\
 {\
   if ((&(trace_logger))->logSyncFileAndScreen())\
     LOG4CXX_TRACE((&(trace_logger))->loggers_[::cnr_logger::TraceLogger::SYNC_FILE_AND_CONSOLE], args)\
-  else if ((&(trace_logger))->logFile())\
+  if ((&(trace_logger))->logFile())\
     LOG4CXX_TRACE((&(trace_logger))->loggers_[::cnr_logger::TraceLogger::FILE_STREAM], args)\
-  else if ((&(trace_logger))->logScreen())\
+  if ((&(trace_logger))->logScreen())\
     LOG4CXX_TRACE((&(trace_logger))->loggers_[::cnr_logger::TraceLogger::CONSOLE_STREAM], args)\
 } while (false)
 // =================

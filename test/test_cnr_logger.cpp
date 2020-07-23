@@ -80,6 +80,39 @@ TEST(TestSuite, wrongConstructor)
 }
 
 // Declare another test
+TEST(TestSuite, flushFileAndScreen)
+{
+  EXPECT_NO_FATAL_FAILURE(logger.reset(new cnr_logger::TraceLogger("log1", "/file_and_screen_same_appender", true)));
+
+  for (size_t i = 0; i < 10; i++)
+  {
+    CNR_INFO( *logger, "Ciao-log-1-info");
+    CNR_DEBUG(*logger, "Ciao-log-1-debug");
+    CNR_FATAL(*logger, "Ciao-log-1-fatal");
+    CNR_TRACE(*logger, "Ciao-log-1-trace");
+
+    CNR_INFO_THROTTLE(*logger,  1.0, "Ciao-log-1-info");
+    CNR_DEBUG_THROTTLE(*logger, 1.0, "Ciao-log-1-debug");
+    CNR_FATAL_THROTTLE(*logger, 1.0, "Ciao-log-1-fatal");
+    CNR_TRACE_THROTTLE(*logger, 1.0, "Ciao-log-1-trace");
+
+    CNR_INFO_COND( *logger, true , "Ciao-log-1-info");
+    CNR_DEBUG_COND(*logger, false, "Ciao-log-1debug");
+    CNR_FATAL_COND(*logger, true , "Ciao-log-1fatal");
+    CNR_TRACE_COND(*logger, false, "Ciao-log-1trace");
+
+    CNR_INFO_COND_THROTTLE( *logger, true , 1.0, "Ciao-log-1-info");
+    CNR_DEBUG_COND_THROTTLE(*logger, false, 1.0, "Ciao-log-1-debug");
+    CNR_FATAL_COND_THROTTLE(*logger, true , 1.0, "Ciao-log-1-fatal");
+    CNR_TRACE_COND_THROTTLE(*logger, false, 1.0, "Ciao-log-1-trace");
+
+    ros::spinOnce();
+    ros::Duration(0.1).sleep();
+  }
+  EXPECT_NO_FATAL_FAILURE(logger.reset());
+}
+
+// Declare another test
 TEST(TestSuite, flushInfoDebug)
 {
   EXPECT_NO_FATAL_FAILURE(logger.reset(new cnr_logger::TraceLogger("log1", "/only_file_streamer", true)));
@@ -111,7 +144,7 @@ TEST(TestSuite, flushInfoDebug)
     CNR_DEBUG(*logger2, "Ciao-log-2-debug");
 
     ros::spinOnce();
-    ros::Duration(1.0).sleep();
+    ros::Duration(0.1).sleep();
   }
   EXPECT_NO_FATAL_FAILURE(logger.reset());
   EXPECT_NO_FATAL_FAILURE(logger2.reset());

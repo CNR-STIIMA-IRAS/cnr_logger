@@ -1,5 +1,9 @@
 <launch>
 
+<arg name="debug" default="false" />
+<arg unless="$(arg debug)" name="launch_prefix" value="" />
+<arg     if="$(arg debug)" name="launch_prefix" value="gdb --ex run --args" />
+
 <group ns="file_and_screen_different_appenders" >
 <rosparam>
   appenders: [file, screen]
@@ -11,7 +15,7 @@
 <group ns="file_and_screen_same_appender" >
 <rosparam >
   appenders: [file, screen]
-  levels: [debug, debug]
+  levels: [trace, info]
   file_name: "ciao"
 </rosparam>
 </group>
@@ -25,9 +29,10 @@
 </group>
 
 
-<test test-name="cnr_logger_test" pkg="cnr_logger" type="cnr_logger_test" >
+<node launch-prefix="$(arg launch_prefix)"  name="cnr_logger_example" pkg="cnr_logger" type="cnr_logger_example"
+      output="screen" >
 
-</test>
+</node>
 
 
 </launch>

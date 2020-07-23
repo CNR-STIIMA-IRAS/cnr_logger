@@ -7,7 +7,7 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-find_package(catkin REQUIRED COMPONENTS roscpp rosconsole roslint)
+find_package(catkin REQUIRED COMPONENTS roscpp roslint)
 find_package(Boost REQUIRED COMPONENTS date_time )
 
 if(CATKIN_ENABLE_TESTING AND ENABLE_COVERAGE_TESTING)
@@ -25,16 +25,19 @@ add_library( ${PROJECT_NAME} src/cnr_logger.cpp )
 target_link_libraries( ${PROJECT_NAME} ${catkin_LIBRARIES} )
 roslint_cpp( src/cnr_logger.cpp )
 
+add_executable( ${PROJECT_NAME}_example src/cnr_logger_example.cpp)
+target_link_libraries( ${PROJECT_NAME}_example ${PROJECT_NAME} ${catkin_LIBRARIES} )
+
+
 #############
 ## Testing ##
 #############
 
 ## Add gtest based cpp test target and link libraries
 if(CATKIN_ENABLE_TESTING)
-  find_package(roscpp REQUIRED)
   find_package(rostest REQUIRED)
   add_rostest_gtest(${PROJECT_NAME}_test test/test.launch test/test_cnr_logger.cpp)
-  target_link_libraries(${PROJECT_NAME}_test ${PROJECT_NAME} ${catkin_LIBRARIES} ${roscpp_LIBRARIES} )
+  target_link_libraries(${PROJECT_NAME}_test ${PROJECT_NAME} ${catkin_LIBRARIES} ${rostest_LIBRARIES} )
 
   if(ENABLE_COVERAGE_TESTING)
     set(COVERAGE_EXCLUDES "*/${PROJECT_NAME}/test*")

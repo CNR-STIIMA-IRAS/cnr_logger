@@ -204,7 +204,7 @@ bool TraceLogger::init(const std::string& param_namespace, const bool star_heade
   if (!ros::param::get(param_namespace + "/pattern_layout", pattern_layout))
   {
     ROS_WARN("Parameter '%s' does not exist", (param_namespace + "/pattern_layout").c_str());
-    pattern_layout = "[%5p][%d{HH:mm:ss,SSS}][%42M:%04L][%24c] %m%n";                    // add %F for file name
+    pattern_layout = "[%5p][%d{HH:mm:ss,SSS}][%M:%04L][%24c] %m%n";                    // add %F for file name
   }
   log4cxx::ColorPatternLayoutPtr layout = new log4cxx::ColorPatternLayout(pattern_layout);
   // =======================================================================================
@@ -218,6 +218,7 @@ bool TraceLogger::init(const std::string& param_namespace, const bool star_heade
   std::string log_file_name;
   if (logFile() || logSyncFileAndScreen())
   {
+    ROS_INFO("Logging to FILE");
     if (!ros::param::get(param_namespace + "/file_name", log_file_name))
     {
       log_file_name = ros::file_log::getLogDirectory() + "/" + logger_id_;
@@ -249,6 +250,7 @@ bool TraceLogger::init(const std::string& param_namespace, const bool star_heade
 
   if (logScreen() || logSyncFileAndScreen())
   {
+    ROS_INFO("Logging to SCREEN");
     log4cxx::ConsoleAppenderPtr appender = new log4cxx::ConsoleAppender(layout, logger_id_);
     loggers_[  logScreen() ? CONSOLE_STREAM : SYNC_FILE_AND_CONSOLE ]->addAppender(appender);
   }
