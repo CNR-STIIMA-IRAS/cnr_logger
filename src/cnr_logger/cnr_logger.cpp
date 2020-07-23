@@ -91,7 +91,6 @@ bool TraceLogger::init(const std::string& param_namespace, const bool star_heade
 
   if ((!default_values) && (!check(param_namespace)))
   {
-    ROS_FATAL_STREAM("Any parameters is within the namespace '" << param_namespace << "'");
     return false;
   }
 
@@ -218,7 +217,6 @@ bool TraceLogger::init(const std::string& param_namespace, const bool star_heade
   std::string log_file_name;
   if (logFile() || logSyncFileAndScreen())
   {
-    ROS_INFO("Logging to FILE");
     if (!ros::param::get(param_namespace + "/file_name", log_file_name))
     {
       log_file_name = ros::file_log::getLogDirectory() + "/" + logger_id_;
@@ -250,7 +248,6 @@ bool TraceLogger::init(const std::string& param_namespace, const bool star_heade
 
   if (logScreen() || logSyncFileAndScreen())
   {
-    ROS_INFO("Logging to SCREEN");
     log4cxx::ConsoleAppenderPtr appender = new log4cxx::ConsoleAppender(layout, logger_id_);
     loggers_[  logScreen() ? CONSOLE_STREAM : SYNC_FILE_AND_CONSOLE ]->addAppender(appender);
   }
