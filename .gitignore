@@ -18,3 +18,4 @@ latex/
 doc/html
 doc/latex
 build/
+*.autosave

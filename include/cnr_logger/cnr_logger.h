@@ -156,6 +156,8 @@ private:
   bool initialized_;
 };
 
+typedef std::shared_ptr< TraceLogger > TraceLoggerPtr;
+
 }  // namespace cnr_logger
 
 #endif  // CNR_LOGGER_CNR_LOGGER_H
