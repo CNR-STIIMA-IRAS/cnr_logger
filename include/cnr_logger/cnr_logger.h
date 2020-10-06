@@ -63,7 +63,7 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/date_time/posix_time/posix_time_io.hpp>
 
-#include <cnr_logger/cnr_logger_macros.h>  //NOLINT(build/include)
+
 
 /**
  * @brief cnr_logger main namespace for the package
@@ -97,13 +97,15 @@ public:
   /**
    * @brief TraceLogger. The constructor does not initilize the class. THe function init() must be called afterwards.
    * @param logger_id: unique id for the logger.
-   * When the class has more than one appender configured, the logger_id is postponed with a "_x" letter to make the appender unique.
+   * When the class has more than one appender configured, the logger_id is postponed with a "_x" letter to make the
+   * appender unique.
    */
   explicit TraceLogger(const std::string& logger_id);
   /**
    * @brief TraceLogger: The constructor fully initilize the class.
    * @param logger_id: unique id for the logger.
-   * When the class has more than one appender configured, the logger_id is postponed with a "_x" letter to make the appender unique.
+   * When the class has more than one appender configured, the logger_id is postponed with a "_x" letter to make the
+   * appender unique.
    * @param param_namespace: absolute namespacewhere the initialization parameters are stored.
    * @param star_header: if the first log is with '***' to make easy to find the start of the logging in the file.
    */
@@ -112,10 +114,12 @@ public:
 
   /**
    * @brief init
-   * * @param logger_id: unique id for the logger. When the class has more than one appender configured, the logger_id is postponed with a "_x" letter to make the appender unique.
+   * * @param logger_id: unique id for the logger. When the class has more than one appender configured, the logger_id
+   * is postponed with a "_x" letter to make the appender unique.
    * @param param_namespace: absolute namespacewhere the initialization parameters are stored.
    * @param star_header: if the first log is with '***' to make easy to find the start of the logging in the file.
-     @param default_values: in the case the parameters are not found under the input namespace, the default configuration is loaded. If FALSE, the function returns false if the parameters are not found.
+   * @param default_values: in the case the parameters are not found under the input namespace, the default
+   * configuration is loaded. If FALSE, the function returns false if the parameters are not found.
    * @return True if correctly initialized
    */
   bool init(const std::string& param_namespace, const bool star_header = false, const bool default_values = true);
@@ -150,14 +154,20 @@ public:
   std::map< AppenderType, log4cxx::LoggerPtr > loggers_;
   std::map< AppenderType, std::string        > levels_;
   const std::string logger_id_;
-
+  const double& defaultThrottleTime() const { return default_throttle_time_; }
 private:
   bool check(const std::string& param_namespace);
   bool initialized_;
+  double default_throttle_time_;
+
 };
 
 typedef std::shared_ptr< TraceLogger > TraceLoggerPtr;
 
+
 }  // namespace cnr_logger
+
+
+#include <cnr_logger/cnr_logger_macros.h>  //NOLINT(build/include)
 
 #endif  // CNR_LOGGER_CNR_LOGGER_H

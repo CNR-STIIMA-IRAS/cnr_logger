@@ -275,6 +275,16 @@ bool TraceLogger::init(const std::string& param_namespace, const bool star_heade
   {
     CNR_INFO_ONLY_FILE((*this), log_start);
   }
+
+  // =======================================================================================
+  // Default Throttle Time
+  //
+  // =======================================================================================
+  if (!ros::param::get(param_namespace + "/default_throttle_time", default_throttle_time_))
+  {
+    ROS_WARN("Parameter '%s' does not exist", (param_namespace + "/default_throttle_time").c_str());
+    default_throttle_time_ = -1.0;
+  }
   initialized_ = true;
   return initialized_;
 }
