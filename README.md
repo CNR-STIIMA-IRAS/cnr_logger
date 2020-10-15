@@ -216,6 +216,5 @@ The macros to be used within the code are:
 
 <mailto:<mailto:nicola.pedrocchi@stiima.cnr.it>>
 
-
-## License
+## License ##
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FCNR-STIIMA-IRAS%2Fcnr_logger.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2FCNR-STIIMA-IRAS%2Fcnr_logger?ref=badge_large)
