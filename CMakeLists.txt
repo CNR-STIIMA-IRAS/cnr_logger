@@ -22,6 +22,21 @@ include_directories( include ${catkin_INCLUDE_DIRS} )
 
 add_library(${PROJECT_NAME} src/${PROJECT_NAME}/cnr_logger.cpp )
 target_link_libraries( ${PROJECT_NAME} ${catkin_LIBRARIES} )
+target_precompile_headers(${PROJECT_NAME} PUBLIC
+                          <map>
+                          <string>
+                          <iostream>
+                          <ros/file_log.h>
+                          <ros/console.h>
+                          <log4cxx/logger.h>
+                          <log4cxx/basicconfigurator.h>
+                          <log4cxx/propertyconfigurator.h>
+                          <log4cxx/helpers/exception.h>
+                          <log4cxx/rollingfileappender.h>
+                          <log4cxx/consoleappender.h>
+                          <log4cxx/patternlayout.h>
+                          <boost/date_time/posix_time/posix_time.hpp>
+                          <boost/date_time/posix_time/posix_time_io.hpp>)
 roslint_cpp( src/cnr_logger.cpp )
 
 add_executable( ${PROJECT_NAME}_example src/cnr_logger_example.cpp)
