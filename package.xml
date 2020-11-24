@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>cnr_logger</name>
+  <version>0.0.0</version>
+  <description>The cnr_logger package</description>
+
+  <maintainer email="iras@stiima.cnr.it">iras</maintainer>
+
+  <license>BSD</license>
+
+  <url type="website">http://https://github.com/CNR-STIIMA-IRAS/cnr_logger</url>
+
+  <author email="nicola.pedrocchi@stiima.cnr.it">Nicola Pedrocchi</author>
+
+  <doc_depend>doxygen</doc_depend>
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>rosconsole</build_depend>
+  <build_depend>roscpp</build_depend>
+  <build_depend>roslint</build_depend>
+  <build_depend>roslaunch</build_depend>
+  <build_depend>code_coverage</build_depend>
+  <build_depend>rostest</build_depend>
+
+  <build_export_depend>roscpp</build_export_depend>
+  <exec_depend>rosconsole</exec_depend>
+  <exec_depend>roscpp</exec_depend>
+
+  <test_depend>rostest</test_depend>
+  
+  <export>
+    <rosdoc config="rosdoc.yaml" />
+  </export>
+</package>
