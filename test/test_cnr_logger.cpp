@@ -41,6 +41,30 @@
 std::shared_ptr<cnr_logger::TraceLogger> logger;
 std::shared_ptr<cnr_logger::TraceLogger> logger2;
 
+TEST(TestSuite, colorTest)
+{
+  std::cout << "Color Test" << std::endl;
+  std::cout << cnr_logger::RST() << "RESET" << " ";
+  std::cout << cnr_logger::BLK() << "BLACK"<<"|";
+  std::cout << cnr_logger::R() << "RED"<<"|";
+  std::cout << cnr_logger::G() << "GREEN"<<"|";
+  std::cout << cnr_logger::Y() << "YELLOW"<<"|";
+  std::cout << cnr_logger::BLE() << "BLUE"<<"|";
+  std::cout << cnr_logger::M() << "MAGENTA"<<"|";
+  std::cout << cnr_logger::C() << "CYAN"<<"|";
+  std::cout << cnr_logger::W() << "WHITE"<<"|";
+  std::cout << cnr_logger::BBLK() << "BOLDBLACK"<<"|";
+  std::cout << cnr_logger::BR() << "BOLDRED"<<"|";
+  std::cout << cnr_logger::BG() << "BOLDGREEN"<<"|";
+  std::cout << cnr_logger::BY() << "BOLDYELLOW"<<"|";
+  std::cout << cnr_logger::BBLE() << "BOLDBLUE"<<"|";
+  std::cout << cnr_logger::BM() << "BOLDMAGENTA"<<"|";
+  std::cout << cnr_logger::BC() << "BOLDCYAN"<<"|";
+  std::cout << cnr_logger::BW() << "BOLDWHITE"<<"|";
+  std::cout << cnr_logger::RST()<< std::endl;
+}
+
+
 // Declare a test
 TEST(TestSuite, fullConstructor)
 {
