@@ -6,18 +6,6 @@ cnr_logger
 [![Codacy Badge][y]][3]
 [![FOSSA Status][f]][4]
 
-[t]:https://travis-ci.org/CNR-STIIMA-IRAS/cnr_logger.svg?branch=master
-[1]:https://travis-ci.org/CNR-STIIMA-IRAS/cnr_logger
-
-[c]:https://codecov.io/gh/CNR-STIIMA-IRAS/cnr_logger/branch/master/graph/badge.svg
-[2]:https://codecov.io/gh/CNR-STIIMA-IRAS/cnr_logger
-
-[y]:https://api.codacy.com/project/badge/Grade/7f1834c02aa84b959ee9b7529deb48d6
-[3]:https://app.codacy.com/gh/CNR-STIIMA-IRAS/cnr_logger?utm_source=github.com&utm_medium=referral&utm_content=CNR-STIIMA-IRAS/cnr_logger&utm_campaign=Badge_Grade_Dashboard
-
-[f]:https://app.fossa.com/api/projects/git%2Bgithub.com%2FCNR-STIIMA-IRAS%2Fcnr_logger.svg?type=shield
-[4]:https://app.fossa.com/projects/git%2Bgithub.com%2FCNR-STIIMA-IRAS%2Fcnr_logger?ref=badge_shield
-
 ## Aim ##
 
 The package has been designed to have a logger separated from the standard ros logging functions. It uses the same core library, log4cxx. The main difference consists of that you can enable or disable the logging to screen and/or to file just using a parameter.
@@ -226,4 +214,20 @@ The macros to be used within the code are:
 <mailto:<mailto:nicola.pedrocchi@stiima.cnr.it>>
 
 ## License ##
-[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FCNR-STIIMA-IRAS%2Fcnr_logger.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2FCNR-STIIMA-IRAS%2Fcnr_logger?ref=badge_large)
+[![FOSSA Status][o]][5]
+
+
+[t]:https://travis-ci.org/CNR-STIIMA-IRAS/cnr_logger.svg?branch=master
+[1]:https://travis-ci.org/CNR-STIIMA-IRAS/cnr_logger
+
+[c]:https://codecov.io/gh/CNR-STIIMA-IRAS/cnr_logger/branch/master/graph/badge.svg
+[2]:https://codecov.io/gh/CNR-STIIMA-IRAS/cnr_logger
+
+[y]:https://api.codacy.com/project/badge/Grade/7f1834c02aa84b959ee9b7529deb48d6
+[3]:https://app.codacy.com/gh/CNR-STIIMA-IRAS/cnr_logger?utm_source=github.com&utm_medium=referral&utm_content=CNR-STIIMA-IRAS/cnr_logger&utm_campaign=Badge_Grade_Dashboard
+
+[f]:https://app.fossa.com/api/projects/git%2Bgithub.com%2FCNR-STIIMA-IRAS%2Fcnr_logger.svg?type=shield
+[4]:https://app.fossa.com/projects/git%2Bgithub.com%2FCNR-STIIMA-IRAS%2Fcnr_logger?ref=badge_shield
+
+[o]:https://app.fossa.com/api/projects/git%2Bgithub.com%2FCNR-STIIMA-IRAS%2Fcnr_logger.svg?type=large
+[5]:https://app.fossa.com/projects/git%2Bgithub.com%2FCNR-STIIMA-IRAS%2Fcnr_logger?ref=badge_large
