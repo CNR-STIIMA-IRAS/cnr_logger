@@ -216,7 +216,6 @@ The macros to be used within the code are:
 ## License ##
 [![FOSSA Status][o]][5]
 
-
 [t]:https://travis-ci.org/CNR-STIIMA-IRAS/cnr_logger.svg?branch=master
 [1]:https://travis-ci.org/CNR-STIIMA-IRAS/cnr_logger
 
