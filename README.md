@@ -1,5 +1,7 @@
-# README #
+cnr_logger
+==========
 
+### Build Status ###
 [![Build Status][t]][1]
 [![codecov][c]][2] 
 [![Codacy Badge][y]][3]
