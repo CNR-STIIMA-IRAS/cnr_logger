@@ -1,13 +1,21 @@
 # README #
 
-## CI/CD ##
+[![Build Status][t]][1]              
+[![codecov][c]][2]      
+[![Codacy Badge][y]][3]
+[![FOSSA Status][f]][4]
 
-| service   |  Master                                                                                                                                                                                                                                                                  |
-|:----------|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
-| Travis    | [![Build Status](https://travis-ci.org/CNR-STIIMA-IRAS/cnr_logger.svg?branch=master)](https://travis-ci.org/CNR-STIIMA-IRAS/cnr_logger)                                                                                                                                  |
-| Codecov   | [![codecov](https://codecov.io/gh/CNR-STIIMA-IRAS/cnr_logger/branch/master/graph/badge.svg)](https://codecov.io/gh/CNR-STIIMA-IRAS/cnr_logger)                                                                                                                           | 
-| Codacy    | [![Codacy Badge](https://api.codacy.com/project/badge/Grade/7f1834c02aa84b959ee9b7529deb48d6)](https://app.codacy.com/gh/CNR-STIIMA-IRAS/cnr_logger?utm_source=github.com&utm_medium=referral&utm_content=CNR-STIIMA-IRAS/cnr_logger&utm_campaign=Badge_Grade_Dashboard) | 
-| Fossa     | [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FCNR-STIIMA-IRAS%2Fcnr_logger.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2FCNR-STIIMA-IRAS%2Fcnr_logger?ref=badge_shield)                                                   |
+[t]:https://travis-ci.org/CNR-STIIMA-IRAS/cnr_logger.svg?branch=master
+[1]:https://travis-ci.org/CNR-STIIMA-IRAS/cnr_logger
+
+[c]:https://codecov.io/gh/CNR-STIIMA-IRAS/cnr_logger/branch/master/graph/badge.svg
+[2]:https://codecov.io/gh/CNR-STIIMA-IRAS/cnr_logger
+
+[y]:https://api.codacy.com/project/badge/Grade/7f1834c02aa84b959ee9b7529deb48d6
+[3]:https://app.codacy.com/gh/CNR-STIIMA-IRAS/cnr_logger?utm_source=github.com&utm_medium=referral&utm_content=CNR-STIIMA-IRAS/cnr_logger&utm_campaign=Badge_Grade_Dashboard
+
+[f]:https://app.fossa.com/api/projects/git%2Bgithub.com%2FCNR-STIIMA-IRAS%2Fcnr_logger.svg?type=shield
+[4]:https://app.fossa.com/projects/git%2Bgithub.com%2FCNR-STIIMA-IRAS%2Fcnr_logger?ref=badge_shield
 
 ## Aim ##
 
