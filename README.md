@@ -1,5 +1,4 @@
-cnr_logger
-==========
+# cnr_logger #
 
 [![Build Status][t]][1]
 [![codecov][c]][2] 
