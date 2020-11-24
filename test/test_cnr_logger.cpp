@@ -45,23 +45,23 @@ TEST(TestSuite, colorTest)
 {
   std::cout << "Color Test" << std::endl;
   std::cout << cnr_logger::RST() << "RESET" << " ";
-  std::cout << cnr_logger::BLK() << "BLACK"<<"|";
-  std::cout << cnr_logger::R() << "RED"<<"|";
-  std::cout << cnr_logger::G() << "GREEN"<<"|";
-  std::cout << cnr_logger::Y() << "YELLOW"<<"|";
-  std::cout << cnr_logger::BLE() << "BLUE"<<"|";
-  std::cout << cnr_logger::M() << "MAGENTA"<<"|";
-  std::cout << cnr_logger::C() << "CYAN"<<"|";
-  std::cout << cnr_logger::W() << "WHITE"<<"|";
-  std::cout << cnr_logger::BBLK() << "BOLDBLACK"<<"|";
-  std::cout << cnr_logger::BR() << "BOLDRED"<<"|";
-  std::cout << cnr_logger::BG() << "BOLDGREEN"<<"|";
-  std::cout << cnr_logger::BY() << "BOLDYELLOW"<<"|";
-  std::cout << cnr_logger::BBLE() << "BOLDBLUE"<<"|";
-  std::cout << cnr_logger::BM() << "BOLDMAGENTA"<<"|";
-  std::cout << cnr_logger::BC() << "BOLDCYAN"<<"|";
-  std::cout << cnr_logger::BW() << "BOLDWHITE"<<"|";
-  std::cout << cnr_logger::RST()<< std::endl;
+  std::cout << cnr_logger::BLK() << "BLACK" << "|";
+  std::cout << cnr_logger::R() << "RED" << "|";
+  std::cout << cnr_logger::G() << "GREEN" << "|";
+  std::cout << cnr_logger::Y() << "YELLOW" << "|";
+  std::cout << cnr_logger::BLE() << "BLUE" << "|";
+  std::cout << cnr_logger::M() << "MAGENTA" << "|";
+  std::cout << cnr_logger::C() << "CYAN" << "|";
+  std::cout << cnr_logger::W() << "WHITE" << "|";
+  std::cout << cnr_logger::BBLK() << "BOLDBLACK" << "|";
+  std::cout << cnr_logger::BR() << "BOLDRED" << "|";
+  std::cout << cnr_logger::BG() << "BOLDGREEN" << "|";
+  std::cout << cnr_logger::BY() << "BOLDYELLOW" << "|";
+  std::cout << cnr_logger::BBLE() << "BOLDBLUE" << "|";
+  std::cout << cnr_logger::BM() << "BOLDMAGENTA" << "|";
+  std::cout << cnr_logger::BC() << "BOLDCYAN" << "|";
+  std::cout << cnr_logger::BW() << "BOLDWHITE" << "|";
+  std::cout << cnr_logger::RST() << std::endl;
 }
 
 
@@ -98,8 +98,8 @@ TEST(TestSuite, wrongConstructor)
 {
   EXPECT_NO_FATAL_FAILURE(logger.reset(new cnr_logger::TraceLogger("log1")));
   EXPECT_FALSE(logger->init("/this_namespace_does_not_exist", false, false));
-  EXPECT_TRUE( logger->init("/this_namespace_does_not_exist", false, true));  // default vaules depiste none parameters
-                                                                              // exits
+  EXPECT_TRUE(logger->init("/this_namespace_does_not_exist", false, true));   // default vaules depiste none parameters
+  // exits
   EXPECT_NO_FATAL_FAILURE(logger.reset());
 }
 
@@ -110,7 +110,7 @@ TEST(TestSuite, flushFileAndScreen)
 
   for (size_t i = 0; i < 10; i++)
   {
-    CNR_INFO( *logger, "Ciao-log-1-info");
+    CNR_INFO(*logger, "Ciao-log-1-info");
     CNR_DEBUG(*logger, "Ciao-log-1-debug");
     CNR_FATAL(*logger, "Ciao-log-1-fatal");
     CNR_TRACE(*logger, "Ciao-log-1-trace");
@@ -120,14 +120,14 @@ TEST(TestSuite, flushFileAndScreen)
     CNR_FATAL_THROTTLE(*logger, 1.0, "Ciao-log-1-fatal");
     CNR_TRACE_THROTTLE(*logger, 1.0, "Ciao-log-1-trace");
 
-    CNR_INFO_COND( *logger, true , "Ciao-log-1-info");
+    CNR_INFO_COND(*logger, true, "Ciao-log-1-info");
     CNR_DEBUG_COND(*logger, false, "Ciao-log-1debug");
-    CNR_FATAL_COND(*logger, true , "Ciao-log-1fatal");
+    CNR_FATAL_COND(*logger, true, "Ciao-log-1fatal");
     CNR_TRACE_COND(*logger, false, "Ciao-log-1trace");
 
-    CNR_INFO_COND_THROTTLE( *logger, true , 1.0, "Ciao-log-1-info");
+    CNR_INFO_COND_THROTTLE(*logger, true, 1.0, "Ciao-log-1-info");
     CNR_DEBUG_COND_THROTTLE(*logger, false, 1.0, "Ciao-log-1-debug");
-    CNR_FATAL_COND_THROTTLE(*logger, true , 1.0, "Ciao-log-1-fatal");
+    CNR_FATAL_COND_THROTTLE(*logger, true, 1.0, "Ciao-log-1-fatal");
     CNR_TRACE_COND_THROTTLE(*logger, false, 1.0, "Ciao-log-1-trace");
 
     ros::spinOnce();
@@ -144,7 +144,7 @@ TEST(TestSuite, flushInfoDebug)
 
   for (size_t i = 0; i < 10; i++)
   {
-    CNR_INFO( *logger, "Ciao-log-1-info");
+    CNR_INFO(*logger, "Ciao-log-1-info");
     CNR_DEBUG(*logger, "Ciao-log-1-debug");
     CNR_FATAL(*logger, "Ciao-log-1-fatal");
     CNR_TRACE(*logger, "Ciao-log-1-trace");
@@ -154,14 +154,14 @@ TEST(TestSuite, flushInfoDebug)
     CNR_FATAL_THROTTLE(*logger, 1.0, "Ciao-log-1-fatal");
     CNR_TRACE_THROTTLE(*logger, 1.0, "Ciao-log-1-trace");
 
-    CNR_INFO_COND( *logger, true , "Ciao-log-1-info");
+    CNR_INFO_COND(*logger, true, "Ciao-log-1-info");
     CNR_DEBUG_COND(*logger, false, "Ciao-log-1debug");
-    CNR_FATAL_COND(*logger, true , "Ciao-log-1fatal");
+    CNR_FATAL_COND(*logger, true, "Ciao-log-1fatal");
     CNR_TRACE_COND(*logger, false, "Ciao-log-1trace");
 
-    CNR_INFO_COND_THROTTLE( *logger, true , 1.0, "Ciao-log-1-info");
+    CNR_INFO_COND_THROTTLE(*logger, true, 1.0, "Ciao-log-1-info");
     CNR_DEBUG_COND_THROTTLE(*logger, false, 1.0, "Ciao-log-1-debug");
-    CNR_FATAL_COND_THROTTLE(*logger, true , 1.0, "Ciao-log-1-fatal");
+    CNR_FATAL_COND_THROTTLE(*logger, true, 1.0, "Ciao-log-1-fatal");
     CNR_TRACE_COND_THROTTLE(*logger, false, 1.0, "Ciao-log-1-trace");
 
     CNR_INFO(*logger2, "Ciao-log-2-info");

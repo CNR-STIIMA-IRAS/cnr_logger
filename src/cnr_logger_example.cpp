@@ -42,7 +42,7 @@ std::shared_ptr<cnr_logger::TraceLogger> logger;
 // Run all the tests that were declared with TEST()
 int main(int argc, char **argv)
 {
-  ros::init(argc, argv,"cnr_logger_example");
+  ros::init(argc, argv, "cnr_logger_example");
   ros::NodeHandle nh;
 
   std::cout << cnr_logger::BOLDCYAN() << "START" << cnr_logger::RESET() << std::endl;
@@ -51,7 +51,7 @@ int main(int argc, char **argv)
 
   for (size_t i = 0; i < 10; i++)
   {
-    CNR_INFO( *logger, "Ciao-log-1-info");
+    CNR_INFO(*logger, "Ciao-log-1-info");
     CNR_DEBUG(*logger, "Ciao-log-1-debug");
     CNR_FATAL(*logger, "Ciao-log-1-fatal");
     CNR_TRACE(*logger, "Ciao-log-1-trace");
@@ -61,14 +61,14 @@ int main(int argc, char **argv)
     CNR_FATAL_THROTTLE(*logger, 1.0, "Ciao-log-1-fatal");
     CNR_TRACE_THROTTLE(*logger, 1.0, "Ciao-log-1-trace");
 
-    CNR_INFO_COND( *logger, true , "Ciao-log-1-info");
+    CNR_INFO_COND(*logger, true, "Ciao-log-1-info");
     CNR_DEBUG_COND(*logger, false, "Ciao-log-1debug");
-    CNR_FATAL_COND(*logger, true , "Ciao-log-1fatal");
+    CNR_FATAL_COND(*logger, true, "Ciao-log-1fatal");
     CNR_TRACE_COND(*logger, false, "Ciao-log-1trace");
 
-    CNR_INFO_COND_THROTTLE( *logger, true , 1.0, "Ciao-log-1-info");
+    CNR_INFO_COND_THROTTLE(*logger, true, 1.0, "Ciao-log-1-info");
     CNR_DEBUG_COND_THROTTLE(*logger, false, 1.0, "Ciao-log-1-debug");
-    CNR_FATAL_COND_THROTTLE(*logger, true , 1.0, "Ciao-log-1-fatal");
+    CNR_FATAL_COND_THROTTLE(*logger, true, 1.0, "Ciao-log-1-fatal");
     CNR_TRACE_COND_THROTTLE(*logger, false, 1.0, "Ciao-log-1-trace");
 
     ros::spinOnce();

@@ -154,7 +154,10 @@ public:
   std::map< AppenderType, log4cxx::LoggerPtr > loggers_;
   std::map< AppenderType, std::string        > levels_;
   const std::string logger_id_;
-  const double& defaultThrottleTime() const { return default_throttle_time_; }
+  const double& defaultThrottleTime() const
+  {
+    return default_throttle_time_;
+  }
 private:
   bool check(const std::string& param_namespace);
   bool initialized_;

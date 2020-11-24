@@ -39,7 +39,8 @@ if(${CMAKE_VERSION} VERSION_GREATER  "3.16.0")
 						<boost/date_time/posix_time/posix_time.hpp>
 						<boost/date_time/posix_time/posix_time_io.hpp>)
 endif()
-roslint_cpp( src/cnr_logger.cpp )
+set(ROSLINT_CPP_OPTS "--filter=-whitespace/braces")
+roslint_cpp( src/${PROJECT_NAME}/cnr_logger.cpp )
 
 add_executable( ${PROJECT_NAME}_example src/cnr_logger_example.cpp)
 target_link_libraries( ${PROJECT_NAME}_example ${PROJECT_NAME} ${catkin_LIBRARIES} )

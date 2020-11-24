@@ -69,8 +69,8 @@ public:
   END_LOG4CXX_CAST_MAP()
 
   ColorPatternLayout() : log4cxx::PatternLayout() {}
-  explicit ColorPatternLayout(const log4cxx::LogString &s)  
-  : log4cxx::PatternLayout(s) 
+  explicit ColorPatternLayout(const log4cxx::LogString &s)
+    : log4cxx::PatternLayout(s)
   {
 
   }
@@ -81,7 +81,7 @@ public:
     try
     {
       log4cxx::LogString tmp;
-      if(event)
+      if (event)
       {
         log4cxx::PatternLayout::format(tmp, event, pool);
         log4cxx::LevelPtr lvl = event->getLevel();
@@ -112,7 +112,7 @@ public:
       output.append(tmp);
       output.append("\u001b[m");
     }
-    catch(std::exception& e)
+    catch (std::exception& e)
     {
       std::cerr << "???" << std::endl;
     }
@@ -278,7 +278,7 @@ inline cnr_logger::TraceLogger* getTraceLogger(TraceLogger& logger)
 
 inline cnr_logger::TraceLogger* getTraceLogger(TraceLoggerPtr logger)
 {
-  if(logger)
+  if (logger)
     return logger.get();
   else
   {
