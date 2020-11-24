@@ -1,7 +1,7 @@
 # README #
 
-[![Build Status][t]][1]              
-[![codecov][c]][2]      
+[![Build Status][t]][1]
+[![codecov][c]][2] 
 [![Codacy Badge][y]][3]
 [![FOSSA Status][f]][4]
 
