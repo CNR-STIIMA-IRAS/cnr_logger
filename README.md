@@ -207,8 +207,6 @@ The macros to be used within the code are:
 #define CNR_RETURN_NOTOK_THROTTLE( logger, var, period, ...)
 ```
 
-### Contribution guidelines ###
-
 ### Contact ###
 
 <mailto:<mailto:nicola.pedrocchi@stiima.cnr.it>>
