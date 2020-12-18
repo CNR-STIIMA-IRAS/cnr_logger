@@ -283,7 +283,7 @@ inline cnr_logger::TraceLogger* getTraceLogger(TraceLoggerPtr logger)
   else
   {
     ROS_ERROR("The logger is not initialized. Fake loggin enabled.");
-    std::shared_ptr<TraceLogger> ret(new TraceLogger(""));
+    std::shared_ptr<TraceLogger> ret(new TraceLogger());
     return ret.get();
   }
 }

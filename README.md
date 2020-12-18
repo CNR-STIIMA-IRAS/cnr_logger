@@ -53,7 +53,7 @@ roscpp
 There are two constructors:
 
 ```cpp
-TraceLogger( const std::string& logger_id )
+TraceLogger( )  //default foo ctor, call init( ) afterwards
 TraceLogger( const std::string& logger_id, const std::string& param_namespace, const bool star_header )
 ```
 
@@ -72,9 +72,9 @@ If the initialization failed, the class superimpose default values unless the us
   std::shared_ptr<cnr_logger::TraceLogger> logger;
   void return_void_ok()
   {
-    CNR_TRACE_START(*logger);
+    CNR_TRACE_START(logger);    // the macro accept both object and shared_ptr<TraceLogger>
     // some stuff
-    CNR_RETURN_OK(*logger, void() );
+    CNR_RETURN_OK(logger, void() );
   }
 
   void return_void_not_ok()
@@ -86,10 +86,10 @@ If the initialization failed, the class superimpose default values unless the us
 
   void return_bool()
   {
-    CNR_TRACE_START(*logger);
+    CNR_TRACE_START(logger);
     // some stuff
     bool ret = true;
-    CNR_RETURN_BOOL(*logger, true );
+    CNR_RETURN_BOOL(logger, true );
   }
 
   void return_true()
@@ -105,7 +105,7 @@ If the initialization failed, the class superimpose default values unless the us
     ros::init(argc, argv, "cnr_logger_test" );
     ros::NodeHandle nh;
 
-    logger.reset( new cnr_logger::TraceLogger ( "log1", "/") );    // the first parameters is an ID for the logger,
+    logger.reset( new cnr_logger::TraceLogger ("log1", "/") );    // the first parameters is an ID for the logger,
                                                                    // the second parameter is the namespace where
                                                                    // to find the configuration parameters
     while( ros::ok() )

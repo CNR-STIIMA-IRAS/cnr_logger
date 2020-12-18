@@ -70,7 +70,7 @@ TEST(TestSuite, fullConstructor)
 {
 
   EXPECT_NO_FATAL_FAILURE(logger.reset(new cnr_logger::TraceLogger("log1", "/file_and_screen_different_appenders")));
-  EXPECT_FALSE(logger->init("/file_and_screen_different_appenders", false, false));  // Already initialized
+  EXPECT_FALSE(logger->init("log1", "/file_and_screen_different_appenders", false, false));  // Already initialized
 
   EXPECT_NO_FATAL_FAILURE(logger2.reset(new cnr_logger::TraceLogger("log2", "/file_and_screen_same_appender")));
 
@@ -88,17 +88,17 @@ TEST(TestSuite, fullConstructor)
 
 TEST(TestSuite, partialConstructor)
 {
-  EXPECT_NO_FATAL_FAILURE(logger.reset(new cnr_logger::TraceLogger("log1")));
-  EXPECT_TRUE(logger->init("/file_and_screen_different_appenders", false, false));
-  EXPECT_FALSE(logger->init("/file_and_screen_different_appenders", false, false));  // Already initialized
+  EXPECT_NO_FATAL_FAILURE(logger.reset(new cnr_logger::TraceLogger()));
+  EXPECT_TRUE(logger->init("log1", "/file_and_screen_different_appenders", false, false));
+  EXPECT_FALSE(logger->init("log1", "/file_and_screen_different_appenders", false, false));  // Already initialized
   EXPECT_NO_FATAL_FAILURE(logger.reset());
 }
 
 TEST(TestSuite, wrongConstructor)
 {
-  EXPECT_NO_FATAL_FAILURE(logger.reset(new cnr_logger::TraceLogger("log1")));
-  EXPECT_FALSE(logger->init("/this_namespace_does_not_exist", false, false));
-  EXPECT_TRUE(logger->init("/this_namespace_does_not_exist", false, true));   // default vaules depiste none parameters
+  EXPECT_NO_FATAL_FAILURE(logger.reset(new cnr_logger::TraceLogger( )));
+  EXPECT_FALSE(logger->init("log1", "/this_namespace_does_not_exist", false, false));
+  EXPECT_TRUE(logger->init("log1", "/this_namespace_does_not_exist", false, true));   // default vaules depiste none parameters
   // exits
   EXPECT_NO_FATAL_FAILURE(logger.reset());
 }

@@ -45,17 +45,17 @@ IMPLEMENT_LOG4CXX_OBJECT(ColorPatternLayout);
 namespace cnr_logger
 {
 
-TraceLogger::TraceLogger(const std::string& logger_id)
-  : logger_id_(logger_id), initialized_(false)
+TraceLogger::TraceLogger()
+  : initialized_(false)
 {
 }
 
 TraceLogger::TraceLogger(const std::string& logger_id, const std::string& param_namespace, const bool star_header)
-  : logger_id_(logger_id), initialized_(false)
+  : TraceLogger()
 {
   try
   {
-    if (!init(param_namespace, star_header, true))
+    if (!init(logger_id, param_namespace, star_header, true))
     {
       ROS_FATAL("Error in creating the TraceLogger. ");
     }
@@ -74,20 +74,23 @@ TraceLogger::TraceLogger(const std::string& logger_id, const std::string& param_
 bool TraceLogger::check(const std::string& param_namespace)
 {
   return ros::param::has(param_namespace + "/appenders")
-         || ros::param::has(param_namespace + "/levels")
-         || ros::param::has(param_namespace + "/pattern_layout")
-         || ros::param::has(param_namespace + "/file_name")
-         || ros::param::has(param_namespace + "/append_date_to_file_name")
-         || ros::param::has(param_namespace + "/append_to_file");
+       || ros::param::has(param_namespace + "/levels")
+       || ros::param::has(param_namespace + "/pattern_layout")
+       || ros::param::has(param_namespace + "/file_name")
+       || ros::param::has(param_namespace + "/append_date_to_file_name")
+       || ros::param::has(param_namespace + "/append_to_file");
 }
 
-bool TraceLogger::init(const std::string& param_namespace, const bool star_header, const bool default_values)
+bool TraceLogger::init(const std::string& logger_id, const std::string& param_namespace,
+                          const bool star_header, const bool default_values)
 {
   if (initialized_)
   {
     ROS_FATAL("Logger already initialized.");
     return false;
   }
+
+  logger_id_ = logger_id;
 
   if ((!default_values) && (!check(param_namespace)))
   {

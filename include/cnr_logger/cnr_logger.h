@@ -39,7 +39,9 @@
  * @date 25 Jun 2020
  * @brief File containing TracLogger class definition.
  *
- * The class has been designed to have a logger separated from the standard ros logging functions. It uses the same core library, log4cxx. The main difference consists of that you can enable or disable the logging to screen and/or to file just using a parameter.
+ * The class has been designed to have a logger separated from the standard ros logging functions.
+ * It uses the same core library, log4cxx. The main difference consists of that you can enable or disable the
+ * logging to screen and/or to file just using a parameter.
  */
 
 
@@ -95,12 +97,9 @@ public:
   enum AppenderType { FILE_STREAM = 0, CONSOLE_STREAM = 1, SYNC_FILE_AND_CONSOLE = 2 };
 
   /**
-   * @brief TraceLogger. The constructor does not initilize the class. THe function init() must be called afterwards.
-   * @param logger_id: unique id for the logger.
-   * When the class has more than one appender configured, the logger_id is postponed with a "_x" letter to make the
-   * appender unique.
+   * @brief TraceLogger. The constructor does not initilize the class. The function init() must be called afterwards.
    */
-  explicit TraceLogger(const std::string& logger_id);
+  explicit TraceLogger();
   /**
    * @brief TraceLogger: The constructor fully initilize the class.
    * @param logger_id: unique id for the logger.
@@ -114,7 +113,7 @@ public:
 
   /**
    * @brief init
-   * * @param logger_id: unique id for the logger. When the class has more than one appender configured, the logger_id
+   * @param logger_id: unique id for the logger. When the class has more than one appender configured, the logger_id
    * is postponed with a "_x" letter to make the appender unique.
    * @param param_namespace: absolute namespacewhere the initialization parameters are stored.
    * @param star_header: if the first log is with '***' to make easy to find the start of the logging in the file.
@@ -122,7 +121,8 @@ public:
    * configuration is loaded. If FALSE, the function returns false if the parameters are not found.
    * @return True if correctly initialized
    */
-  bool init(const std::string& param_namespace, const bool star_header = false, const bool default_values = true);
+  bool init(const std::string& logger_id, const std::string& param_namespace,
+              const bool star_header = false, const bool default_values = true);
 
 
   /**
@@ -153,7 +153,7 @@ public:
 
   std::map< AppenderType, log4cxx::LoggerPtr > loggers_;
   std::map< AppenderType, std::string        > levels_;
-  const std::string logger_id_;
+  std::string logger_id_;
   const double& defaultThrottleTime() const
   {
     return default_throttle_time_;
