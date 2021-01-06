@@ -43,6 +43,8 @@
  * The further macro CNR_TRACE_START and CNR_RETURN_xxx are used to trace the input and the output values of the functions
  */
 
+#pragma once // qtcreator, workaround
+
 #ifndef CNR_LOGGER_CNR_LOGGER_MACROS_H
 #define CNR_LOGGER_CNR_LOGGER_MACROS_H
 

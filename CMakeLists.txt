@@ -2,7 +2,10 @@ cmake_minimum_required(VERSION 3.10.2)
 
 project(cnr_logger)
 
-set(CMAKE_BUILD_TYPE Debug)
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE Release)
+endif()
+
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
@@ -42,8 +45,8 @@ endif()
 set(ROSLINT_CPP_OPTS "--filter=-whitespace/braces")
 roslint_cpp( src/${PROJECT_NAME}/cnr_logger.cpp )
 
-add_executable( ${PROJECT_NAME}_example src/cnr_logger_example.cpp)
-target_link_libraries( ${PROJECT_NAME}_example ${PROJECT_NAME} ${catkin_LIBRARIES} )
+#add_executable( ${PROJECT_NAME}_example src/cnr_logger_example.cpp)
+#target_link_libraries( ${PROJECT_NAME}_example ${PROJECT_NAME} ${catkin_LIBRARIES} )
 
 
 #############

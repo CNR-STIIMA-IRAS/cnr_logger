@@ -107,8 +107,11 @@ public:
    * appender unique.
    * @param param_namespace: absolute namespacewhere the initialization parameters are stored.
    * @param star_header: if the first log is with '***' to make easy to find the start of the logging in the file.
+   * @param default_values: in the case the parameters are not found under the input namespace, the default
+   * configuration is loaded. If FALSE, the function returns false if the parameters are not found.
    */
-  TraceLogger(const std::string& logger_id, const std::string& param_namespace, const bool star_header = false);
+  TraceLogger(const std::string& logger_id, const std::string& param_namespace,
+                const bool star_header=false, const bool default_values=true);
   ~TraceLogger();
 
   /**
@@ -124,6 +127,7 @@ public:
   bool init(const std::string& logger_id, const std::string& param_namespace,
               const bool star_header = false, const bool default_values = true);
 
+  TraceLogger& operator=(const TraceLogger& rhs);
 
   /**
    * @brief Configuration getter.
@@ -154,6 +158,8 @@ public:
   std::map< AppenderType, log4cxx::LoggerPtr > loggers_;
   std::map< AppenderType, std::string        > levels_;
   std::string logger_id_;
+  std::string param_namespace_;
+  bool default_values_;
   const double& defaultThrottleTime() const
   {
     return default_throttle_time_;
