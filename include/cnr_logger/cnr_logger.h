@@ -1,7 +1,7 @@
 /*
  *  Software License Agreement (New BSD License)
  *
- *  Copyright 2020 National Council of Research of Italy (CNR)
+ *  Copyright 2021 National Council of Research of Italy (CNR)
  *
  *  All rights reserved.
  *
@@ -35,8 +35,8 @@
 
 /**
  * @file cnr_logger.h
- * @author Nicola Pedrocchi
- * @date 25 Jun 2020
+ * @author Nicola Pedrocchi, Alessio Prini 
+ * @date 30 Gen 2021
  * @brief File containing TracLogger class definition.
  *
  * The class has been designed to have a logger separated from the standard ros logging functions.
@@ -51,8 +51,7 @@
 #include <map>
 #include <string>
 #include <iostream>
-#include <ros/file_log.h>
-#include <ros/console.h>
+#include <memory>
 
 #include <log4cxx/logger.h>
 #include <log4cxx/basicconfigurator.h>
@@ -62,10 +61,6 @@
 #include <log4cxx/consoleappender.h>
 #include <log4cxx/patternlayout.h>
 
-#include <boost/date_time/posix_time/posix_time.hpp>
-#include <boost/date_time/posix_time/posix_time_io.hpp>
-
-
 
 /**
  * @brief cnr_logger main namespace for the package
@@ -73,19 +68,6 @@
 namespace cnr_logger
 {
 
-/**
- * @brief Utility to print nicely the time.
- * @param now Time to translate in string.
- */
-inline std::string to_string(const ros::Time& now)
-{
-  auto current_time = now.toBoost();
-  std::stringstream ss;
-  auto facet = new boost::posix_time::time_facet("%Y%m%d-%H:%M:%s");
-  ss.imbue(std::locale(std::locale::classic(), facet));
-  ss << current_time;
-  return ss.str();
-}
 
 /**
  * \class TraceLogger cnr_logger.h
@@ -102,15 +84,15 @@ public:
   explicit TraceLogger();
   /**
    * @brief TraceLogger: The constructor fully initilize the class.
-   * @param logger_id: unique id for the logger.
+   * @param[IN] logger_id: unique id for the logger.
    * When the class has more than one appender configured, the logger_id is postponed with a "_x" letter to make the
    * appender unique.
-   * @param param_namespace: absolute namespacewhere the initialization parameters are stored.
-   * @param star_header: if the first log is with '***' to make easy to find the start of the logging in the file.
-   * @param default_values: in the case the parameters are not found under the input namespace, the default
+   * @param[IN] path: absolute namespace where the initialization parameters are stored.
+   * @param[IN] star_header: if the first log is with '***' to make easy to find the start of the logging in the file.
+   * @param[IN] default_values: in the case the parameters are not found under the input namespace, the default
    * configuration is loaded. If FALSE, the function returns false if the parameters are not found.
    */
-  TraceLogger(const std::string& logger_id, const std::string& param_namespace,
+  TraceLogger(const std::string& logger_id, const std::string& path,
                 const bool star_header=false, const bool default_values=true);
   ~TraceLogger();
 
@@ -118,13 +100,13 @@ public:
    * @brief init
    * @param logger_id: unique id for the logger. When the class has more than one appender configured, the logger_id
    * is postponed with a "_x" letter to make the appender unique.
-   * @param param_namespace: absolute namespacewhere the initialization parameters are stored.
+   * @param path: absolute namespacewhere the initialization parameters are stored.
    * @param star_header: if the first log is with '***' to make easy to find the start of the logging in the file.
    * @param default_values: in the case the parameters are not found under the input namespace, the default
    * configuration is loaded. If FALSE, the function returns false if the parameters are not found.
    * @return True if correctly initialized
    */
-  bool init(const std::string& logger_id, const std::string& param_namespace,
+  bool init(const std::string& logger_id, const std::string& path,
               const bool star_header = false, const bool default_values = true);
 
   TraceLogger& operator=(const TraceLogger& rhs);
@@ -158,14 +140,14 @@ public:
   std::map< AppenderType, log4cxx::LoggerPtr > loggers_;
   std::map< AppenderType, std::string        > levels_;
   std::string logger_id_;
-  std::string param_namespace_;
+  std::string path_;
   bool default_values_;
   const double& defaultThrottleTime() const
   {
     return default_throttle_time_;
   }
 private:
-  bool check(const std::string& param_namespace);
+  bool check(const std::string& path);
   bool initialized_;
   double default_throttle_time_;
 

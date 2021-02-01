@@ -34,7 +34,9 @@
  */
 
 #include <iostream>
+#if defined (ROS_AVAILABLE)
 #include <ros/ros.h>
+#endif
 #include <cnr_logger/cnr_logger.h>
 #include <gtest/gtest.h>
 
@@ -68,11 +70,22 @@ TEST(TestSuite, colorTest)
 // Declare a test
 TEST(TestSuite, fullConstructor)
 {
+  std::string path1, path2;
+#if defined(ROS_AVAILABLE)
+  path1 = "/file_and_screen_different_appenders";
+  path2 = "/file_and_screen_different_appender";
+#else
+  char buff[100];
+  getcwd(buff, 100);
+  std::string current_working_dir(buff);
+  path1 = current_working_dir + "/../../src/cnr_logger/test/config/cnr_logger.yaml";
+  path2 = current_working_dir + "/../../src/cnr_logger/test/config/cnr_logger.yaml";
+#endif
 
-  EXPECT_NO_FATAL_FAILURE(logger.reset(new cnr_logger::TraceLogger("log1", "/file_and_screen_different_appenders")));
-  EXPECT_FALSE(logger->init("log1", "/file_and_screen_different_appenders", false, false));  // Already initialized
+  EXPECT_NO_FATAL_FAILURE(logger.reset(new cnr_logger::TraceLogger("log1",path1 )));
+  EXPECT_FALSE(logger->init("log1", path1, false, false));  // Already initialized
 
-  EXPECT_NO_FATAL_FAILURE(logger2.reset(new cnr_logger::TraceLogger("log2", "/file_and_screen_same_appender")));
+  EXPECT_NO_FATAL_FAILURE(logger2.reset(new cnr_logger::TraceLogger("log2", path2)));
 
   EXPECT_TRUE(logger->logFile());
   EXPECT_TRUE(logger->logScreen());
@@ -88,9 +101,19 @@ TEST(TestSuite, fullConstructor)
 
 TEST(TestSuite, partialConstructor)
 {
+  std::string path1;
+#if defined(ROS_AVAILABLE)
+  path1 = "/file_and_screen_different_appenders";
+#else
+  char buff[100];
+  getcwd(buff, 100);
+  std::string current_working_dir(buff);
+  path1 = current_working_dir + "/../../src/cnr_logger/test/config/cnr_logger.yaml";
+#endif
+
   EXPECT_NO_FATAL_FAILURE(logger.reset(new cnr_logger::TraceLogger()));
-  EXPECT_TRUE(logger->init("log1", "/file_and_screen_different_appenders", false, false));
-  EXPECT_FALSE(logger->init("log1", "/file_and_screen_different_appenders", false, false));  // Already initialized
+  EXPECT_TRUE(logger->init("log1", path1, false, false));
+  EXPECT_FALSE(logger->init("log1",path1, false, false));  // Already initialized
   EXPECT_NO_FATAL_FAILURE(logger.reset());
 }
 
@@ -106,7 +129,17 @@ TEST(TestSuite, wrongConstructor)
 // Declare another test
 TEST(TestSuite, flushFileAndScreen)
 {
-  EXPECT_NO_FATAL_FAILURE(logger.reset(new cnr_logger::TraceLogger("log1", "/file_and_screen_same_appender", true)));
+  std::string path1;
+#if defined(ROS_AVAILABLE)
+  path1 = "/file_and_screen_same_appender";
+#else
+  char buff[100];
+  getcwd(buff, 100);
+  std::string current_working_dir(buff);
+  path1 = current_working_dir + "/../../src/cnr_logger/test/config/cnr_logger.yaml";
+#endif
+
+  EXPECT_NO_FATAL_FAILURE(logger.reset(new cnr_logger::TraceLogger("log1", path1, true)));
 
   for (size_t i = 0; i < 10; i++)
   {
@@ -130,8 +163,11 @@ TEST(TestSuite, flushFileAndScreen)
     CNR_FATAL_COND_THROTTLE(*logger, true, 1.0, "Ciao-log-1-fatal");
     CNR_TRACE_COND_THROTTLE(*logger, false, 1.0, "Ciao-log-1-trace");
 
-    ros::spinOnce();
+#if defined(ROS_AVAILABLE)
     ros::Duration(0.1).sleep();
+#else
+    sleep(1);
+#endif
   }
   EXPECT_NO_FATAL_FAILURE(logger.reset());
 }
@@ -139,8 +175,20 @@ TEST(TestSuite, flushFileAndScreen)
 // Declare another test
 TEST(TestSuite, flushInfoDebug)
 {
-  EXPECT_NO_FATAL_FAILURE(logger.reset(new cnr_logger::TraceLogger("log1", "/only_file_streamer", true)));
-  EXPECT_NO_FATAL_FAILURE(logger2.reset(new cnr_logger::TraceLogger("log2", "/file_and_screen_same_appender")));
+  std::string path1,path2;
+#if defined(ROS_AVAILABLE)
+  path1 = "/only_file_streamer";
+  path2 = "/file_and_screen_same_appender";
+#else
+  char buff[100];
+  getcwd(buff, 100);
+  std::string current_working_dir(buff);
+  path1 = current_working_dir + "/../../src/cnr_logger/test/config/cnr_logger.yaml";
+  path2 = current_working_dir + "../test/config/cnr_logger.yaml";
+#endif
+
+  EXPECT_NO_FATAL_FAILURE(logger.reset(new cnr_logger::TraceLogger("log1", path1, true)));
+  EXPECT_NO_FATAL_FAILURE(logger2.reset(new cnr_logger::TraceLogger("log2", path2)));
 
   for (size_t i = 0; i < 10; i++)
   {
@@ -167,8 +215,11 @@ TEST(TestSuite, flushInfoDebug)
     CNR_INFO(*logger2, "Ciao-log-2-info");
     CNR_DEBUG(*logger2, "Ciao-log-2-debug");
 
-    ros::spinOnce();
+#if defined(ROS_AVAILABLE)
     ros::Duration(0.1).sleep();
+#else
+    sleep(1);
+#endif
   }
   EXPECT_NO_FATAL_FAILURE(logger.reset());
   EXPECT_NO_FATAL_FAILURE(logger2.reset());
@@ -178,7 +229,9 @@ TEST(TestSuite, flushInfoDebug)
 int main(int argc, char **argv)
 {
   testing::InitGoogleTest(&argc, argv);
+#if defined (ROS_AVAILABLE)
   ros::init(argc, argv, "cnr_logger_tester");
   ros::NodeHandle nh;
+#endif
   return RUN_ALL_TESTS();
 }

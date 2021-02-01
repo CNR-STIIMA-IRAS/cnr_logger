@@ -36,8 +36,48 @@
 #include <string>
 #include <vector>
 #include <iostream>
-#include <ros/ros.h>
 #include <cnr_logger/cnr_logger.h>
+
+#if defined(ROS_AVAILABLE)
+  #include <ros/common.h>
+  #if ROS_VERSION_MINIMUM(1, 14, 1)
+    #include <ros/file_log.h>
+    #include <ros/console.h>
+    #include <ros/param.h>
+    #include <boost/date_time/posix_time/posix_time.hpp>
+    #include <boost/date_time/posix_time/posix_time_io.hpp>
+  #else
+    #error "The minimum ros version 1.14.1 is not satisfied"
+  #endif
+#else
+  #include <yaml-cpp/yaml.h>
+#endif
+
+#include <fstream>
+#include <pwd.h>
+#include <dirent.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <bits/stdc++.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+
+std::string mkLogDir()
+{
+  struct passwd *pw = getpwuid(getuid());
+  const char *homedir = pw->pw_dir;
+  std::string homedir_string = std::string(homedir) + "/.local/log";
+  DIR* dir = opendir(homedir_string.c_str());
+  if (dir)
+  {
+    closedir(dir);
+  }
+  else if (ENOENT == errno)
+  {
+    mkdir(homedir_string.c_str(),0777);
+  }
+  return homedir_string;
+}
 
 using log4cxx::ColorPatternLayout;
 IMPLEMENT_LOG4CXX_OBJECT(ColorPatternLayout);
@@ -45,57 +85,171 @@ IMPLEMENT_LOG4CXX_OBJECT(ColorPatternLayout);
 namespace cnr_logger
 {
 
+/**
+ * @brief Utility to print nicely the time.
+ * @param now Time to translate in string.
+ */
+#if defined(ROS_AVAILABLE)
+inline std::string to_string(const ros::Time& now)
+#else
+inline std::string to_string(const time_t& now) 
+#endif
+{
+  std::string ret;
+#if defined(ROS_AVAILABLE)
+  #if ROS_VERSION_MINIMUM(1, 14, 1)
+    auto current_time = now.toBoost();
+    std::stringstream ss;
+    auto facet = new boost::posix_time::time_facet("%Y%m%d-%H:%M:%s");
+    ss.imbue(std::locale(std::locale::classic(), facet));
+    ss << current_time;
+    ret = ss.str();
+  #else
+    #error "The minimum version of ros is 1.14.1"
+  #endif
+#else
+  char* date_time = ctime(&now);
+  ret = std::string(date_time);
+#endif
+  return ret;
+}
+
+
+template<typename T>
+#if defined(ROS_AVAILABLE)
+bool extract(T& val,
+              const std::string& path,
+                const std::string& leaf,
+                  const T& default_val)
+#else
+bool extract(T& val,
+              const YAML::Node& path,
+                const std::string& leaf,
+                    const T& default_val)
+#endif
+{
+  bool ret = false;
+#if defined(ROS_AVAILABLE)
+  if(!ros::param::get(path + "/" + leaf, val))
+#else
+  if(!path[leaf])
+#endif
+  {
+    val = default_val;
+  }
+  else
+  {
+#if !defined(ROS_AVAILABLE)
+    val = path[leaf].as<T>();
+    ret = true;
+#endif
+   }
+  return ret;
+}
+
+template<>
+#if defined(ROS_AVAILABLE)
+bool extract(std::vector<std::string>& val,
+              const std::string& path,
+                const std::string& leaf,
+                  const std::vector<std::string>& default_val)
+#else
+bool extract(std::vector<std::string>& val,
+              const YAML::Node& path,
+                const std::string& leaf,
+                    const std::vector<std::string>& default_val)
+#endif
+{
+  bool ret = false;
+#if defined(ROS_AVAILABLE)
+  if(!ros::param::get(path + "/" + leaf, val))
+#else
+  if(!path[leaf])
+#endif
+  {
+    if(default_val.size())
+    {
+      val.resize(default_val.size());
+      std::copy(default_val.begin(), default_val.end(), val.begin());
+    }
+  }
+  else
+  {
+#if !defined(ROS_AVAILABLE)
+    for(YAML::const_iterator it=path[leaf].begin();it!=path[leaf].end();++it)
+    {
+      val.push_back(it->as<std::string>());
+      ret = true;
+    }
+#endif
+   }
+  return ret;
+}
+
 TraceLogger::TraceLogger()
-  : logger_id_(""), param_namespace_(""), default_values_(false), initialized_(false)
+  : logger_id_(""), path_(""), default_values_(false), initialized_(false)
 {
 }
 
-TraceLogger::TraceLogger(const std::string& logger_id, const std::string& param_namespace,
+TraceLogger::TraceLogger(const std::string& logger_id, const std::string& path,
                          const bool star_header, const bool default_values)
   : TraceLogger()
 {
   try
   {
-    if(!init(logger_id, param_namespace, star_header, default_values))
+    if(!init(logger_id, path, star_header, default_values))
     {
-      ROS_FATAL("Error in creating the TraceLogger. ");
+      std::cerr << "Error in creating the TraceLogger. " << std::endl;
     }
   }
   catch (std::exception& e)
   {
-    ROS_FATAL("Error in creating the TraceLogger. Exception: %s", e.what());
+    std::cerr << "Error in creating the TraceLogger. Exception: " << e.what() << std::endl;
   }
   catch (...)
   {
-    ROS_FATAL("Error in creating the TraceLogger. Unhandled Exception");
+    std::cerr << "Error in creating the TraceLogger. Unhandled Exception" << std::endl;
   }
 }
 
 
-bool TraceLogger::check(const std::string& param_namespace)
+bool TraceLogger::check(const std::string& path)
 {
-  return ros::param::has(param_namespace + "/appenders")
-       || ros::param::has(param_namespace + "/levels")
-       || ros::param::has(param_namespace + "/pattern_layout")
-       || ros::param::has(param_namespace + "/file_name")
-       || ros::param::has(param_namespace + "/append_date_to_file_name")
-       || ros::param::has(param_namespace + "/append_to_file");
+  bool res = true;
+#if defined(ROS_AVAILABLE)
+  res = ros::param::has(path + "/appenders")
+       || ros::param::has(path + "/levels")
+       || ros::param::has(path + "/pattern_layout")
+       || ros::param::has(path + "/file_name")
+       || ros::param::has(path + "/append_date_to_file_name")
+       || ros::param::has(path + "/append_to_file");
+#else
+  YAML::Node config = YAML::LoadFile(path);
+
+  res &= (config["appenders"] && config["appenders"].IsSequence());
+  res &= (config["levels"]?config["levels"].IsSequence():true);
+  res &= (config["pattern_layout"]?config["pattern_layout"].IsScalar():true);
+  res &= (config["file_name"]?config["file_name"].IsScalar():true);
+  res &= (config["append_date_to_file_name"]?config["append_date_to_file_name"].IsScalar():true);
+  res &= (config["append_to_file"]?config["append_to_file"].IsScalar():true);
+#endif
+  return res;
 }
 
-bool TraceLogger::init(const std::string& logger_id, const std::string& param_namespace,
+bool TraceLogger::init(const std::string& logger_id, const std::string& path,
                           const bool star_header, const bool default_values)
 {
   if(initialized_)
   {
-    ROS_FATAL("Logger already initialized.");
+    std::cerr<<"Logger already initialized."<<std::endl;
     return false;
   }
 
   logger_id_ = logger_id;
-  param_namespace_ = param_namespace;
+  path_ = path;
   default_values_ = default_values;
 
-  if((!default_values) && (!check(param_namespace)))
+  if((!default_values) && (!check(path)))
   {
     return false;
   }
@@ -104,22 +258,29 @@ bool TraceLogger::init(const std::string& logger_id, const std::string& param_na
   // Extract the info to constructs the logger
   //
   // =======================================================================================
-
   std::vector<std::string> appenders, levels;
-  if(!ros::param::get(param_namespace + "/appenders", appenders))
+#if defined(ROS_AVAILABLE)
+  std::string _path = path;
+  auto now = ros::Time::now();
+#else
+  YAML::Node _path = YAML::LoadFile(path);
+  auto now = time(0);
+#endif
+
+  std::vector<std::string> empty;
+  if(!extract(appenders, _path, "appenders", empty))
   {
-    ROS_WARN("%s: None appender is configured under parameter: '%s'"
-             , logger_id_.c_str(), (param_namespace + "/appenders").c_str());
+    std::cerr << logger_id_ << ": Paremeter missing: path='"<<path<<"', key='"<<"appenders"<<std::endl;
   }
 
-  if(!ros::param::get(param_namespace + "/levels", levels))
+  if(!extract(levels, _path, "levels", empty))
   {
-    ROS_WARN("Parameter '%s' does not exist", (param_namespace +  + "/levels").c_str());
+    std::cerr << logger_id_ << ": Paremeter missing: path='"<<path<<"', key='"<<"levels"<<std::endl;
   }
 
   if(appenders.size() != levels.size())
   {
-    ROS_WARN("Size of appenders and levels mismatch! Default INFO level for all the appenders");
+    std::cout << "Size of appenders and levels mismatch! Default INFO level for all the appenders" << std::endl;
     levels.clear();
     levels.resize(appenders.size(), "DEBUG");
   }
@@ -139,7 +300,7 @@ bool TraceLogger::init(const std::string& logger_id, const std::string& param_na
       // nothing to do
     }
     else if((appenders[i] == "console") || (appenders[i] == "cout")
-             || (appenders[i] == "terminal") || (appenders[i] == "screen") || (appenders[i] == "video"))
+      || (appenders[i] == "terminal") || (appenders[i] == "screen") || (appenders[i] == "video"))
     {
       appenders[i] = "screen";
     }
@@ -201,15 +362,16 @@ bool TraceLogger::init(const std::string& logger_id, const std::string& param_na
   // =======================================================================================
 
 
+
   // =======================================================================================
   // Layout
   //
   // =======================================================================================
   std::string pattern_layout;
-  if(!ros::param::get(param_namespace + "/pattern_layout", pattern_layout))
+  std::string default_pattern_layout = "[%5p][%d{HH:mm:ss,SSS}][%M:%04L][%24c] %m%n";
+  if(!extract(pattern_layout, _path, "pattern_layout", default_pattern_layout))
   {
-    ROS_WARN("Parameter '%s' does not exist", (param_namespace + "/pattern_layout").c_str());
-    pattern_layout = "[%5p][%d{HH:mm:ss,SSS}][%M:%04L][%24c] %m%n";                    // add %F for file name
+    std::cerr << logger_id_ << ": Paremeter missing: path='"<<path<<"', key='"<<"pattern_layout"<<std::endl;
   }
   log4cxx::ColorPatternLayoutPtr layout = new log4cxx::ColorPatternLayout(pattern_layout);
   // =======================================================================================
@@ -221,26 +383,33 @@ bool TraceLogger::init(const std::string& logger_id, const std::string& param_na
   //
   // =======================================================================================
   std::string log_file_name;
+  std::string root_path = mkLogDir();
+  std::string default_log_file_name = log_file_name = root_path + "/" + logger_id_;
   if(logFile() || logSyncFileAndScreen())
   {
-    if(!ros::param::get(param_namespace + "/file_name", log_file_name))
+    if(!extract(log_file_name, _path, "file_name", default_log_file_name))
     {
-      log_file_name = ros::file_log::getLogDirectory() + "/" + logger_id_;
+      std::cerr << logger_id_ << ": Paremeter missing: path='"<<path<<"', key='"<<"file_name"
+                  << ", default superimposed: "<< default_log_file_name <<std::endl;
     }
+
     bool append_date_to_file_name = false;
-
-
-    if(ros::param::get(param_namespace + "/append_date_to_file_name", append_date_to_file_name))
+    bool default_append_date_to_file_name = true;
+    if(!extract(append_date_to_file_name, _path, "append_date_to_file_name", default_append_date_to_file_name))
     {
-      append_date_to_file_name = true;
+      std::cerr << logger_id_ << ": Paremeter missing: path='"<<path<<"', key='"<<"append_date_to_file_name"
+                  << ", default superimposed: "<< default_append_date_to_file_name <<std::endl;
     }
 
-    log_file_name +=  append_date_to_file_name  ? ("." + to_string(ros::Time::now()) + ".log") : ".log";
+
+    log_file_name +=  append_date_to_file_name  ? ("." + to_string(now) + ".log") : ".log";
 
     bool append_to_file = false;
-    if(!ros::param::get(param_namespace + "/append_to_file", append_to_file))
+    bool default_append_to_file = true;
+    if(!extract(append_to_file, _path, "append_to_file", default_append_to_file))
     {
-      append_to_file = true;
+      std::cerr << logger_id_ << ": Paremeter missing: path='"<<path<<"', key='"<<"append_to_file"
+                  << ", default superimposed: "<< default_append_to_file <<std::endl;
     }
 
     log4cxx::RollingFileAppenderPtr appender = new log4cxx::RollingFileAppender(layout, log_file_name, append_to_file);
@@ -270,7 +439,7 @@ bool TraceLogger::init(const std::string& logger_id, const std::string& param_na
     loggers_str += std::to_string(l.first) + "|";
   }
 
-  std::string log_start = "LOG START: " + logger_id_  + ", " + to_string(ros::Time::now()) + ", " + loggers_str
+  std::string log_start = "LOG START: " + logger_id_  + ", " + to_string(now) + ", " + loggers_str
                           + (log_file_name.size() > 0 ?  ", fn: " + log_file_name : "");
   if(star_header)
   {
@@ -286,20 +455,21 @@ bool TraceLogger::init(const std::string& logger_id, const std::string& param_na
   // Default Throttle Time
   //
   // =======================================================================================
-  if(!ros::param::get(param_namespace + "/default_throttle_time", default_throttle_time_))
+  if(!extract(default_throttle_time_, _path, "default_throttle_time", -1.0))
   {
-    ROS_WARN("Parameter '%s' does not exist", (param_namespace + "/default_throttle_time").c_str());
-    default_throttle_time_ = -1.0;
+    std::cerr << logger_id_ << ": Paremeter missing: path='"<<path<<"', key='"<<"default_throttle_time"
+                << ", default superimposed: "<< -1.0 <<std::endl;
   }
+
   initialized_ = true;
   return initialized_;
 }
 
 TraceLogger& TraceLogger::operator=(const TraceLogger& rhs)
 {
-  if(!this->init(rhs.logger_id_, rhs.param_namespace_, false, rhs.default_values_))
+  if(!this->init(rhs.logger_id_, rhs.path_, false, rhs.default_values_))
   {
-    ROS_ERROR("ERROR - THE LOGGER INITIALIZATION FAILED.");
+    std::cerr << "ERROR - THE LOGGER INITIALIZATION FAILED." << std::endl;
   }
   return *this;
 }

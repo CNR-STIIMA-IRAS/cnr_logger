@@ -1,7 +1,7 @@
 /*
  *  Software License Agreement (New BSD License)
  *
- *  Copyright 2020 National Council of Research of Italy (CNR)
+ *  Copyright 2021 National Council of Research of Italy (CNR)
  *
  *  All rights reserved.
  *
@@ -35,8 +35,8 @@
 
 /**
  * @file cnr_logger_macros.h
- * @author Nicola Pedrocchi
- * @date 25 Jun 2020
+ * @author Nicola Pedrocchi, ALessio Prini
+ * @date 30 Gen 2021
  * @brief File containing the macro definition.
  *
  * The macro have been designed to follow the basic log4cxx structure (and ROS).
@@ -56,8 +56,29 @@
 #include <log4cxx/rollingfileappender.h>
 #include <log4cxx/consoleappender.h>
 #include <log4cxx/patternlayout.h>
-#include <ros/console.h>
 #include <cnr_logger/cnr_logger.h>
+
+#if defined(ROS_AVAILABLE)
+  #define CONSOLE_THROTTLE_CHECK(now, last, period)\
+    ROSCONSOLE_THROTTLE_CHECK(now, last, period)
+
+#define TIME_NOW()\
+   ::ros::Time::now().toSec()
+#else
+  #if defined(_MSC_VER)
+  #define ROS_LIKELY(x)       (x)
+  #define ROS_UNLIKELY(x)     (x)
+  #else
+  #define ROS_LIKELY(x)       __builtin_expect((x),1)
+  #define ROS_UNLIKELY(x)     __builtin_expect((x),0)
+  #endif
+
+  #define CONSOLE_THROTTLE_CHECK(now, last, period)\
+    (ROS_UNLIKELY(last + period <= now) || ROS_UNLIKELY(now < last))
+
+  #define TIME_NOW()\
+   time(0)
+#endif
 
 namespace log4cxx
 {
@@ -284,7 +305,8 @@ inline cnr_logger::TraceLogger* getTraceLogger(TraceLoggerPtr logger)
     return logger.get();
   else
   {
-    ROS_ERROR("The logger is not initialized. Fake loggin enabled.");
+    // ROS_ERROR("The logger is not initialized. Fake loggin enabled.");
+    std::cerr << "The logger is not initialized. Fake loggin enabled." << std::endl;
     std::shared_ptr<TraceLogger> ret(new TraceLogger());
     return ret.get();
   }
@@ -385,8 +407,8 @@ do\
   do \
   { \
     static double __log_throttle_last_hit__ = 0.0; \
-    double __log_throttle_now__ = ::ros::Time::now().toSec(); \
-    if (ROSCONSOLE_THROTTLE_CHECK(__log_throttle_now__, __log_throttle_last_hit__, period))\
+    double __log_throttle_now__ = TIME_NOW(); \
+    if (CONSOLE_THROTTLE_CHECK(__log_throttle_now__, __log_throttle_last_hit__, period))\
     { \
       __log_throttle_last_hit__ = __log_throttle_now__; \
       CNR_FATAL(trace_logger, args); \
@@ -397,8 +419,8 @@ do\
   do \
   { \
     static double __log_throttle_last_hit__ = 0.0; \
-    double __log_throttle_now__ = ::ros::Time::now().toSec(); \
-    if (ROSCONSOLE_THROTTLE_CHECK(__log_throttle_now__, __log_throttle_last_hit__, period))\
+    double __log_throttle_now__ = TIME_NOW(); \
+    if (CONSOLE_THROTTLE_CHECK(__log_throttle_now__, __log_throttle_last_hit__, period))\
     { \
       __log_throttle_last_hit__ = __log_throttle_now__; \
       CNR_ERROR(trace_logger, args); \
@@ -409,8 +431,8 @@ do\
   do \
   { \
     static double __log_throttle_last_hit__ = 0.0; \
-    double __log_throttle_now__ = ::ros::Time::now().toSec(); \
-    if (ROSCONSOLE_THROTTLE_CHECK(__log_throttle_now__, __log_throttle_last_hit__, period))\
+    double __log_throttle_now__ = TIME_NOW(); \
+    if (CONSOLE_THROTTLE_CHECK(__log_throttle_now__, __log_throttle_last_hit__, period))\
     { \
       __log_throttle_last_hit__ = __log_throttle_now__; \
       CNR_WARN(trace_logger, args); \
@@ -421,8 +443,8 @@ do\
   do \
   { \
     static double __log_throttle_last_hit__ = 0.0; \
-    double __log_throttle_now__ = ::ros::Time::now().toSec(); \
-    if (ROSCONSOLE_THROTTLE_CHECK(__log_throttle_now__, __log_throttle_last_hit__, period))\
+    double __log_throttle_now__ = TIME_NOW(); \
+    if (CONSOLE_THROTTLE_CHECK(__log_throttle_now__, __log_throttle_last_hit__, period))\
     { \
       __log_throttle_last_hit__ = __log_throttle_now__; \
       CNR_INFO(trace_logger, args); \
@@ -433,8 +455,8 @@ do\
   do \
   { \
     static double __log_throttle_last_hit__ = 0.0; \
-    double __log_throttle_now__ = ::ros::Time::now().toSec(); \
-    if (ROSCONSOLE_THROTTLE_CHECK(__log_throttle_now__, __log_throttle_last_hit__, period))\
+    double __log_throttle_now__ = TIME_NOW(); \
+    if (CONSOLE_THROTTLE_CHECK(__log_throttle_now__, __log_throttle_last_hit__, period))\
     { \
       __log_throttle_last_hit__ = __log_throttle_now__; \
       CNR_DEBUG(trace_logger, args); \
@@ -446,8 +468,8 @@ do\
   do \
   { \
     static double __log_throttle_last_hit__ = 0.0; \
-    double __log_throttle_now__ = ::ros::Time::now().toSec(); \
-    if (ROSCONSOLE_THROTTLE_CHECK(__log_throttle_now__, __log_throttle_last_hit__, period))\
+    double __log_throttle_now__ = TIME_NOW(); \
+    if (CONSOLE_THROTTLE_CHECK(__log_throttle_now__, __log_throttle_last_hit__, period))\
     { \
       __log_throttle_last_hit__ = __log_throttle_now__; \
       CNR_TRACE(trace_logger, args); \
