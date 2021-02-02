@@ -18,14 +18,24 @@ endif()
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-option(ROS_ENABLED "ROS ENABLED" OFF)
+option(ROS_DISABLED "ROS ENABLED" OFF)
 
-if(ROS_ENABLED)
+if(ROS_DISABLED)
+  set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+  find_package(yaml-cpp REQUIRED)
+  find_package(Log4cxx)
+  add_compile_definitions(ROS_NOT_AVAILABLE)
+  set(CNR_LOGGER_TARGET_LINK_LIBRARIES ${YAML_CPP_LIBRARIES} ${Log4cxx_LIBRARY})
+  include_directories( include ${YAML_CPP_INCLUDE_DIRS} )
+
+  set(CNR_LOGGER_INSTALL_INCLUDE_DIR "${CMAKE_INSTALL_PREFIX}/include")
+  set(CNR_LOGGER_INSTALL_LIB_DIR "${CMAKE_INSTALL_PREFIX}/lib")
+else()
+
   MESSAGE("***** ROS Enabled *****")
   find_package(catkin REQUIRED COMPONENTS roscpp roslint)
   set(CNR_LOGGER_TARGET_LINK_LIBRARIES ${catkin_LIBRARIES})
   include_directories( include ${catkin_INCLUDE_DIRS} )
-  add_compile_definitions(ROS_AVAILABLE)
   catkin_package( INCLUDE_DIRS include LIBRARIES ${PROJECT_NAME} )
 
   set(ROSLINT_CPP_OPTS
@@ -34,16 +44,6 @@ if(ROS_ENABLED)
 
   set(CNR_LOGGER_INSTALL_INCLUDE_DIR ${CATKIN_PACKAGE_INCLUDE_DESTINATION})
   set(CNR_LOGGER_INSTALL_LIB_DIR ${CATKIN_PACKAGE_LIB_DESTINATION})
-else()
-
-  set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
-  find_package(yaml-cpp REQUIRED)
-  find_package(Log4cxx)
-  set(CNR_LOGGER_TARGET_LINK_LIBRARIES ${YAML_CPP_LIBRARIES} ${Log4cxx_LIBRARY})
-  include_directories( include ${YAML_CPP_INCLUDE_DIRS} )
-
-  set(CNR_LOGGER_INSTALL_INCLUDE_DIR "${CMAKE_INSTALL_PREFIX}/include")
-  set(CNR_LOGGER_INSTALL_LIB_DIR "${CMAKE_INSTALL_PREFIX}/lib")
 endif()
 
 find_package(Boost REQUIRED COMPONENTS date_time )

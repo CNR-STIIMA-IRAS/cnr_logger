@@ -34,7 +34,7 @@
  */
 
 #include <iostream>
-#if defined (ROS_AVAILABLE)
+#if !defined (ROS_NOT_AVAILABLE)
 #include <ros/ros.h>
 #endif
 #include <cnr_logger/cnr_logger.h>
@@ -71,15 +71,15 @@ TEST(TestSuite, colorTest)
 TEST(TestSuite, fullConstructor)
 {
   std::string path1, path2;
-#if defined(ROS_AVAILABLE)
-  path1 = "/file_and_screen_different_appenders";
-  path2 = "/file_and_screen_different_appender";
-#else
+#if defined(ROS_NOT_AVAILABLE)
   char buff[100];
   getcwd(buff, 100);
   std::string current_working_dir(buff);
   path1 = current_working_dir + "/../../src/cnr_logger/test/config/cnr_logger.yaml";
   path2 = current_working_dir + "/../../src/cnr_logger/test/config/cnr_logger.yaml";
+#else
+  path1 = "/file_and_screen_different_appenders";
+  path2 = "/file_and_screen_different_appender";
 #endif
 
   EXPECT_NO_FATAL_FAILURE(logger.reset(new cnr_logger::TraceLogger("log1",path1 )));
@@ -102,13 +102,13 @@ TEST(TestSuite, fullConstructor)
 TEST(TestSuite, partialConstructor)
 {
   std::string path1;
-#if defined(ROS_AVAILABLE)
-  path1 = "/file_and_screen_different_appenders";
-#else
+#if defined(ROS_NOT_AVAILABLE)
   char buff[100];
   getcwd(buff, 100);
   std::string current_working_dir(buff);
   path1 = current_working_dir + "/../../src/cnr_logger/test/config/cnr_logger.yaml";
+#else
+  path1 = "/file_and_screen_different_appenders";
 #endif
 
   EXPECT_NO_FATAL_FAILURE(logger.reset(new cnr_logger::TraceLogger()));
@@ -130,13 +130,13 @@ TEST(TestSuite, wrongConstructor)
 TEST(TestSuite, flushFileAndScreen)
 {
   std::string path1;
-#if defined(ROS_AVAILABLE)
-  path1 = "/file_and_screen_same_appender";
-#else
+#if defined(ROS_NOT_AVAILABLE)
   char buff[100];
-  getcwd(buff, 100);
-  std::string current_working_dir(buff);
-  path1 = current_working_dir + "/../../src/cnr_logger/test/config/cnr_logger.yaml";
+    getcwd(buff, 100);
+    std::string current_working_dir(buff);
+    path1 = current_working_dir + "/../../src/cnr_logger/test/config/cnr_logger.yaml";
+#else
+  path1 = "/file_and_screen_same_appender";
 #endif
 
   EXPECT_NO_FATAL_FAILURE(logger.reset(new cnr_logger::TraceLogger("log1", path1, true)));
@@ -163,10 +163,10 @@ TEST(TestSuite, flushFileAndScreen)
     CNR_FATAL_COND_THROTTLE(*logger, true, 1.0, "Ciao-log-1-fatal");
     CNR_TRACE_COND_THROTTLE(*logger, false, 1.0, "Ciao-log-1-trace");
 
-#if defined(ROS_AVAILABLE)
-    ros::Duration(0.1).sleep();
-#else
+#if defined(ROS_NOT_AVAILABLE)
     sleep(1);
+#else
+    ros::Duration(0.1).sleep();
 #endif
   }
   EXPECT_NO_FATAL_FAILURE(logger.reset());
@@ -176,15 +176,15 @@ TEST(TestSuite, flushFileAndScreen)
 TEST(TestSuite, flushInfoDebug)
 {
   std::string path1,path2;
-#if defined(ROS_AVAILABLE)
-  path1 = "/only_file_streamer";
-  path2 = "/file_and_screen_same_appender";
-#else
+#if defined(ROS_NOT_AVAILABLE)
   char buff[100];
   getcwd(buff, 100);
   std::string current_working_dir(buff);
   path1 = current_working_dir + "/../../src/cnr_logger/test/config/cnr_logger.yaml";
   path2 = current_working_dir + "../test/config/cnr_logger.yaml";
+#else
+  path1 = "/only_file_streamer";
+  path2 = "/file_and_screen_same_appender";
 #endif
 
   EXPECT_NO_FATAL_FAILURE(logger.reset(new cnr_logger::TraceLogger("log1", path1, true)));
@@ -215,10 +215,10 @@ TEST(TestSuite, flushInfoDebug)
     CNR_INFO(*logger2, "Ciao-log-2-info");
     CNR_DEBUG(*logger2, "Ciao-log-2-debug");
 
-#if defined(ROS_AVAILABLE)
-    ros::Duration(0.1).sleep();
-#else
+#if defined(ROS_NOT_AVAILABLE)
     sleep(1);
+#else
+    ros::Duration(0.1).sleep();
 #endif
   }
   EXPECT_NO_FATAL_FAILURE(logger.reset());
@@ -229,7 +229,7 @@ TEST(TestSuite, flushInfoDebug)
 int main(int argc, char **argv)
 {
   testing::InitGoogleTest(&argc, argv);
-#if defined (ROS_AVAILABLE)
+#if !defined (ROS_NOT_AVAILABLE)
   ros::init(argc, argv, "cnr_logger_tester");
   ros::NodeHandle nh;
 #endif

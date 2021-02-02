@@ -38,7 +38,9 @@
 #include <iostream>
 #include <cnr_logger/cnr_logger.h>
 
-#if defined(ROS_AVAILABLE)
+#if defined(ROS_NOT_AVAILABLE)
+  #include <yaml-cpp/yaml.h>
+#else
   #include <ros/common.h>
   #if ROS_VERSION_MINIMUM(1, 14, 1)
     #include <ros/file_log.h>
@@ -49,8 +51,6 @@
   #else
     #error "The minimum ros version 1.14.1 is not satisfied"
   #endif
-#else
-  #include <yaml-cpp/yaml.h>
 #endif
 
 #include <fstream>
@@ -89,82 +89,81 @@ namespace cnr_logger
  * @brief Utility to print nicely the time.
  * @param now Time to translate in string.
  */
-#if defined(ROS_AVAILABLE)
-inline std::string to_string(const ros::Time& now)
+#if defined(ROS_NOT_AVAILABLE)
+inline std::string to_string(const time_t& now)
 #else
-inline std::string to_string(const time_t& now) 
+inline std::string to_string(const ros::Time& now)
 #endif
 {
   std::string ret;
-#if defined(ROS_AVAILABLE)
-  #if ROS_VERSION_MINIMUM(1, 14, 1)
-    auto current_time = now.toBoost();
-    std::stringstream ss;
-    auto facet = new boost::posix_time::time_facet("%Y%m%d-%H:%M:%s");
-    ss.imbue(std::locale(std::locale::classic(), facet));
-    ss << current_time;
-    ret = ss.str();
-  #else
-    #error "The minimum version of ros is 1.14.1"
-  #endif
-#else
+#if defined(ROS_NOT_AVAILABLE)
   char* date_time = ctime(&now);
   ret = std::string(date_time);
+#else
+#if ROS_VERSION_MINIMUM(1, 14, 1)
+  auto current_time = now.toBoost();
+  std::stringstream ss;
+  auto facet = new boost::posix_time::time_facet("%Y%m%d-%H:%M:%s");
+  ss.imbue(std::locale(std::locale::classic(), facet));
+  ss << current_time;
+  ret = ss.str();
+#else
+  #error "The minimum version of ros is 1.14.1"
+#endif
 #endif
   return ret;
 }
 
 
 template<typename T>
-#if defined(ROS_AVAILABLE)
-bool extract(T& val,
-              const std::string& path,
-                const std::string& leaf,
-                  const T& default_val)
-#else
+#if defined(ROS_NOT_AVAILABLE)
 bool extract(T& val,
               const YAML::Node& path,
                 const std::string& leaf,
                     const T& default_val)
+#else
+bool extract(T& val,
+              const std::string& path,
+                const std::string& leaf,
+                  const T& default_val)
 #endif
 {
   bool ret = false;
-#if defined(ROS_AVAILABLE)
-  if(!ros::param::get(path + "/" + leaf, val))
-#else
+#if defined(ROS_NOT_AVAILABLE)
   if(!path[leaf])
+#else
+  if(!ros::param::get(path + "/" + leaf, val))
 #endif
   {
     val = default_val;
   }
   else
   {
-#if !defined(ROS_AVAILABLE)
+#if defined(ROS_NOT_AVAILABLE)
     val = path[leaf].as<T>();
-    ret = true;
 #endif
-   }
+    ret = true;
+  }
   return ret;
 }
 
-template<>
-#if defined(ROS_AVAILABLE)
-bool extract(std::vector<std::string>& val,
-              const std::string& path,
-                const std::string& leaf,
-                  const std::vector<std::string>& default_val)
-#else
-bool extract(std::vector<std::string>& val,
+#if defined(ROS_NOT_AVAILABLE)
+bool extractVector(std::vector<std::string>& val,
               const YAML::Node& path,
                 const std::string& leaf,
                     const std::vector<std::string>& default_val)
+#else
+bool extractVector(std::vector<std::string>& val,
+                      const std::string& path,
+                        const std::string& leaf,
+                          const std::vector<std::string>& default_val)
 #endif
 {
   bool ret = false;
-#if defined(ROS_AVAILABLE)
-  if(!ros::param::get(path + "/" + leaf, val))
-#else
+#if defined(ROS_NOT_AVAILABLE)
   if(!path[leaf])
+#else
+  if(!ros::param::get(path + "/" + leaf, val))
 #endif
   {
     if(default_val.size())
@@ -175,13 +174,14 @@ bool extract(std::vector<std::string>& val,
   }
   else
   {
-#if !defined(ROS_AVAILABLE)
+#if defined(ROS_NOT_AVAILABLE)
     for(YAML::const_iterator it=path[leaf].begin();it!=path[leaf].end();++it)
     {
       val.push_back(it->as<std::string>());
       ret = true;
     }
 #endif
+    ret = true;
    }
   return ret;
 }
@@ -216,14 +216,7 @@ TraceLogger::TraceLogger(const std::string& logger_id, const std::string& path,
 bool TraceLogger::check(const std::string& path)
 {
   bool res = true;
-#if defined(ROS_AVAILABLE)
-  res = ros::param::has(path + "/appenders")
-       || ros::param::has(path + "/levels")
-       || ros::param::has(path + "/pattern_layout")
-       || ros::param::has(path + "/file_name")
-       || ros::param::has(path + "/append_date_to_file_name")
-       || ros::param::has(path + "/append_to_file");
-#else
+#if defined(ROS_NOT_AVAILABLE)
   YAML::Node config = YAML::LoadFile(path);
 
   res &= (config["appenders"] && config["appenders"].IsSequence());
@@ -232,6 +225,13 @@ bool TraceLogger::check(const std::string& path)
   res &= (config["file_name"]?config["file_name"].IsScalar():true);
   res &= (config["append_date_to_file_name"]?config["append_date_to_file_name"].IsScalar():true);
   res &= (config["append_to_file"]?config["append_to_file"].IsScalar():true);
+#else
+  res = ros::param::has(path + "/appenders")
+         || ros::param::has(path + "/levels")
+         || ros::param::has(path + "/pattern_layout")
+         || ros::param::has(path + "/file_name")
+         || ros::param::has(path + "/append_date_to_file_name")
+         || ros::param::has(path + "/append_to_file");
 #endif
   return res;
 }
@@ -259,28 +259,28 @@ bool TraceLogger::init(const std::string& logger_id, const std::string& path,
   //
   // =======================================================================================
   std::vector<std::string> appenders, levels;
-#if defined(ROS_AVAILABLE)
-  std::string _path = path;
-  auto now = ros::Time::now();
-#else
+#if defined(ROS_NOT_AVAILABLE)
   YAML::Node _path = YAML::LoadFile(path);
   auto now = time(0);
+#else
+  std::string _path = path;
+    auto now = ros::Time::now();
 #endif
 
   std::vector<std::string> empty;
-  if(!extract(appenders, _path, "appenders", empty))
+  if(!extractVector(appenders, _path, "appenders", empty))
   {
-    std::cerr << logger_id_ << ": Paremeter missing: path='"<<path<<"', key='"<<"appenders"<<std::endl;
+    std::cerr << logger_id_ << ": Paremeter missing: path='"<<path<<"', key='"<<"appenders'"<<std::endl;
   }
 
-  if(!extract(levels, _path, "levels", empty))
+  if(!extractVector(levels, _path, "levels", empty))
   {
-    std::cerr << logger_id_ << ": Paremeter missing: path='"<<path<<"', key='"<<"levels"<<std::endl;
+    std::cerr << logger_id_ << ": Paremeter missing: path='"<<path<<"', key='"<<"levels'"<<std::endl;
   }
 
   if(appenders.size() != levels.size())
   {
-    std::cout << "Size of appenders and levels mismatch! Default INFO level for all the appenders" << std::endl;
+    std::cerr << "Size of appenders and levels mismatch! Default INFO level for all the appenders" << std::endl;
     levels.clear();
     levels.resize(appenders.size(), "DEBUG");
   }
@@ -368,7 +368,7 @@ bool TraceLogger::init(const std::string& logger_id, const std::string& path,
   //
   // =======================================================================================
   std::string pattern_layout;
-  std::string default_pattern_layout = "[%5p][%d{HH:mm:ss,SSS}][%M:%04L][%24c] %m%n";
+  std::string default_pattern_layout = "[%5p][%d{HH:mm:ss,SSS}][%M:%L][%24c] %m%n";
   if(!extract(pattern_layout, _path, "pattern_layout", default_pattern_layout))
   {
     std::cerr << logger_id_ << ": Paremeter missing: path='"<<path<<"', key='"<<"pattern_layout"<<std::endl;
