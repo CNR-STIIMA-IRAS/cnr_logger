@@ -367,7 +367,7 @@ bool TraceLogger::init(const std::string& logger_id, const std::string& path,
   std::string default_pattern_layout = "[%5p][%d{HH:mm:ss,SSS}][%M:%L][%c] %m%n";
   if(!extract(pattern_layout, _path, "pattern_layout", default_pattern_layout))
   {
-    std::cerr << logger_id_ << ": Paremeter missing: path='"<<path<<"', key='"<<"pattern_layout"<<std::endl;
+    std::cerr << logger_id_ << ": Paremeter missing: path='"<<path<<"', key='"<<"pattern_layout'"<<std::endl;
   }
   log4cxx::ColorPatternLayoutPtr layout = new log4cxx::ColorPatternLayout(pattern_layout);
   // =======================================================================================

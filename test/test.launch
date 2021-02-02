@@ -1,6 +1,6 @@
 <launch>
 
-<group ns="file_and_screen_different_appenders" >
+<group ns="/file_and_screen_different_appenders" >
 <rosparam>
   appenders: [file, screen]
   levels: [trace, info]
@@ -8,7 +8,7 @@
 </rosparam>
 </group>
 
-<group ns="file_and_screen_same_appender" >
+<group ns="/file_and_screen_same_appenders" >
 <rosparam >
   appenders: [file, screen]
   levels: [debug, debug]
@@ -16,7 +16,7 @@
 </rosparam>
 </group>
 
-<group ns="only_file_streamer">
+<group ns="/only_file_streamer">
 <rosparam>
   appenders: [file]
   levels: [debug]

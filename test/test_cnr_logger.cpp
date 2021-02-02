@@ -79,7 +79,7 @@ TEST(TestSuite, fullConstructor)
   path2 = current_working_dir + "/../../src/cnr_logger/test/config/cnr_logger.yaml";
 #else
   path1 = "/file_and_screen_different_appenders";
-  path2 = "/file_and_screen_different_appender";
+  path2 = "/file_and_screen_same_appenders";
 #endif
 
   EXPECT_NO_FATAL_FAILURE(logger.reset(new cnr_logger::TraceLogger("log1",path1 )));
