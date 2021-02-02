@@ -130,20 +130,20 @@ bool extract(T& val,
 {
   bool ret = false;
 #if defined(ROS_NOT_AVAILABLE)
-  if(!path[leaf])
+  ret = path[leaf];
 #else
-  if(!ros::param::get(path + "/" + leaf, val))
+  ret = ros::param::get(path + "/" + leaf, val);
 #endif
+  if(!ret)
   {
     val = default_val;
   }
+#if defined(ROS_NOT_AVAILABLE)
   else
   {
-#if defined(ROS_NOT_AVAILABLE)
     val = path[leaf].as<T>();
-#endif
-    ret = true;
   }
+#endif
   return ret;
 }
 
@@ -161,28 +161,24 @@ bool extractVector(std::vector<std::string>& val,
 {
   bool ret = false;
 #if defined(ROS_NOT_AVAILABLE)
-  if(!path[leaf])
+  ret = path[leaf];
 #else
-  if(!ros::param::get(path + "/" + leaf, val))
+  ret = ros::param::get(path + "/" + leaf, val);
 #endif
+  if(!ret && default_val.size())
   {
-    if(default_val.size())
-    {
-      val.resize(default_val.size());
-      std::copy(default_val.begin(), default_val.end(), val.begin());
-    }
+    val.resize(default_val.size());
+    std::copy(default_val.begin(), default_val.end(), val.begin());
   }
+#if defined(ROS_NOT_AVAILABLE)
   else
   {
-#if defined(ROS_NOT_AVAILABLE)
     for(YAML::const_iterator it=path[leaf].begin();it!=path[leaf].end();++it)
     {
       val.push_back(it->as<std::string>());
-      ret = true;
     }
-#endif
-    ret = true;
    }
+#endif
   return ret;
 }
 
