@@ -146,15 +146,20 @@ public:
   {
     return default_throttle_time_;
   }
+
+  friend std::string to_string(const TraceLogger& logger);
+  friend std::ofstream& operator<<(std::ofstream& out, const TraceLogger& logger);
+
 private:
   bool check(const std::string& path);
   bool initialized_;
   double default_throttle_time_;
-
 };
 
 typedef std::shared_ptr< TraceLogger > TraceLoggerPtr;
 
+std::string to_string(const TraceLogger& logger);
+std::ostream& operator<<(std::ostream& out, const TraceLogger& logger);
 
 }  // namespace cnr_logger
 

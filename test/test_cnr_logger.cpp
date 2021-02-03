@@ -79,7 +79,7 @@ TEST(TestSuite, fullConstructor)
   path2 = current_working_dir + "/../../src/cnr_logger/test/config/cnr_logger.yaml";
 #else
   path1 = "/file_and_screen_different_appenders";
-  path2 = "/file_and_screen_same_appenders";
+  path2 = "/file_and_screen_same_appender";
 #endif
 
   EXPECT_NO_FATAL_FAILURE(logger.reset(new cnr_logger::TraceLogger("log1",path1 )));
@@ -91,9 +91,13 @@ TEST(TestSuite, fullConstructor)
   EXPECT_TRUE(logger->logScreen());
   EXPECT_FALSE(logger->logSyncFileAndScreen());
 
+  std::cout << *logger << std::endl;
+
   EXPECT_FALSE(logger2->logFile());
   EXPECT_FALSE(logger2->logScreen());
   EXPECT_TRUE(logger2->logSyncFileAndScreen());
+
+  std::cout << *logger2 << std::endl;
 
   EXPECT_NO_FATAL_FAILURE(logger.reset());
   EXPECT_NO_FATAL_FAILURE(logger2.reset());
@@ -140,6 +144,14 @@ TEST(TestSuite, flushFileAndScreen)
 #endif
 
   EXPECT_NO_FATAL_FAILURE(logger.reset(new cnr_logger::TraceLogger("log1", path1, true)));
+
+  std::cout << *logger << std::endl;
+
+  EXPECT_FALSE(logger->logFile());
+  EXPECT_FALSE(logger->logScreen());
+  EXPECT_TRUE(logger->logSyncFileAndScreen());
+
+
 
   for (size_t i = 0; i < 10; i++)
   {

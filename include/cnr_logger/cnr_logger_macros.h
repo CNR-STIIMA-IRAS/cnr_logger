@@ -140,7 +140,7 @@ public:
     }
     catch (std::exception& e)
     {
-      std::cerr << "???" << std::endl;
+      std::cerr << __PRETTY_FUNCTION__<<":" << __LINE__<<": Exception: "<< e.what() << std::endl;
     }
   }
 };
@@ -305,11 +305,13 @@ inline cnr_logger::TraceLogger* getTraceLogger(TraceLogger& logger)
 inline cnr_logger::TraceLogger* getTraceLogger(TraceLoggerPtr logger)
 {
   if (logger)
+  {
     return logger.get();
+  }
   else
   {
-    // ROS_ERROR("The logger is not initialized. Fake loggin enabled.");
-    std::cerr << "The logger is not initialized. Fake loggin enabled." << std::endl;
+    std::cerr << __PRETTY_FUNCTION__ << ":" << __LINE__
+                <<": The logger is not initialized. Fake loggin enabled." << std::endl;
     std::shared_ptr<TraceLogger> ret(new TraceLogger());
     return ret.get();
   }

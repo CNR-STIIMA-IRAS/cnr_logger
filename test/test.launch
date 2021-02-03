@@ -8,7 +8,7 @@
 </rosparam>
 </group>
 
-<group ns="/file_and_screen_same_appenders" >
+<group ns="/file_and_screen_same_appender" >
 <rosparam >
   appenders: [file, screen]
   levels: [debug, debug]

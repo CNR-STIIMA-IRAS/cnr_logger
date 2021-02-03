@@ -90,9 +90,9 @@ namespace cnr_logger
  * @param now Time to translate in string.
  */
 #if defined(ROS_NOT_AVAILABLE)
-inline std::string to_string(const time_t& now)
+std::string to_string(const time_t& now)
 #else
-inline std::string to_string(const ros::Time& now)
+std::string to_string(const ros::Time& now)
 #endif
 {
   std::string ret;
@@ -195,16 +195,16 @@ TraceLogger::TraceLogger(const std::string& logger_id, const std::string& path,
   {
     if(!init(logger_id, path, star_header, default_values))
     {
-      std::cerr << "Error in creating the TraceLogger. " << std::endl;
+      std::cerr << logger_id << ": Error in creating the TraceLogger. " << std::endl;
     }
   }
   catch (std::exception& e)
   {
-    std::cerr << "Error in creating the TraceLogger. Exception: " << e.what() << std::endl;
+    std::cerr << logger_id << ": Error in creating the TraceLogger. Exception: " << e.what() << std::endl;
   }
   catch (...)
   {
-    std::cerr << "Error in creating the TraceLogger. Unhandled Exception" << std::endl;
+    std::cerr << logger_id << ": Error in creating the TraceLogger. Unhandled Exception" << std::endl;
   }
 }
 
@@ -237,7 +237,7 @@ bool TraceLogger::init(const std::string& logger_id, const std::string& path,
 {
   if(initialized_)
   {
-    std::cerr<<"Logger already initialized."<<std::endl;
+    std::cerr<< logger_id_ << ": Logger already initialized."<<std::endl;
     return false;
   }
 
@@ -276,7 +276,8 @@ bool TraceLogger::init(const std::string& logger_id, const std::string& path,
 
   if(appenders.size() != levels.size())
   {
-    std::cerr << "Size of appenders and levels mismatch! Default INFO level for all the appenders" << std::endl;
+    std::cerr << logger_id_
+                << ": Size of appenders and levels mismatch! Default INFO level for all the appenders" << std::endl;
     levels.clear();
     levels.resize(appenders.size(), "DEBUG");
   }
@@ -306,7 +307,6 @@ bool TraceLogger::init(const std::string& logger_id, const std::string& path,
   auto it_screen   = std::find(appenders.begin(), appenders.end(), "screen");
   int  idx_file    = (it_file   != appenders.end()) ? std::distance(appenders.begin(), it_file) : -1;
   int  idx_screen  = (it_screen != appenders.end()) ? std::distance(appenders.begin(), it_screen) : -1;
-
 
   if(((idx_file >= 0) && (idx_screen >= 0)) && (levels[idx_file] == levels[idx_screen]))   // 1 logger and 2 appenders
   {
@@ -397,7 +397,6 @@ bool TraceLogger::init(const std::string& logger_id, const std::string& path,
                   << ", default superimposed: "<< default_append_date_to_file_name <<std::endl;
     }
 
-
     log_file_name +=  append_date_to_file_name  ? ("." + to_string(now) + ".log") : ".log";
 
     bool append_to_file = false;
@@ -465,7 +464,7 @@ TraceLogger& TraceLogger::operator=(const TraceLogger& rhs)
 {
   if(!this->init(rhs.logger_id_, rhs.path_, false, rhs.default_values_))
   {
-    std::cerr << "ERROR - THE LOGGER INITIALIZATION FAILED." << std::endl;
+    std::cerr << rhs.logger_id_ << ": ERROR - THE LOGGER INITIALIZATION FAILED." << std::endl;
   }
   return *this;
 }
@@ -476,6 +475,35 @@ TraceLogger::~TraceLogger()
   {
     l.second->removeAllAppenders();
   }
+}
+
+std::string to_string(const TraceLogger& logger)
+{
+  std::string ret;
+  ret +="ID:" + logger.logger_id_;
+  ret +="\nFILE PATH: " + logger.path_;
+  ret +="\nDEFAULT VALUES: " + std::to_string(logger.default_values_);
+  ret +="\nINITIALIZED: " + std::to_string(logger.initialized_);
+  ret +="\nTHROTTLE TIME: " + std::to_string(logger.default_throttle_time_);
+  ret +="\nLEVELS: [ ";
+  for(const auto & l: logger.levels_)
+    ret+= (l.first == TraceLogger::FILE_STREAM          ) ? "FILE_STREAM "
+        : (l.first == TraceLogger::CONSOLE_STREAM       ) ? "CONSOLE_STREAM "
+        : "SYNC_FILE_AND_CONSOLE ";
+  ret += "]";
+  ret +="\nLOGGERS: [ ";
+  for(const auto & l: logger.levels_)
+    ret+= (l.first == TraceLogger::FILE_STREAM          ) ? "FILE_STREAM "
+        : (l.first == TraceLogger::CONSOLE_STREAM       ) ? "CONSOLE_STREAM "
+        : "SYNC_FILE_AND_CONSOLE ";
+  ret += "]";
+  return ret;
+}
+
+std::ostream& operator<<(std::ostream& out, const TraceLogger& logger)
+{
+  out << to_string(logger);
+  return out;
 }
 
 }  // namespace cnr_logger
