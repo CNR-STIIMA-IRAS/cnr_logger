@@ -11,11 +11,29 @@ The package has been designed to have a logger separated from the standard ros l
 
 ## Usage ##
 
-### Dependencies ###
+### Dependencies and Building ###
 
-roscpp
+The package is based on [Log4cxx](https://logging.apache.org/log4cxx/latest_stable/), and it can be built on top of [ros](www.ros.org) distribution, or having installed  [yaml-cpp](https://yaml-cpp.docsforge.com/)
+
+The configuration is done through CMake. Enabling the cmake option `ROS_DISABLED`, the package looks for the `yaml-cpp` (the FindLog4cxx.cmake is [here](./cmake/FindLog4cxx.cmake)).
+
+```cmake
+option(ROS_DISABLED "ROS ENABLED" OFF)
+
+if(ROS_DISABLED)
+  set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+  find_package(yaml-cpp REQUIRED)
+  find_package(Log4cxx)
+  ...
+else()
+  find_package(catkin REQUIRED COMPONENTS roscpp roslint)
+  ...
+endif()
+```
 
 ### Parameters ###
+
+The parameters can be stored in a `file.yaml` or in the `rosparam server` according to the package building modality.
 
 ```yaml
   ~/appenders: ['file', 'screen']                 # Mandatory
@@ -54,11 +72,16 @@ There are two constructors:
 
 ```cpp
 TraceLogger( )  //default foo ctor, call init( ) afterwards
-TraceLogger( const std::string& logger_id, const std::string& param_namespace, const bool star_header )
+TraceLogger(const std::string& logger_id,
+              const std::string& path,
+                const bool star_header = true,
+                  const bool default_values = true )
 ```
 
-The first does not initialize the instance of the class, and the function `init()` must be called afterwards.
-The second initializes the instance of the class.
+The first one does not initialize the instance of the class, and the function `init()` must be called afterwards.
+The second one initializes the instance of the class.
+
+The path can be or the full namespace where the parameters are stored in the `rosparam server`, or the full path of the `file.yaml`.
 
 If the initialization failed, the class superimpose default values unless the user explicitly indicates to not use the default values.
 
@@ -66,7 +89,6 @@ If the initialization failed, the class superimpose default values unless the us
 
 ```cpp
   #include <iostream>
-  #include <ros/ros.h>
   #include <cnr_logger/cnr_logger.h>
 
   std::shared_ptr<cnr_logger::TraceLogger> logger;
