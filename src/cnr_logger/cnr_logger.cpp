@@ -390,7 +390,7 @@ bool TraceLogger::init(const std::string& logger_id, const std::string& path,
     }
 
     bool append_date_to_file_name = false;
-    bool default_append_date_to_file_name = true;
+    bool default_append_date_to_file_name = false;
     if(!extract(append_date_to_file_name, _path, "append_date_to_file_name", default_append_date_to_file_name))
     {
       std::cerr << logger_id_ << ": Paremeter missing: path='"<<path<<"', key='"<<"append_date_to_file_name"
@@ -400,7 +400,7 @@ bool TraceLogger::init(const std::string& logger_id, const std::string& path,
     log_file_name +=  append_date_to_file_name  ? ("." + to_string(now) + ".log") : ".log";
 
     bool append_to_file = false;
-    bool default_append_to_file = true;
+    bool default_append_to_file = false;
     if(!extract(append_to_file, _path, "append_to_file", default_append_to_file))
     {
       std::cerr << logger_id_ << ": Paremeter missing: path='"<<path<<"', key='"<<"append_to_file"
