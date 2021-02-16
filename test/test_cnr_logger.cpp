@@ -68,7 +68,7 @@ TEST(TestSuite, colorTest)
 
 
 // Declare a test
-TEST(TestSuite, fullConstructor)
+TEST(TestSuite, fullConstructor1)
 {
   std::string path1, path2;
 #if defined(ROS_NOT_AVAILABLE)
@@ -76,33 +76,60 @@ TEST(TestSuite, fullConstructor)
   getcwd(buff, 100);
   std::string current_working_dir(buff);
   path1 = current_working_dir + "/../../src/cnr_logger/test/config/cnr_logger.yaml";
-  path2 = current_working_dir + "/../../src/cnr_logger/test/config/cnr_logger.yaml";
 #else
   path1 = "/file_and_screen_different_appenders";
-  path2 = "/file_and_screen_same_appender";
 #endif
 
   EXPECT_NO_FATAL_FAILURE(logger.reset(new cnr_logger::TraceLogger("log1",path1 )));
   EXPECT_FALSE(logger->init("log1", path1, false, false));  // Already initialized
 
-  EXPECT_NO_FATAL_FAILURE(logger2.reset(new cnr_logger::TraceLogger("log2", path2)));
 
   EXPECT_TRUE(logger->logFile());
   EXPECT_TRUE(logger->logScreen());
   EXPECT_FALSE(logger->logSyncFileAndScreen());
 
+  EXPECT_TRUE(logger->logFatal() );
+  EXPECT_TRUE(logger->logError() );
+  EXPECT_TRUE(logger->logWarn()  );
+  EXPECT_TRUE(logger->logInfo()  );
+  EXPECT_TRUE(logger->logDebug() );
+  EXPECT_TRUE(logger->logTrace() );
+
   std::cout << *logger << std::endl;
 
+  EXPECT_NO_FATAL_FAILURE(logger.reset());
+}
+
+
+// Declare a test
+TEST(TestSuite, fullConstructor2)
+{
+  std::string path1, path2;
+#if defined(ROS_NOT_AVAILABLE)
+  char buff[100];
+  getcwd(buff, 100);
+  std::string current_working_dir(buff);
+  path2 = current_working_dir + "/../../src/cnr_logger/test/config/cnr_logger.yaml";
+#else
+  path2 = "/file_and_screen_same_appender";
+#endif
+
+  EXPECT_NO_FATAL_FAILURE(logger2.reset(new cnr_logger::TraceLogger("log2", path2)));
   EXPECT_FALSE(logger2->logFile());
   EXPECT_FALSE(logger2->logScreen());
   EXPECT_TRUE(logger2->logSyncFileAndScreen());
 
+  EXPECT_TRUE( logger2->logFatal() );
+  EXPECT_TRUE( logger2->logError() );
+  EXPECT_TRUE( logger2->logWarn()  );
+  EXPECT_TRUE( logger2->logInfo()  );
+  EXPECT_FALSE(logger2->logDebug() );
+  EXPECT_FALSE(logger2->logTrace() );
+
   std::cout << *logger2 << std::endl;
 
-  EXPECT_NO_FATAL_FAILURE(logger.reset());
   EXPECT_NO_FATAL_FAILURE(logger2.reset());
 }
-
 TEST(TestSuite, partialConstructor)
 {
   std::string path1;
@@ -170,10 +197,10 @@ TEST(TestSuite, flushFileAndScreen)
     CNR_FATAL_COND(*logger, true, "Ciao-log-1fatal");
     CNR_TRACE_COND(*logger, false, "Ciao-log-1trace");
 
-    CNR_INFO_COND_THROTTLE(*logger, true, 1.0, "Ciao-log-1-info");
-    CNR_DEBUG_COND_THROTTLE(*logger, false, 1.0, "Ciao-log-1-debug");
-    CNR_FATAL_COND_THROTTLE(*logger, true, 1.0, "Ciao-log-1-fatal");
-    CNR_TRACE_COND_THROTTLE(*logger, false, 1.0, "Ciao-log-1-trace");
+    CNR_INFO_COND_THROTTLE(*logger, true, 1.0, "THROTTLE Ciao-log-1-info");
+    CNR_DEBUG_COND_THROTTLE(*logger, false, 1.0, "THROTTLE Ciao-log-1-debug");
+    CNR_FATAL_COND_THROTTLE(*logger, true, 1.0, "THROTTLE Ciao-log-1-fatal");
+    CNR_TRACE_COND_THROTTLE(*logger, false, 1.0, "THROTTLE Ciao-log-1-trace");
 
 #if defined(ROS_NOT_AVAILABLE)
     sleep(1);
@@ -185,7 +212,7 @@ TEST(TestSuite, flushFileAndScreen)
 }
 
 // Declare another test
-TEST(TestSuite, flushInfoDebug)
+TEST(TestSuite, flushOnlyFile)
 {
   std::string path1,path2;
 #if defined(ROS_NOT_AVAILABLE)
@@ -193,14 +220,11 @@ TEST(TestSuite, flushInfoDebug)
   getcwd(buff, 100);
   std::string current_working_dir(buff);
   path1 = current_working_dir + "/../../src/cnr_logger/test/config/cnr_logger.yaml";
-  path2 = current_working_dir + "../test/config/cnr_logger.yaml";
 #else
   path1 = "/only_file_streamer";
-  path2 = "/file_and_screen_same_appender";
 #endif
 
   EXPECT_NO_FATAL_FAILURE(logger.reset(new cnr_logger::TraceLogger("log1", path1, true)));
-  EXPECT_NO_FATAL_FAILURE(logger2.reset(new cnr_logger::TraceLogger("log2", path2)));
 
   for (size_t i = 0; i < 10; i++)
   {
@@ -219,13 +243,10 @@ TEST(TestSuite, flushInfoDebug)
     CNR_FATAL_COND(*logger, true, "Ciao-log-1fatal");
     CNR_TRACE_COND(*logger, false, "Ciao-log-1trace");
 
-    CNR_INFO_COND_THROTTLE(*logger, true, 1.0, "Ciao-log-1-info");
-    CNR_DEBUG_COND_THROTTLE(*logger, false, 1.0, "Ciao-log-1-debug");
-    CNR_FATAL_COND_THROTTLE(*logger, true, 1.0, "Ciao-log-1-fatal");
-    CNR_TRACE_COND_THROTTLE(*logger, false, 1.0, "Ciao-log-1-trace");
-
-    CNR_INFO(*logger2, "Ciao-log-2-info");
-    CNR_DEBUG(*logger2, "Ciao-log-2-debug");
+    CNR_INFO_COND_THROTTLE( *logger, true , 1.0, "THROTTLE Ciao-log-1-info");
+    CNR_DEBUG_COND_THROTTLE(*logger, false, 1.0, "THROTTLE Ciao-log-1-debug");
+    CNR_FATAL_COND_THROTTLE(*logger, true , 1.0, "THROTTLE Ciao-log-1-fatal");
+    CNR_TRACE_COND_THROTTLE(*logger, false, 1.0, "THROTTLE Ciao-log-1-trace");
 
 #if defined(ROS_NOT_AVAILABLE)
     sleep(1);
@@ -234,7 +255,53 @@ TEST(TestSuite, flushInfoDebug)
 #endif
   }
   EXPECT_NO_FATAL_FAILURE(logger.reset());
-  EXPECT_NO_FATAL_FAILURE(logger2.reset());
+}
+
+
+// Declare another test
+TEST(TestSuite, flushOnlsyScreen)
+{
+  std::string path1,path2;
+#if defined(ROS_NOT_AVAILABLE)
+  char buff[100];
+  getcwd(buff, 100);
+  std::string current_working_dir(buff);
+  path1 = current_working_dir + "/../../src/cnr_logger/test/config/cnr_logger.yaml";
+#else
+  path1 = "/only_screen_streamer";
+#endif
+
+  EXPECT_NO_FATAL_FAILURE(logger.reset(new cnr_logger::TraceLogger("log1", path1, true)));
+
+  for (size_t i = 0; i < 10; i++)
+  {
+    CNR_INFO(*logger, "Ciao-log-1-info");
+    CNR_DEBUG(*logger, "Ciao-log-1-debug");
+    CNR_FATAL(*logger, "Ciao-log-1-fatal");
+    CNR_TRACE(*logger, "Ciao-log-1-trace");
+
+    CNR_INFO_THROTTLE(*logger,  1.0, "Ciao-log-1-info");
+    CNR_DEBUG_THROTTLE(*logger, 1.0, "Ciao-log-1-debug");
+    CNR_FATAL_THROTTLE(*logger, 1.0, "Ciao-log-1-fatal");
+    CNR_TRACE_THROTTLE(*logger, 1.0, "Ciao-log-1-trace");
+
+    CNR_INFO_COND(*logger, true, "Ciao-log-1-info");
+    CNR_DEBUG_COND(*logger, false, "Ciao-log-1debug");
+    CNR_FATAL_COND(*logger, true, "Ciao-log-1fatal");
+    CNR_TRACE_COND(*logger, false, "Ciao-log-1trace");
+
+    CNR_INFO_COND_THROTTLE(*logger , true , 1.0, "THROTTLE Ciao-log-1-info");
+    CNR_DEBUG_COND_THROTTLE(*logger, false, 1.0, "THROTTLE Ciao-log-1-debug");
+    CNR_FATAL_COND_THROTTLE(*logger, true , 1.0, "THROTTLE Ciao-log-1-fatal");
+    CNR_TRACE_COND_THROTTLE(*logger, false, 1.0, "THROTTLE Ciao-log-1-trace");
+
+#if defined(ROS_NOT_AVAILABLE)
+    sleep(1);
+#else
+    ros::Duration(0.1).sleep();
+#endif
+  }
+  EXPECT_NO_FATAL_FAILURE(logger.reset());
 }
 
 // Run all the tests that were declared with TEST()

@@ -282,6 +282,7 @@ bool TraceLogger::init(const std::string& logger_id, const std::string& path,
     levels.resize(appenders.size(), "DEBUG");
   }
 
+
   for(size_t i = 0; i < appenders.size(); i++)
   {
     std::for_each(appenders[i].begin(), appenders[i].end(), [](char & c)
@@ -311,49 +312,53 @@ bool TraceLogger::init(const std::string& logger_id, const std::string& path,
   if(((idx_file >= 0) && (idx_screen >= 0)) && (levels[idx_file] == levels[idx_screen]))   // 1 logger and 2 appenders
   {
     loggers_  [ SYNC_FILE_AND_CONSOLE ] = log4cxx::Logger::getLogger(logger_id_);
-    levels_   [ SYNC_FILE_AND_CONSOLE ] = levels[idx_file];
+    levels_   [ SYNC_FILE_AND_CONSOLE ] = levels[idx_file] == "FATAL"     ? FATAL
+                                        : levels[idx_file] == "ERROR"     ? ERROR
+                                        : levels[idx_file] == "WARN"      ? WARN
+                                        : levels[idx_file] == "INFO"      ? INFO
+                                        : levels[idx_file] == "DEBUG"     ? DEBUG
+                                        : TRACE;
   }
   else
   {
     if(idx_file >= 0)
     {
       loggers_[FILE_STREAM] = log4cxx::Logger::getLogger(logger_id_ + "_f");
-      levels_ [FILE_STREAM] = levels[idx_file];
+      levels_ [FILE_STREAM] = levels[idx_file] == "FATAL"     ? FATAL
+                            : levels[idx_file] == "ERROR"     ? ERROR
+                            : levels[idx_file] == "WARN"      ? WARN
+                            : levels[idx_file] == "INFO"      ? INFO
+                            : levels[idx_file] == "DEBUG"     ? DEBUG
+                            : TRACE;
     }
     if(idx_screen >= 0)
     {
       loggers_[CONSOLE_STREAM] = log4cxx::Logger::getLogger(logger_id_);
-      levels_ [CONSOLE_STREAM] = levels[idx_screen];
+      levels_ [CONSOLE_STREAM] = levels[idx_screen] == "FATAL"     ? FATAL
+                               : levels[idx_screen] == "ERROR"     ? ERROR
+                               : levels[idx_screen] == "WARN"      ? WARN
+                               : levels[idx_screen] == "INFO"      ? INFO
+                               : levels[idx_screen] == "DEBUG"     ? DEBUG
+                               : TRACE;
     }
   }
 
-
+  max_level_ = FATAL;
   for(auto const & level : levels_)
   {
-    if(level.second == "INFO")
+    switch(level.second)
     {
-      loggers_[level.first]->setLevel(log4cxx::Level::getInfo());
+      case FATAL: loggers_[level.first]->setLevel(log4cxx::Level::getFatal()); break;
+      case ERROR: loggers_[level.first]->setLevel(log4cxx::Level::getError()); break;
+      case WARN : loggers_[level.first]->setLevel(log4cxx::Level::getWarn() ); break;
+      case INFO : loggers_[level.first]->setLevel(log4cxx::Level::getInfo() ); break;
+      case DEBUG: loggers_[level.first]->setLevel(log4cxx::Level::getDebug()); break;
+      case TRACE: loggers_[level.first]->setLevel(log4cxx::Level::getTrace()); break;
     }
-    else if(level.second == "WARN")
-    {
-      loggers_[level.first]->setLevel(log4cxx::Level::getWarn());
-    }
-    else if(level.second == "ERROR")
-    {
-      loggers_[level.first]->setLevel(log4cxx::Level::getError());
-    }
-    else if(level.second == "FATAL")
-    {
-      loggers_[level.first]->setLevel(log4cxx::Level::getFatal());
-    }
-    else if(level.second == "TRACE")
-    {
-      loggers_[level.first]->setLevel(log4cxx::Level::getTrace());
-    }
-    else
-    {
-      loggers_[level.first]->setLevel(log4cxx::Level::getDebug());
-    }
+    std::cout << "max_level:" << max_level_<< " level.second:" << level.second
+                << " level.second >= max_level_ ? level.second : max_level_ "; std::cout.flush();
+    max_level_ = level.second >= max_level_ ? level.second : max_level_;
+    std::cout <<  max_level_ << std::endl;
   }
   // =======================================================================================
 

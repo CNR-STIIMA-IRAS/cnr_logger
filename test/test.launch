@@ -11,7 +11,7 @@
 <group ns="/file_and_screen_same_appender" >
 <rosparam >
   appenders: [file, screen]
-  levels: [debug, debug]
+  levels: [info, info]
   file_name: "ciao"
 </rosparam>
 </group>
@@ -21,6 +21,13 @@
   appenders: [file]
   levels: [debug]
   file_name: "ciao"
+</rosparam>
+</group>
+
+<group ns="/only_screen_streamer">
+<rosparam>
+  appenders: [screen]
+  levels: [debug]
 </rosparam>
 </group>
 

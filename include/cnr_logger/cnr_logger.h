@@ -76,7 +76,8 @@ namespace cnr_logger
 class TraceLogger
 {
 public:
-  enum AppenderType { FILE_STREAM = 0, CONSOLE_STREAM = 1, SYNC_FILE_AND_CONSOLE = 2 };
+  enum AppenderType {FILE_STREAM=0, CONSOLE_STREAM=1, SYNC_FILE_AND_CONSOLE=2};
+  enum Level {FATAL=0, ERROR=1, WARN=2, INFO=3, DEBUG=4, TRACE=5};
 
   /**
    * @brief TraceLogger. The constructor does not initilize the class. The function init() must be called afterwards.
@@ -125,7 +126,7 @@ public:
    */
   bool logScreen()
   {
-    return (loggers_.find(CONSOLE_STREAM)        != loggers_.end());
+    return (loggers_.find(CONSOLE_STREAM) != loggers_.end());
   }
 
   /**
@@ -137,8 +138,8 @@ public:
     return (loggers_.find(SYNC_FILE_AND_CONSOLE) != loggers_.end());
   }
 
-  std::map< AppenderType, log4cxx::LoggerPtr > loggers_;
-  std::map< AppenderType, std::string        > levels_;
+  std::map<AppenderType, log4cxx::LoggerPtr> loggers_;
+  std::map<AppenderType, Level> levels_;
   std::string logger_id_;
   std::string path_;
   bool default_values_;
@@ -147,6 +148,13 @@ public:
     return default_throttle_time_;
   }
 
+  bool logFatal() const {return FATAL<=max_level_;};
+  bool logError() const {return ERROR<=max_level_;};
+  bool logWarn()  const {return WARN <=max_level_;};
+  bool logInfo()  const {return INFO <=max_level_;};
+  bool logDebug() const {return DEBUG<=max_level_;};
+  bool logTrace() const {return TRACE<=max_level_;};
+
   friend std::string to_string(const TraceLogger& logger);
   friend std::ofstream& operator<<(std::ofstream& out, const TraceLogger& logger);
 
@@ -154,6 +162,7 @@ private:
   bool check(const std::string& path);
   bool initialized_;
   double default_throttle_time_;
+  Level max_level_;
 };
 
 typedef std::shared_ptr< TraceLogger > TraceLoggerPtr;

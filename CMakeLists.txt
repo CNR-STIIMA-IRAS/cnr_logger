@@ -55,8 +55,10 @@ if(CATKIN_ENABLE_TESTING AND ENABLE_COVERAGE_TESTING)
 endif()
 
 add_library(${PROJECT_NAME} src/${PROJECT_NAME}/cnr_logger.cpp )
-
 target_link_libraries( ${PROJECT_NAME} ${CNR_LOGGER_TARGET_LINK_LIBRARIES})
+target_compile_options(${PROJECT_NAME}
+  PUBLIC $<$<CONFIG:Release>:-Ofast -funroll-loops -ffast-math >)
+
 if(${CMAKE_VERSION} VERSION_GREATER  "3.16.0")
   target_precompile_headers(${PROJECT_NAME} PUBLIC
             <map>
