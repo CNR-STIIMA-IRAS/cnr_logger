@@ -35,3 +35,11 @@ jobs:
       # Run industrial_ci
       - uses: 'ros-industrial/industrial_ci@master'
         env: ${{ matrix.env }}
+      - uses: actions/checkout@master
+      - uses: codecov/codecov-action@v1
+        with:
+          #files: ./coverage1.xml,./coverage2.xml # optional
+          #flags: unittests # optional
+          name: codecov-umbrella # optional
+          fail_ci_if_error: true # optional (default = false)
+          verbose: true # optional (default = false)
