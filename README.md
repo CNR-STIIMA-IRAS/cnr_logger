@@ -235,8 +235,11 @@ The macros to be used within the code are:
 ## License ##
 [![FOSSA Status][o]][5]
 
-[t]:https://travis-ci.org/CNR-STIIMA-IRAS/cnr_logger.svg?branch=master
-[1]:https://travis-ci.org/CNR-STIIMA-IRAS/cnr_logger
+[//]: # ([t]:https://travis-ci.org/CNR-STIIMA-IRAS/cnr_logger.svg?branch=master)
+[//]: # ([1]:https://travis-ci.org/CNR-STIIMA-IRAS/cnr_logger)
+
+[t]:https://github.com/CNR-STIIMA-IRAS/cnr_logger/actions/workflows/industrial_ci_action.yml/badge.svg?branch=master
+[1]:https://github.com/CNR-STIIMA-IRAS/cnr_logger/actions/workflows/industrial_ci_action.yml
 
 [c]:https://codecov.io/gh/CNR-STIIMA-IRAS/cnr_logger/branch/master/graph/badge.svg
 [2]:https://codecov.io/gh/CNR-STIIMA-IRAS/cnr_logger
