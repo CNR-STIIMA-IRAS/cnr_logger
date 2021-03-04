@@ -355,10 +355,7 @@ bool TraceLogger::init(const std::string& logger_id, const std::string& path,
       case DEBUG: loggers_[level.first]->setLevel(log4cxx::Level::getDebug()); break;
       case TRACE: loggers_[level.first]->setLevel(log4cxx::Level::getTrace()); break;
     }
-    std::cout << "max_level:" << max_level_<< " level.second:" << level.second
-                << " level.second >= max_level_ ? level.second : max_level_ "; std::cout.flush();
     max_level_ = level.second >= max_level_ ? level.second : max_level_;
-    std::cout <<  max_level_ << std::endl;
   }
   // =======================================================================================
 
