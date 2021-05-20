@@ -294,7 +294,10 @@ inline std::string BW()
   return BOLDWHITE();
 }
 
-
+inline cnr_logger::TraceLogger* getTraceLogger(TraceLogger* logger)
+{
+  return logger;
+}
 
 inline cnr_logger::TraceLogger* getTraceLogger(TraceLogger& logger)
 {
