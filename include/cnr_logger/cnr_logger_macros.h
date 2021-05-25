@@ -327,112 +327,112 @@ inline cnr_logger::TraceLogger* getTraceLogger(TraceLoggerPtr logger)
 
 
 // ================= STANDARD
-#define CNR_FATAL(trace_logger, args)\
+#define CNR_FATAL(logger, args)\
 do \
 { \
-  if(cnr_logger::getTraceLogger(trace_logger) && cnr_logger::getTraceLogger(trace_logger)->logFatal())\
+  if(cnr_logger::getTraceLogger(logger) && cnr_logger::getTraceLogger(logger)->logFatal())\
   {\
-    if(cnr_logger::getTraceLogger(trace_logger)->logSyncFileAndScreen())\
-      LOG4CXX_FATAL(cnr_logger::getTraceLogger(trace_logger)->loggers_[::cnr_logger::TraceLogger::SYNC_FILE_AND_CONSOLE], args)\
-    if(cnr_logger::getTraceLogger(trace_logger)->logFile())\
-        LOG4CXX_FATAL(cnr_logger::getTraceLogger(trace_logger)->loggers_[::cnr_logger::TraceLogger::FILE_STREAM], args)\
-    if(cnr_logger::getTraceLogger(trace_logger)->logScreen())\
-        LOG4CXX_FATAL(cnr_logger::getTraceLogger(trace_logger)->loggers_[::cnr_logger::TraceLogger::CONSOLE_STREAM], args)\
+    if(cnr_logger::getTraceLogger(logger)->logSyncFileAndScreen())\
+      LOG4CXX_FATAL(cnr_logger::getTraceLogger(logger)->loggers_[::cnr_logger::TraceLogger::SYNC_FILE_AND_CONSOLE], args)\
+    if(cnr_logger::getTraceLogger(logger)->logFile())\
+        LOG4CXX_FATAL(cnr_logger::getTraceLogger(logger)->loggers_[::cnr_logger::TraceLogger::FILE_STREAM], args)\
+    if(cnr_logger::getTraceLogger(logger)->logScreen())\
+        LOG4CXX_FATAL(cnr_logger::getTraceLogger(logger)->loggers_[::cnr_logger::TraceLogger::CONSOLE_STREAM], args)\
   }\
 } while (false)
 
-#define CNR_ERROR(trace_logger, args)\
+#define CNR_ERROR(logger, args)\
 do \
 {\
-  if(cnr_logger::getTraceLogger(trace_logger) && cnr_logger::getTraceLogger(trace_logger)->logError())\
+  if(cnr_logger::getTraceLogger(logger) && cnr_logger::getTraceLogger(logger)->logError())\
   {\
-    if (cnr_logger::getTraceLogger(trace_logger)->logSyncFileAndScreen())\
-      LOG4CXX_ERROR(cnr_logger::getTraceLogger(trace_logger)->loggers_[::cnr_logger::TraceLogger::SYNC_FILE_AND_CONSOLE], args)\
-    if (cnr_logger::getTraceLogger(trace_logger)->logFile())\
-        LOG4CXX_ERROR(cnr_logger::getTraceLogger(trace_logger)->loggers_[::cnr_logger::TraceLogger::FILE_STREAM], args)\
-    if (cnr_logger::getTraceLogger(trace_logger)->logScreen())\
-        LOG4CXX_ERROR(cnr_logger::getTraceLogger(trace_logger)->loggers_[::cnr_logger::TraceLogger::CONSOLE_STREAM], args)\
+    if (cnr_logger::getTraceLogger(logger)->logSyncFileAndScreen())\
+      LOG4CXX_ERROR(cnr_logger::getTraceLogger(logger)->loggers_[::cnr_logger::TraceLogger::SYNC_FILE_AND_CONSOLE], args)\
+    if (cnr_logger::getTraceLogger(logger)->logFile())\
+        LOG4CXX_ERROR(cnr_logger::getTraceLogger(logger)->loggers_[::cnr_logger::TraceLogger::FILE_STREAM], args)\
+    if (cnr_logger::getTraceLogger(logger)->logScreen())\
+        LOG4CXX_ERROR(cnr_logger::getTraceLogger(logger)->loggers_[::cnr_logger::TraceLogger::CONSOLE_STREAM], args)\
   }\
 } while (false)
 
-#define CNR_WARN(trace_logger, args)\
+#define CNR_WARN(logger, args)\
 do\
 {\
-  if(cnr_logger::getTraceLogger(trace_logger) && cnr_logger::getTraceLogger(trace_logger)->logWarn())\
+  if(cnr_logger::getTraceLogger(logger) && cnr_logger::getTraceLogger(logger)->logWarn())\
   {\
-    if (cnr_logger::getTraceLogger(trace_logger)->logSyncFileAndScreen())\
-      LOG4CXX_WARN(cnr_logger::getTraceLogger(trace_logger)->loggers_[::cnr_logger::TraceLogger::SYNC_FILE_AND_CONSOLE], args)\
-    if (cnr_logger::getTraceLogger(trace_logger)->logFile())\
-        LOG4CXX_WARN(cnr_logger::getTraceLogger(trace_logger)->loggers_[::cnr_logger::TraceLogger::FILE_STREAM], args)\
-    if (cnr_logger::getTraceLogger(trace_logger)->logScreen())\
-        LOG4CXX_WARN(cnr_logger::getTraceLogger(trace_logger)->loggers_[::cnr_logger::TraceLogger::CONSOLE_STREAM], args)\
+    if (cnr_logger::getTraceLogger(logger)->logSyncFileAndScreen())\
+      LOG4CXX_WARN(cnr_logger::getTraceLogger(logger)->loggers_[::cnr_logger::TraceLogger::SYNC_FILE_AND_CONSOLE], args)\
+    if (cnr_logger::getTraceLogger(logger)->logFile())\
+        LOG4CXX_WARN(cnr_logger::getTraceLogger(logger)->loggers_[::cnr_logger::TraceLogger::FILE_STREAM], args)\
+    if (cnr_logger::getTraceLogger(logger)->logScreen())\
+        LOG4CXX_WARN(cnr_logger::getTraceLogger(logger)->loggers_[::cnr_logger::TraceLogger::CONSOLE_STREAM], args)\
   }\
 } while (false)
 
-#define CNR_INFO(trace_logger, args)\
+#define CNR_INFO(logger, args)\
 do\
 {\
-  if(cnr_logger::getTraceLogger(trace_logger) && cnr_logger::getTraceLogger(trace_logger)->logInfo())\
+  if(cnr_logger::getTraceLogger(logger) && cnr_logger::getTraceLogger(logger)->logInfo())\
   {\
-    if ((cnr_logger::getTraceLogger(trace_logger)->logSyncFileAndScreen())) \
+    if ((cnr_logger::getTraceLogger(logger)->logSyncFileAndScreen())) \
     {\
-      LOG4CXX_INFO(cnr_logger::getTraceLogger(trace_logger)->loggers_[::cnr_logger::TraceLogger::SYNC_FILE_AND_CONSOLE], args)\
+      LOG4CXX_INFO(cnr_logger::getTraceLogger(logger)->loggers_[::cnr_logger::TraceLogger::SYNC_FILE_AND_CONSOLE], args)\
     }\
-    if (cnr_logger::getTraceLogger(trace_logger)->logFile()) \
+    if (cnr_logger::getTraceLogger(logger)->logFile()) \
     {\
-      LOG4CXX_INFO(cnr_logger::getTraceLogger(trace_logger)->loggers_[::cnr_logger::TraceLogger::FILE_STREAM], args)\
+      LOG4CXX_INFO(cnr_logger::getTraceLogger(logger)->loggers_[::cnr_logger::TraceLogger::FILE_STREAM], args)\
     }\
-    if (cnr_logger::getTraceLogger(trace_logger)->logScreen()) \
+    if (cnr_logger::getTraceLogger(logger)->logScreen()) \
     {\
-      LOG4CXX_INFO(cnr_logger::getTraceLogger(trace_logger)->loggers_[::cnr_logger::TraceLogger::CONSOLE_STREAM], args)\
+      LOG4CXX_INFO(cnr_logger::getTraceLogger(logger)->loggers_[::cnr_logger::TraceLogger::CONSOLE_STREAM], args)\
     }\
   }\
 } while (false)
 
-#define CNR_INFO_ONLY_FILE(trace_logger, args)\
+#define CNR_INFO_ONLY_FILE(logger, args)\
 do\
 {\
-  if(cnr_logger::getTraceLogger(trace_logger) && cnr_logger::getTraceLogger(trace_logger)->logInfo())\
+  if(cnr_logger::getTraceLogger(logger) && cnr_logger::getTraceLogger(logger)->logInfo())\
   {\
-    if ((cnr_logger::getTraceLogger(trace_logger)->logSyncFileAndScreen())) \
-      LOG4CXX_INFO(cnr_logger::getTraceLogger(trace_logger)->loggers_[::cnr_logger::TraceLogger::SYNC_FILE_AND_CONSOLE], args)\
-    else if (cnr_logger::getTraceLogger(trace_logger)->logFile()) \
-      LOG4CXX_INFO(cnr_logger::getTraceLogger(trace_logger)->loggers_[::cnr_logger::TraceLogger::FILE_STREAM], args)\
+    if ((cnr_logger::getTraceLogger(logger)->logSyncFileAndScreen())) \
+      LOG4CXX_INFO(cnr_logger::getTraceLogger(logger)->loggers_[::cnr_logger::TraceLogger::SYNC_FILE_AND_CONSOLE], args)\
+    else if (cnr_logger::getTraceLogger(logger)->logFile()) \
+      LOG4CXX_INFO(cnr_logger::getTraceLogger(logger)->loggers_[::cnr_logger::TraceLogger::FILE_STREAM], args)\
   }\
 } while (false)
 
-#define CNR_DEBUG(trace_logger, args)\
+#define CNR_DEBUG(logger, args)\
 do\
 {\
-  if(cnr_logger::getTraceLogger(trace_logger) && cnr_logger::getTraceLogger(trace_logger)->logDebug())\
+  if(cnr_logger::getTraceLogger(logger) && cnr_logger::getTraceLogger(logger)->logDebug())\
   {\
-    if (cnr_logger::getTraceLogger(trace_logger)->logSyncFileAndScreen())\
-      LOG4CXX_DEBUG(cnr_logger::getTraceLogger(trace_logger)->loggers_[::cnr_logger::TraceLogger::SYNC_FILE_AND_CONSOLE], args)\
-    if (cnr_logger::getTraceLogger(trace_logger)->logFile())\
-      LOG4CXX_DEBUG(cnr_logger::getTraceLogger(trace_logger)->loggers_[::cnr_logger::TraceLogger::FILE_STREAM], args)\
-    if (cnr_logger::getTraceLogger(trace_logger)->logScreen())\
-      LOG4CXX_DEBUG(cnr_logger::getTraceLogger(trace_logger)->loggers_[::cnr_logger::TraceLogger::CONSOLE_STREAM], args)\
+    if (cnr_logger::getTraceLogger(logger)->logSyncFileAndScreen())\
+      LOG4CXX_DEBUG(cnr_logger::getTraceLogger(logger)->loggers_[::cnr_logger::TraceLogger::SYNC_FILE_AND_CONSOLE], args)\
+    if (cnr_logger::getTraceLogger(logger)->logFile())\
+      LOG4CXX_DEBUG(cnr_logger::getTraceLogger(logger)->loggers_[::cnr_logger::TraceLogger::FILE_STREAM], args)\
+    if (cnr_logger::getTraceLogger(logger)->logScreen())\
+      LOG4CXX_DEBUG(cnr_logger::getTraceLogger(logger)->loggers_[::cnr_logger::TraceLogger::CONSOLE_STREAM], args)\
   }\
 } while (false)
 
-#define CNR_TRACE(trace_logger, args)\
+#define CNR_TRACE(logger, args)\
 do\
 {\
-  if(cnr_logger::getTraceLogger(trace_logger) && cnr_logger::getTraceLogger(trace_logger)->logTrace())\
+  if(cnr_logger::getTraceLogger(logger) && cnr_logger::getTraceLogger(logger)->logTrace())\
   {\
-    if (cnr_logger::getTraceLogger(trace_logger)->logSyncFileAndScreen())\
-      LOG4CXX_TRACE(cnr_logger::getTraceLogger(trace_logger)->loggers_[::cnr_logger::TraceLogger::SYNC_FILE_AND_CONSOLE], args)\
-    if (cnr_logger::getTraceLogger(trace_logger)->logFile())\
-      LOG4CXX_TRACE(cnr_logger::getTraceLogger(trace_logger)->loggers_[::cnr_logger::TraceLogger::FILE_STREAM], args)\
-    if (cnr_logger::getTraceLogger(trace_logger)->logScreen())\
-      LOG4CXX_TRACE(cnr_logger::getTraceLogger(trace_logger)->loggers_[::cnr_logger::TraceLogger::CONSOLE_STREAM], args)\
+    if (cnr_logger::getTraceLogger(logger)->logSyncFileAndScreen())\
+      LOG4CXX_TRACE(cnr_logger::getTraceLogger(logger)->loggers_[::cnr_logger::TraceLogger::SYNC_FILE_AND_CONSOLE], args)\
+    if (cnr_logger::getTraceLogger(logger)->logFile())\
+      LOG4CXX_TRACE(cnr_logger::getTraceLogger(logger)->loggers_[::cnr_logger::TraceLogger::FILE_STREAM], args)\
+    if (cnr_logger::getTraceLogger(logger)->logScreen())\
+      LOG4CXX_TRACE(cnr_logger::getTraceLogger(logger)->loggers_[::cnr_logger::TraceLogger::CONSOLE_STREAM], args)\
   }\
 } while (false)
 // =================
 
 
 // ================= THROTTLE
-#define CNR_FATAL_THROTTLE(trace_logger, period, args)\
+#define CNR_FATAL_THROTTLE(logger, period, args)\
   do \
   { \
     static double __log_throttle_last_hit__ = 0.0; \
@@ -440,11 +440,11 @@ do\
     if (CONSOLE_THROTTLE_CHECK(__log_throttle_now__, __log_throttle_last_hit__, period))\
     { \
       __log_throttle_last_hit__ = __log_throttle_now__; \
-      CNR_FATAL(trace_logger, args); \
+      CNR_FATAL(logger, args); \
     } \
   } while (false)
 
-#define CNR_ERROR_THROTTLE(trace_logger, period, args)\
+#define CNR_ERROR_THROTTLE(logger, period, args)\
   do \
   { \
     static double __log_throttle_last_hit__ = 0.0; \
@@ -452,11 +452,11 @@ do\
     if (CONSOLE_THROTTLE_CHECK(__log_throttle_now__, __log_throttle_last_hit__, period))\
     { \
       __log_throttle_last_hit__ = __log_throttle_now__; \
-      CNR_ERROR(trace_logger, args); \
+      CNR_ERROR(logger, args); \
     } \
   } while (false)
 
-#define CNR_WARN_THROTTLE(trace_logger, period, args)\
+#define CNR_WARN_THROTTLE(logger, period, args)\
   do \
   { \
     static double __log_throttle_last_hit__ = 0.0; \
@@ -464,11 +464,11 @@ do\
     if (CONSOLE_THROTTLE_CHECK(__log_throttle_now__, __log_throttle_last_hit__, period))\
     { \
       __log_throttle_last_hit__ = __log_throttle_now__; \
-      CNR_WARN(trace_logger, args); \
+      CNR_WARN(logger, args); \
     } \
   } while (false)
 
-#define CNR_INFO_THROTTLE(trace_logger, period, args)\
+#define CNR_INFO_THROTTLE(logger, period, args)\
   do \
   { \
     static double __log_throttle_last_hit__ = 0.0; \
@@ -476,11 +476,11 @@ do\
     if (CONSOLE_THROTTLE_CHECK(__log_throttle_now__, __log_throttle_last_hit__, period))\
     { \
       __log_throttle_last_hit__ = __log_throttle_now__; \
-      CNR_INFO(trace_logger, args); \
+      CNR_INFO(logger, args); \
     } \
   } while (false)
 
-#define CNR_DEBUG_THROTTLE(trace_logger, period, args)\
+#define CNR_DEBUG_THROTTLE(logger, period, args)\
   do \
   { \
     static double __log_throttle_last_hit__ = 0.0; \
@@ -488,12 +488,12 @@ do\
     if (CONSOLE_THROTTLE_CHECK(__log_throttle_now__, __log_throttle_last_hit__, period))\
     { \
       __log_throttle_last_hit__ = __log_throttle_now__; \
-      CNR_DEBUG(trace_logger, args); \
+      CNR_DEBUG(logger, args); \
     } \
   } while (false)
 
 
-#define CNR_TRACE_THROTTLE(trace_logger, period, args)\
+#define CNR_TRACE_THROTTLE(logger, period, args)\
   do \
   { \
     static double __log_throttle_last_hit__ = 0.0; \
@@ -501,85 +501,85 @@ do\
     if (CONSOLE_THROTTLE_CHECK(__log_throttle_now__, __log_throttle_last_hit__, period))\
     { \
       __log_throttle_last_hit__ = __log_throttle_now__; \
-      CNR_TRACE(trace_logger, args); \
+      CNR_TRACE(logger, args); \
     } \
   } while (false)
 // =================
 
 
 // ================= COND
-#define CNR_FATAL_COND(trace_logger, cond, args)\
+#define CNR_FATAL_COND(logger, cond, args)\
   do\
   {\
-    if (cond) { CNR_FATAL(trace_logger, args); }\
+    if (cond) { CNR_FATAL(logger, args); }\
   } while (false)
 
-#define CNR_ERROR_COND(trace_logger, cond, args)\
+#define CNR_ERROR_COND(logger, cond, args)\
   do\
   {\
-    if (cond) { CNR_ERROR(trace_logger, args); }\
+    if (cond) { CNR_ERROR(logger, args); }\
   } while (false)
 
-#define CNR_WARN_COND(trace_logger, cond, args)\
+#define CNR_WARN_COND(logger, cond, args)\
   do\
   {\
-    if (cond) { CNR_WARN(trace_logger, args); }\
+    if (cond) { CNR_WARN(logger, args); }\
 } while (false)
 
-#define CNR_INFO_COND(trace_logger, cond, args)\
+#define CNR_INFO_COND(logger, cond, args)\
   do\
   {\
-    if (cond) { CNR_INFO(trace_logger, args); }\
+    if (cond) { CNR_INFO(logger, args); }\
   } while (false)
 
-#define CNR_DEBUG_COND(trace_logger, cond, args)\
+#define CNR_DEBUG_COND(logger, cond, args)\
   do\
   {\
-    if (cond) { CNR_DEBUG(trace_logger, args); }\
+    if (cond) { CNR_DEBUG(logger, args); }\
   } while (false)
 
-#define CNR_TRACE_COND(trace_logger, cond, args)\
+#define CNR_TRACE_COND(logger, cond, args)\
   do\
   {\
-    if (cond) { CNR_TRACE(trace_logger, args); }\
+    if (cond) { CNR_TRACE(logger, args); }\
   } while (false)
 
 
 // ================= COND THROTTLE
-#define CNR_FATAL_COND_THROTTLE(trace_logger, cond, period, args)\
+#define CNR_FATAL_COND_THROTTLE(logger, cond, period, args)\
 do\
 {\
-  if (cond) { CNR_FATAL_THROTTLE(trace_logger, period, args); }\
+  if (cond) { CNR_FATAL_THROTTLE(logger, period, args); }\
 } while (false)
 
-#define CNR_ERROR_COND_THROTTLE(trace_logger, cond, period, args)\
+#define CNR_ERROR_COND_THROTTLE(logger, cond, period, args)\
 do\
 {\
-  if (cond) { CNR_ERROR_THROTTLE(trace_logger, period, args); }\
+  if (cond) { CNR_ERROR_THROTTLE(logger, period, args); }\
 } while (false)
 
-#define CNR_WARN_COND_THROTTLE(trace_logger, cond, period, args)\
+#define CNR_WARN_COND_THROTTLE(logger, cond, period, args)\
 do\
 {\
-  if (cond) { CNR_WARN_THROTTLE(trace_logger, period, args); }\
+  if (cond) { CNR_WARN_THROTTLE(logger, period, args); }\
 } while (false)
 
-#define CNR_INFO_COND_THROTTLE(trace_logger, cond, period, args)\
+#define CNR_INFO_COND_THROTTLE(logger, cond, period, args)\
 do\
 {\
-  if (cond) { CNR_INFO_THROTTLE(trace_logger, period, args); }\
+  if (cond) { CNR_INFO_THROTTLE(logger, period, args); }\
 } while (false)
 
-#define CNR_DEBUG_COND_THROTTLE(trace_logger, cond, period, args)\
+#define CNR_DEBUG_COND_THROTTLE(logger, cond, period, args)\
 do\
 {\
-  if (cond) { CNR_DEBUG_THROTTLE(trace_logger, period, args); }\
+  if (cond) { CNR_DEBUG_THROTTLE(logger, period, args); }\
 } while (false)
 
-#define CNR_TRACE_COND_THROTTLE(trace_logger, cond, period, args)\
+#define CNR_TRACE_COND_THROTTLE(logger, cond, period, args)\
 do\
 {\
-  if (cond) { CNR_TRACE_THROTTLE(trace_logger, period, args); }\
+  if (cond) { CNR_TRACE_THROTTLE(logger, period, args); }\
 } while (false)
 
 
@@ -712,70 +712,52 @@ return(var);
 #define CNR_TRACE_START_THROTTLE_DEFAULT(logger, ...)\
 do\
 {\
-  if(cnr_logger::getTraceLogger(logger))\
-  {\
-    double period = cnr_logger::getTraceLogger(logger)->defaultThrottleTime();\
-    CNR_INFO_COND_THROTTLE(logger, std::string(__VA_ARGS__).length() > 0, period, std::string(__VA_ARGS__)); \
-    CNR_TRACE_COND_THROTTLE(logger, period>0, period, "[ START] " << __FUNCTION__);\
-  }\
+  double period = cnr_logger::getTraceLogger(logger) ? cnr_logger::getTraceLogger(logger)->defaultThrottleTime() : 1.0;\
+  CNR_INFO_COND_THROTTLE(logger, std::string(__VA_ARGS__).length() > 0, period, std::string(__VA_ARGS__)); \
+  CNR_TRACE_COND_THROTTLE(logger, period>0, period, "[ START] " << __FUNCTION__);\
 } while (false)
 
 #define CNR_RETURN_BOOL_THROTTLE_DEFAULT(logger, ret, ...)\
 do\
 {\
-  if(cnr_logger::getTraceLogger(logger))\
-  {\
-    double period = cnr_logger::getTraceLogger(logger)->defaultThrottleTime();\
-    if (ret) { CNR_INFO_COND_THROTTLE(logger, std::string(__VA_ARGS__).length() > 0, period, std::string(__VA_ARGS__)); }\
-    else     { CNR_ERROR_COND_THROTTLE(logger, std::string(__VA_ARGS__).length() > 0, period, std::string(__VA_ARGS__));}\
-    CNR_TRACE_COND_THROTTLE(logger, period>0, period, (ret ? "[  DONE] " : cnr_logger::RED() + "[FAILED] " + cnr_logger::RESET())\
-                                      << __FUNCTION__);\
-  }\
+  double period = cnr_logger::getTraceLogger(logger) ? cnr_logger::getTraceLogger(logger)->defaultThrottleTime() : 1.0;\
+  if (ret) { CNR_INFO_COND_THROTTLE(logger, std::string(__VA_ARGS__).length() > 0, period, std::string(__VA_ARGS__)); }\
+  else     { CNR_ERROR_COND_THROTTLE(logger, std::string(__VA_ARGS__).length() > 0, period, std::string(__VA_ARGS__));}\
+  CNR_TRACE_COND_THROTTLE(logger, period>0, period, (ret ? "[  DONE] " : cnr_logger::RED() + "[FAILED] " + cnr_logger::RESET())\
+                                    << __FUNCTION__);\
 } while (false);\
 return ret;
 
 #define CNR_RETURN_TRUE_THROTTLE_DEFAULT(logger,  ...)\
 do\
 {\
-  if(cnr_logger::getTraceLogger(logger))\
-  {\
-    double period = cnr_logger::getTraceLogger(logger)->defaultThrottleTime();\
-    CNR_RETURN_BOOL_THROTTLE(logger, true, period, __VA_ARGS__);\
-  }\
+  double period = cnr_logger::getTraceLogger(logger) ? cnr_logger::getTraceLogger(logger)->defaultThrottleTime() : 1.0;\
+  CNR_RETURN_BOOL_THROTTLE(logger, true, period, __VA_ARGS__);\
 } while(false);\
 
 
 #define CNR_RETURN_FALSE_THROTTLE_DEFAULT(logger, ...)\
 do\
 {\
-  if(cnr_logger::getTraceLogger(logger))\
-  {\
-    double period = cnr_logger::getTraceLogger(logger)->defaultThrottleTime();\
-    CNR_RETURN_BOOL_THROTTLE(logger, false, period, __VA_ARGS__);\
-  }\
+  double period = cnr_logger::getTraceLogger(logger) ? cnr_logger::getTraceLogger(logger)->defaultThrottleTime() : 1.0;\
+  CNR_RETURN_BOOL_THROTTLE(logger, false, period, __VA_ARGS__);\
 } while(false);\
 
 #define CNR_RETURN_OK_THROTTLE_DEFAULT(logger, var, ...)\
 do\
 {\
-  if(cnr_logger::getTraceLogger(logger))\
-  {\
-    double period = cnr_logger::getTraceLogger(logger)->defaultThrottleTime();\
-    CNR_INFO_COND_THROTTLE(logger, std::string(__VA_ARGS__).length() > 0, period, std::string(__VA_ARGS__));\
-    CNR_TRACE_COND_THROTTLE(logger, period>0, period, "[  DONE] " << __FUNCTION__);\
-  }\
+  double period = cnr_logger::getTraceLogger(logger) ? cnr_logger::getTraceLogger(logger)->defaultThrottleTime() : 1.0;\
+  CNR_INFO_COND_THROTTLE(logger, std::string(__VA_ARGS__).length() > 0, period, std::string(__VA_ARGS__));\
+  CNR_TRACE_COND_THROTTLE(logger, period>0, period, "[  DONE] " << __FUNCTION__);\
 } while (false);\
 return(var);
 
 #define CNR_RETURN_NOTOK_THROTTLE_DEFAULT(logger, var, ...)\
 do\
 {\
-  if(cnr_logger::getTraceLogger(logger))\
-  {\
-    double period = cnr_logger::getTraceLogger(logger)->defaultThrottleTime();\
-    CNR_ERROR_COND_THROTTLE(logger, std::string(__VA_ARGS__).length() > 0, period, std::string(__VA_ARGS__));\
-    CNR_TRACE_COND_THROTTLE(logger, period>0, period, cnr_logger::RED() + "[FAILED] " + cnr_logger::RESET() << __FUNCTION__);\
-  }\
+  double period = cnr_logger::getTraceLogger(logger) ? cnr_logger::getTraceLogger(logger)->defaultThrottleTime() : 1.0;\
+  CNR_ERROR_COND_THROTTLE(logger, std::string(__VA_ARGS__).length() > 0, period, std::string(__VA_ARGS__));\
+  CNR_TRACE_COND_THROTTLE(logger, period>0, period, cnr_logger::RED() + "[FAILED] " + cnr_logger::RESET() << __FUNCTION__);\
 } while (false);\
 return(var);
 
