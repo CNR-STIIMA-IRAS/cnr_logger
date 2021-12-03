@@ -25,7 +25,6 @@ option(ROS_DISABLED "ROS ENABLED" ON)
 
 if(ROS_DISABLED)
   MESSAGE("***** ROS Disabled *****")
-  
   set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
   
   #In Ubuntu 14.04 find_package for yaml-cpp fails, the patch below fix the problem  
@@ -35,11 +34,11 @@ if(ROS_DISABLED)
 
   find_package(Log4cxx)
 
-  #The fucntion add_compile_definitions is not available in CMAKE 2.8.3
+  #The fucntion add_compile_definitions 
   #add_compile_definitions(ROS_NOT_AVAILABLE)
   add_definitions(-DROS_NOT_AVAILABLE)
   
-  set(CNR_LOGGER_TARGET_LINK_LIBRARIES ${YAML_CPP_LIBRARIES} ${Log4cxx_LIBRARY})
+  set(CNR_LOGGER_TARGET_LINK_LIBRARIES yaml-cpp log4cxx) #This variables are empty ${YAML_CPP_LIBRARIES} ${Log4cxx_LIBRARIES})
   include_directories( include ${YAML_CPP_INCLUDE_DIRS} )
 
   set(CNR_LOGGER_INSTALL_INCLUDE_DIR "${CMAKE_INSTALL_PREFIX}/include")
@@ -68,7 +67,7 @@ if(CATKIN_ENABLE_TESTING AND ENABLE_COVERAGE_TESTING)
   APPEND_COVERAGE_COMPILER_FLAGS()
 endif()
 
-add_library(${PROJECT_NAME} src/${PROJECT_NAME}/cnr_logger.cpp )
+add_library(${PROJECT_NAME} SHARED src/${PROJECT_NAME}/cnr_logger.cpp ) #to avoid the linking of yaml-cpp and log4cxx in the user program
 target_link_libraries( ${PROJECT_NAME} ${CNR_LOGGER_TARGET_LINK_LIBRARIES})
 target_compile_options(${PROJECT_NAME}
   PUBLIC $<$<CONFIG:Release>:-Ofast -funroll-loops -ffast-math >)
@@ -109,11 +108,21 @@ endif()
 
 
 ## Mark cpp header files for installation
+if(ROS_DISABLED)
+ #To keep compatibility of the include policy of ROS 
+ install(DIRECTORY include/${PROJECT_NAME}/
+   DESTINATION ${CNR_LOGGER_INSTALL_INCLUDE_DIR}/${PROJECT_NAME}
+   FILES_MATCHING PATTERN "*.h"
+   PATTERN ".git" EXCLUDE
+ )
+else()
  install(DIRECTORY include/${PROJECT_NAME}/
    DESTINATION ${CNR_LOGGER_INSTALL_INCLUDE_DIR}
    FILES_MATCHING PATTERN "*.h"
    PATTERN ".git" EXCLUDE
  )
+endif()
+
 
 install(TARGETS ${PROJECT_NAME}
   ARCHIVE DESTINATION ${CNR_LOGGER_INSTALL_LIB_DIR}
