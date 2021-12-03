@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10.2)
+cmake_minimum_required(VERSION 2.8.3)
 
 project(cnr_logger)
 
@@ -11,20 +11,34 @@ if(NOT CMAKE_C_STANDARD)
 endif()
 
 # Default to C++14
-if(NOT CMAKE_CXX_STANDARD)
-  set(CMAKE_CXX_STANDARD 14)
+if(NOT CMAKE_CXX_STANDARD)  
+  #To compile with CMAKE 2.8.3 it is necessary to use C++11
+  #CMAKE_CXX_STANDARD is not available in CMAKE 2.8.3
+  #set(CMAKE_CXX_STANDARD 14) 
+  set(CMAKE_CXX_FLAGS "-std=c++11")
 endif()
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-option(ROS_DISABLED "ROS ENABLED" OFF)
+option(ROS_DISABLED "ROS ENABLED" ON)
 
 if(ROS_DISABLED)
+  MESSAGE("***** ROS Disabled *****")
+  
   set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
-  find_package(yaml-cpp REQUIRED)
+  
+  #In Ubuntu 14.04 find_package for yaml-cpp fails, the patch below fix the problem  
+  #find_package(yaml-cpp REQUIRED)
+  find_package(PkgConfig REQUIRED)
+  pkg_check_modules(yaml_cpp REQUIRED yaml-cpp)  
+
   find_package(Log4cxx)
-  add_compile_definitions(ROS_NOT_AVAILABLE)
+
+  #The fucntion add_compile_definitions is not available in CMAKE 2.8.3
+  #add_compile_definitions(ROS_NOT_AVAILABLE)
+  add_definitions(-DROS_NOT_AVAILABLE)
+  
   set(CNR_LOGGER_TARGET_LINK_LIBRARIES ${YAML_CPP_LIBRARIES} ${Log4cxx_LIBRARY})
   include_directories( include ${YAML_CPP_INCLUDE_DIRS} )
 

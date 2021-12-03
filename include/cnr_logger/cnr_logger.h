@@ -82,6 +82,7 @@ public:
   /**
    * @brief TraceLogger. The constructor does not initilize the class. The function init() must be called afterwards.
    */
+  //TraceLogger();
   explicit TraceLogger();
   /**
    * @brief TraceLogger: The constructor fully initilize the class.
