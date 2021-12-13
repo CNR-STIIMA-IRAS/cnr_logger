@@ -214,7 +214,6 @@ bool TraceLogger::check(const std::string& path)
   bool res = true;
 #if defined(ROS_NOT_AVAILABLE)
   YAML::Node config = YAML::LoadFile(path);
-
   res &= (config["appenders"] && config["appenders"].IsSequence());
   res &= (config["levels"]?config["levels"].IsSequence():true);
   res &= (config["pattern_layout"]?config["pattern_layout"].IsScalar():true);
