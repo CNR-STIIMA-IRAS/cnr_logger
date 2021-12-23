@@ -58,7 +58,17 @@
 #include <log4cxx/patternlayout.h>
 #include <cnr_logger/cnr_logger.h>
 
-#if defined(ROS_NOT_AVAILABLE)
+// user can force the use of ROS time by adding "-DFORCE_ROS_TIME_USE"
+
+#if defined(FORCE_ROS_TIME_USE)
+  #include <ros/time.h>
+  #include <ros/console.h>
+  #define CONSOLE_THROTTLE_CHECK(now, last, period)\
+    ROSCONSOLE_THROTTLE_CHECK(now, last, period)
+
+  #define TIME_NOW()\
+    ::ros::Time::now().toSec()
+#else
   #if defined(_MSC_VER)
   #define ROS_LIKELY(x)       (x)
   #define ROS_UNLIKELY(x)     (x)
@@ -72,15 +82,6 @@
 
   #define TIME_NOW()\
    time(0)
-
-#else
-  #include <ros/time.h>
-  #include <ros/console.h>
-#define CONSOLE_THROTTLE_CHECK(now, last, period)\
-  ROSCONSOLE_THROTTLE_CHECK(now, last, period)
-
-#define TIME_NOW()\
- ::ros::Time::now().toSec()
 #endif
 
 namespace log4cxx

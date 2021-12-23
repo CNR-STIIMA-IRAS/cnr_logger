@@ -31,7 +31,14 @@ else()
 endif()
 ```
 
-### Parameters ###
+### Usage ###
+
+#### MACROS #####
+
+By default, the time-tag used in the logging is the system time. 
+Define the compiler macro `FORCE_ROS_TIME_USE` in the project that links `cnr_logger` to enable the usage of ROS time. 
+
+#### Parameters ####
 
 The parameters can be stored in a `file.yaml` or in the `rosparam server` according to the package building modality.
 
@@ -66,7 +73,7 @@ The parameters can be stored in a `file.yaml` or in the `rosparam server` accord
                                                   # Default: true
 ```
 
-### Class initialization and usage ###
+#### Class initialization ####
 
 There are two constructors:
 
@@ -85,7 +92,7 @@ The path can be or the full namespace where the parameters are stored in the `ro
 
 If the initialization failed, the class superimpose default values unless the user explicitly indicates to not use the default values.
 
-#### Example of usage ####
+### Example of usage ###
 
 ```cpp
   #include <iostream>
@@ -146,7 +153,7 @@ If the initialization failed, the class superimpose default values unless the us
   }
 ```
 
-#### Utilities with the package ####
+### Utilities with the package ###
 
 The ANSI Colors are defined as an inline function
 

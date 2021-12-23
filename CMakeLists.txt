@@ -18,21 +18,27 @@ endif()
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-option(ROS_DISABLED "ROS ENABLED" OFF)
+option(NOT_USE_ROS "ROS SUPPORT" OFF)
 
-if(ROS_DISABLED)
+if(NOT_USE_ROS)
+  MESSAGE(STATUS "ROS SUPPORT DISABLED")
   set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+  
   find_package(yaml-cpp REQUIRED)
   find_package(Log4cxx)
+  
   add_compile_definitions(ROS_NOT_AVAILABLE)
+  
   set(CNR_LOGGER_TARGET_LINK_LIBRARIES ${YAML_CPP_LIBRARIES} ${Log4cxx_LIBRARY})
+  
   include_directories( include ${YAML_CPP_INCLUDE_DIRS} )
 
   set(CNR_LOGGER_INSTALL_INCLUDE_DIR "${CMAKE_INSTALL_PREFIX}/include")
   set(CNR_LOGGER_INSTALL_LIB_DIR "${CMAKE_INSTALL_PREFIX}/lib")
+
 else()
 
-  MESSAGE("***** ROS Enabled *****")
+  MESSAGE(STATUS "ROS SUPPORT ENABLED")
   find_package(catkin REQUIRED COMPONENTS roscpp roslint)
   set(CNR_LOGGER_TARGET_LINK_LIBRARIES ${catkin_LIBRARIES})
   include_directories( include ${catkin_INCLUDE_DIRS} )
