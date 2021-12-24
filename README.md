@@ -31,14 +31,12 @@ else()
 endif()
 ```
 
-### Usage ###
-
-#### MACROS #####
+#### User Compilation Defitions ####
 
 By default, the time-tag used in the logging is the system time. 
 Define the compiler macro `FORCE_ROS_TIME_USE` in the project that links `cnr_logger` to enable the usage of ROS time. 
 
-#### Parameters ####
+### Parameters ###
 
 The parameters can be stored in a `file.yaml` or in the `rosparam server` according to the package building modality.
 
@@ -73,7 +71,7 @@ The parameters can be stored in a `file.yaml` or in the `rosparam server` accord
                                                   # Default: true
 ```
 
-#### Class initialization ####
+### Class initialization ###
 
 There are two constructors:
 
