@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10.2)
+cmake_minimum_required(VERSION 2.8.3)
 
 project(cnr_logger)
 
@@ -10,27 +10,36 @@ if(NOT CMAKE_C_STANDARD)
   set(CMAKE_C_STANDARD 99)
 endif()
 
-# Default to C++14
-if(NOT CMAKE_CXX_STANDARD)
-  set(CMAKE_CXX_STANDARD 14)
-endif()
+IF("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" LESS 3.0)
+  set(CMAKE_CXX_FLAGS "-std=c++11")
+ELSE()
+  # Default to C++14
+  if(NOT CMAKE_CXX_STANDARD)
+    set(CMAKE_CXX_STANDARD 14)
+  endif()
 
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
+  set(CMAKE_CXX_STANDARD_REQUIRED ON)
+  set(CMAKE_CXX_EXTENSIONS OFF)
+endif()
 
 option(USE_ROS "ROS SUPPORT" ON)
 
 if(NOT USE_ROS)
   MESSAGE(STATUS "ROS SUPPORT DISABLED")
   set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
-  
-  find_package(yaml-cpp REQUIRED)
+
+  if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" LESS 3.0)
+    find_package(PkgConfig REQUIRED)
+    pkg_check_modules(yaml_cpp REQUIRED yaml-cpp)
+  else()
+    find_package(yaml-cpp REQUIRED)
+  end()
   find_package(Log4cxx)
-  
+
   add_compile_definitions(ROS_NOT_AVAILABLE)
-  
+
   set(CNR_LOGGER_TARGET_LINK_LIBRARIES ${YAML_CPP_LIBRARIES} ${Log4cxx_LIBRARY})
-  
+
   include_directories( include ${YAML_CPP_INCLUDE_DIRS} )
 
   set(CNR_LOGGER_INSTALL_INCLUDE_DIR "${CMAKE_INSTALL_PREFIX}/include")
@@ -99,7 +108,6 @@ if(CATKIN_ENABLE_TESTING)
 endif()
 
 
-
 ## Mark cpp header files for installation
  install(DIRECTORY include/${PROJECT_NAME}/
    DESTINATION ${CNR_LOGGER_INSTALL_INCLUDE_DIR}
@@ -112,4 +120,3 @@ install(TARGETS ${PROJECT_NAME}
   LIBRARY DESTINATION ${CNR_LOGGER_INSTALL_LIB_DIR}
   RUNTIME DESTINATION ${CNR_LOGGER_INSTALL_LIB_DIR}
 )
-
