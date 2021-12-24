@@ -25,15 +25,13 @@ endif()
 option(USE_ROS "ROS SUPPORT" ON)
 
 if(NOT USE_ROS)
+
   MESSAGE(STATUS "ROS SUPPORT DISABLED")
   set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
-  if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" LESS 3.0)
-    find_package(PkgConfig REQUIRED)
-    pkg_check_modules(yaml_cpp REQUIRED yaml-cpp)
-  else()
-    find_package(yaml-cpp REQUIRED)
-  end()
+  find_package(PkgConfig REQUIRED)
+  pkg_check_modules(yaml_cpp REQUIRED yaml-cpp)
+
   find_package(Log4cxx)
 
   add_compile_definitions(ROS_NOT_AVAILABLE)
@@ -59,7 +57,9 @@ else()
 
   set(CNR_LOGGER_INSTALL_INCLUDE_DIR ${CATKIN_PACKAGE_INCLUDE_DESTINATION})
   set(CNR_LOGGER_INSTALL_LIB_DIR ${CATKIN_PACKAGE_LIB_DESTINATION})
-endif()
+
+endif(NOT USE_ROS)
+
 
 find_package(Boost REQUIRED COMPONENTS date_time )
 
