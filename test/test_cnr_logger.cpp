@@ -35,8 +35,9 @@
 
 #include <iostream>
 #if !defined (ROS_NOT_AVAILABLE)
-#include <ros/ros.h>
+  #include <ros/ros.h>
 #endif
+
 #include <cnr_logger/cnr_logger.h>
 #include <gtest/gtest.h>
 

@@ -33,7 +33,7 @@ if(NOT USE_ROS)
   pkg_check_modules(yaml_cpp REQUIRED yaml-cpp)
 
   find_package(Log4cxx)
-
+  
   add_compile_definitions(ROS_NOT_AVAILABLE)
 
   set(CNR_LOGGER_TARGET_LINK_LIBRARIES ${YAML_CPP_LIBRARIES} ${Log4cxx_LIBRARY})
@@ -91,20 +91,35 @@ endif()
 #############
 ## Testing ##
 #############
+if(USE_ROS)
+  ## Add gtest based cpp test target and link libraries
+  if(CATKIN_ENABLE_TESTING)
+    find_package(rostest REQUIRED)
+    add_rostest_gtest(${PROJECT_NAME}_test test/test.launch test/test_cnr_logger.cpp)
+    target_link_libraries(${PROJECT_NAME}_test ${PROJECT_NAME} ${CNR_LOGGER_TARGET_LINK_LIBRARIES} ${rostest_LIBRARIES} )
 
-## Add gtest based cpp test target and link libraries
-if(CATKIN_ENABLE_TESTING)
-  find_package(rostest REQUIRED)
-  add_rostest_gtest(${PROJECT_NAME}_test test/test.launch test/test_cnr_logger.cpp)
-  target_link_libraries(${PROJECT_NAME}_test ${PROJECT_NAME} ${CNR_LOGGER_TARGET_LINK_LIBRARIES} ${rostest_LIBRARIES} )
-
-  if(ENABLE_COVERAGE_TESTING)
-    set(COVERAGE_EXCLUDES "*/${PROJECT_NAME}/test*")
-    add_code_coverage(
-      NAME ${PROJECT_NAME}_coverage_report
-      DEPENDENCIES ${PROJECT_NAME}_test
-    )
+    if(ENABLE_COVERAGE_TESTING)
+      set(COVERAGE_EXCLUDES "*/${PROJECT_NAME}/test*")
+      add_code_coverage(
+        NAME ${PROJECT_NAME}_coverage_report
+        DEPENDENCIES ${PROJECT_NAME}_test
+      )
+    endif()
   endif()
+
+#################
+else()
+#################
+
+  enable_testing()
+  find_package(GTest REQUIRED)
+  include_directories(${GTEST_INCLUDE_DIRS})
+
+  add_executable(${PROJECT_NAME}.test test/test_cnr_logger.cpp)
+  target_link_libraries(${PROJECT_NAME}.test ${PROJECT_NAME} gtest pthread)
+  target_compile_definitions(${PROJECT_NAME}.test PRIVATE TEST_DIR="${CMAKE_CURRENT_LIST_DIR}/test")
+
+  install(TARGETS ${PROJECT_NAME}.test DESTINATION "${tool_dest}")
 endif()
 
 

@@ -10,17 +10,17 @@ jobs:
       fail-fast: false
       matrix:
         config:
-        - {
-            name: "Windows Latest MSVC", artifact: "Windows-MSVC.tar.xz",
-            os: windows-latest,
-            build_type: "Release", cc: "cl", cxx: "cl",
-            environment_script: "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Auxiliary/Build/vcvars64.bat"
-          }
-        - {
-            name: "Windows Latest MinGW", artifact: "Windows-MinGW.tar.xz",
-            os: windows-latest,
-            build_type: "Release", cc: "gcc", cxx: "g++"
-          }
+        # - {
+        #     name: "Windows Latest MSVC", artifact: "Windows-MSVC.tar.xz",
+        #     os: windows-latest,
+        #     build_type: "Release", cc: "cl", cxx: "cl",
+        #     environment_script: "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Auxiliary/Build/vcvars64.bat"
+        #   }
+        # - {
+        #     name: "Windows Latest MinGW", artifact: "Windows-MinGW.tar.xz",
+        #     os: windows-latest,
+        #     build_type: "Release", cc: "gcc", cxx: "g++"
+        #   }
         - {
             name: "Ubuntu Latest GCC", artifact: "Linux.tar.xz",
             os: ubuntu-latest,
@@ -74,6 +74,9 @@ jobs:
             COMMAND chmod +x ${cmake_dir}/cmake
           )
         endif()
+
+    - name: Install gtest manually
+      run: sudo apt-get install libgtest-dev && cd /usr/src/gtest && sudo cmake CMakeLists.txt && sudo make && sudo cp *.a /usr/lib && sudo ln -s /usr/lib/libgtest.a /usr/local/lib/libgtest.a && sudo ln -s /usr/lib/libgtest_main.a /usr/local/lib/libgtest_main.a
 
     - name: Configure
       shell: cmake -P {0}
