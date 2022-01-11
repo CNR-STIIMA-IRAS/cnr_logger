@@ -69,6 +69,7 @@
   #define TIME_NOW()\
     ::ros::Time::now().toSec()
 #else
+  #include <ctime>
   #if defined(_MSC_VER)
   #define ROS_LIKELY(x)       (x)
   #define ROS_UNLIKELY(x)     (x)
@@ -81,7 +82,7 @@
     (ROS_UNLIKELY(last + period <= now) || ROS_UNLIKELY(now < last))
 
   #define TIME_NOW()\
-   time(0)
+   std::time(0)
 #endif
 
 namespace log4cxx
