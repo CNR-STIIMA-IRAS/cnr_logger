@@ -30,7 +30,7 @@ if(NOT USE_ROS)
   set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
   find_package(PkgConfig REQUIRED)
-  pkg_check_modules(yaml_cpp REQUIRED yaml-cpp)
+  pkg_check_modules(YAML_CPP REQUIRED yaml-cpp)
 
   find_package(Log4cxx)
   
