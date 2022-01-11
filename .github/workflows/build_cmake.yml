@@ -24,9 +24,13 @@ jobs:
         - {
             name: "Ubuntu Latest GCC", artifact: "Linux.tar.xz",
             os: ubuntu-latest,
-            build_type: "Release", cc: "gcc", cxx: "g++"
+            build_type: "Release", cc: "gcc", cxx: "g++", cmake_version_used: "3.16.2"
           }
-
+        - {
+            name: "Ubuntu Old GCC", artifact: "Linux.tar.xz",
+            os: ubuntu-14.04,
+            build_type: "Release", cc: "gcc", cxx: "g++", cmake_version_used: "2.8.10.2"
+          }
     steps:
     - uses: actions/checkout@v1
 
@@ -38,7 +42,7 @@ jobs:
       shell: cmake -P {0}
       run: |
         set(ninja_version "1.9.0")
-        set(cmake_version "3.16.2")
+        set(cmake_version "${{ runner.cmake_version_used }}")
         
         message(STATUS "Using host CMake version: ${CMAKE_VERSION}")
 
