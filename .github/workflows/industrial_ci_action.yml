@@ -16,6 +16,7 @@ on: [push, pull_request] # on all pushes and PRs
 #     branches: [ master ]
 
 jobs:
+  ### TEST WITH ROS SUPPORT
   industrial_ci:
     strategy:
       matrix:
@@ -45,3 +46,4 @@ jobs:
           name: codecov-umbrella # optional
           fail_ci_if_error: false # optional (default = false)
           verbose: true # optional (default = false)
+ 
