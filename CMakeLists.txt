@@ -116,7 +116,7 @@ else()
   include_directories(${GTEST_INCLUDE_DIRS})
 
   add_executable(${PROJECT_NAME}_test test/test_cnr_logger.cpp)
-  MESSAGE(STATUS "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^${CNR_LOGGER_TARGET_LINK_LIBRARIES")
+  MESSAGE(STATUS "CNR_LOGGER_TARGET_LINK_LIBRARIES=${CNR_LOGGER_TARGET_LINK_LIBRARIES")
   target_link_libraries(${PROJECT_NAME}_test ${PROJECT_NAME} ${CNR_LOGGER_TARGET_LINK_LIBRARIES}  gtest pthread)
   target_compile_definitions(${PROJECT_NAME}_test PRIVATE TEST_DIR="${CMAKE_CURRENT_LIST_DIR}/test")
 endif()
