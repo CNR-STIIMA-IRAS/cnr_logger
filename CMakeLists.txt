@@ -115,22 +115,23 @@ else()
   find_package(GTest REQUIRED)
   include_directories(${GTEST_INCLUDE_DIRS})
 
-  add_executable(${PROJECT_NAME}.test test/test_cnr_logger.cpp)
-  target_link_libraries(${PROJECT_NAME}.test ${PROJECT_NAME} gtest pthread ${CNR_LOGGER_TARGET_LINK_LIBRARIES} )
-  target_compile_definitions(${PROJECT_NAME}.test PRIVATE TEST_DIR="${CMAKE_CURRENT_LIST_DIR}/test")
-
-  install(TARGETS ${PROJECT_NAME}.test DESTINATION "${tool_dest}")
+  add_executable(${PROJECT_NAME}_test test/test_cnr_logger.cpp)
+  MESSAGE(STATUS "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^${CNR_LOGGER_TARGET_LINK_LIBRARIES")
+  target_link_libraries(${PROJECT_NAME}_test ${PROJECT_NAME} ${CNR_LOGGER_TARGET_LINK_LIBRARIES}  gtest pthread)
+  target_compile_definitions(${PROJECT_NAME}_test PRIVATE TEST_DIR="${CMAKE_CURRENT_LIST_DIR}/test")
 endif()
 
 
-## Mark cpp header files for installation
+#############
+## Install ##
+#############
  install(DIRECTORY include/${PROJECT_NAME}/
    DESTINATION ${CNR_LOGGER_INSTALL_INCLUDE_DIR}
    FILES_MATCHING PATTERN "*.h"
    PATTERN ".git" EXCLUDE
  )
 
-install(TARGETS ${PROJECT_NAME}
+install(TARGETS ${PROJECT_NAME} 
   ARCHIVE DESTINATION ${CNR_LOGGER_INSTALL_LIB_DIR}
   LIBRARY DESTINATION ${CNR_LOGGER_INSTALL_LIB_DIR}
   RUNTIME DESTINATION ${CNR_LOGGER_INSTALL_LIB_DIR}
