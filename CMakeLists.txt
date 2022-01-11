@@ -120,7 +120,7 @@ else()
   target_compile_definitions(${PROJECT_NAME}_test PRIVATE TEST_DIR="${CMAKE_CURRENT_LIST_DIR}/test")
 
   include(GoogleTest)
-  gtest_discover_tests(${TEST_NAME})
+  gtest_discover_tests(${PROJECT_NAME}_test)
 endif()
 
 
