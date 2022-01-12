@@ -106,6 +106,7 @@ std::string to_string(const ros::Time& now)
   char* date_time = ctime(&now);
   ret = std::string(date_time);
 #else
+
 #if ROS_VERSION_MINIMUM(1, 14, 1)
   auto current_time = now.toBoost();
   std::stringstream ss;
@@ -116,6 +117,7 @@ std::string to_string(const ros::Time& now)
 #else
   #error "The minimum version of ros is 1.14.1"
 #endif
+
 #endif
   return ret;
 }
