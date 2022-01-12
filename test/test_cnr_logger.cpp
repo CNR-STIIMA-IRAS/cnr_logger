@@ -142,7 +142,7 @@ TEST(TestSuite, wrongConstructor)
 {
   EXPECT_NO_FATAL_FAILURE(logger.reset(new cnr_logger::TraceLogger( )));
   EXPECT_FALSE(logger->init("log1", "/this_namespace_does_not_exist", false, false));
-  //EXPECT_TRUE(logger->init("log1", "/this_namespace_does_not_exist", false, true));   // default vaules depiste none parameters
+  EXPECT_TRUE(logger->init("log1", "/this_namespace_does_not_exist", false, true));   // default vaules depiste none parameters
   // exits
   EXPECT_NO_FATAL_FAILURE(logger.reset());
 }
@@ -163,21 +163,25 @@ TEST(TestSuite, flushFileAndScreen)
   for (size_t i = 0; i < 5; i++)
   {
     CNR_INFO(*logger, "Ciao-log-1-info");
+    CNR_WARN(*logger, "Ciao-log-1-warn");
     CNR_DEBUG(*logger, "Ciao-log-1-debug");
     CNR_FATAL(*logger, "Ciao-log-1-fatal");
     CNR_TRACE(*logger, "Ciao-log-1-trace");
 
     CNR_INFO_THROTTLE(*logger,  1.0, "Ciao-log-1-info");
+    CNR_WARN_THROTTLE(*logger, 1.0, "Ciao-log-1-warn");
     CNR_DEBUG_THROTTLE(*logger, 1.0, "Ciao-log-1-debug");
     CNR_FATAL_THROTTLE(*logger, 1.0, "Ciao-log-1-fatal");
     CNR_TRACE_THROTTLE(*logger, 1.0, "Ciao-log-1-trace");
 
     CNR_INFO_COND(*logger, true, "Ciao-log-1-info");
+    CNR_WARN_COND(*logger, true, "Ciao-log-1-warn");
     CNR_DEBUG_COND(*logger, false, "Ciao-log-1debug");
     CNR_FATAL_COND(*logger, true, "Ciao-log-1fatal");
     CNR_TRACE_COND(*logger, false, "Ciao-log-1trace");
 
     CNR_INFO_COND_THROTTLE(*logger, true, 1.0, "THROTTLE Ciao-log-1-info");
+    CNR_WARN_COND_THROTTLE(*logger, true, 1.0, "THROTTLE Ciao-log-1-warn");
     CNR_DEBUG_COND_THROTTLE(*logger, false, 1.0, "THROTTLE Ciao-log-1-debug");
     CNR_FATAL_COND_THROTTLE(*logger, true, 1.0, "THROTTLE Ciao-log-1-fatal");
     CNR_TRACE_COND_THROTTLE(*logger, false, 1.0, "THROTTLE Ciao-log-1-trace");
@@ -201,23 +205,27 @@ TEST(TestSuite, flushOnlyFile)
   for (size_t i = 0; i < 5; i++)
   {
     CNR_INFO(*logger, "Ciao-log-1-info");
+    CNR_WARN(*logger, "Ciao-log-1-warn");
     CNR_DEBUG(*logger, "Ciao-log-1-debug");
     CNR_FATAL(*logger, "Ciao-log-1-fatal");
     CNR_TRACE(*logger, "Ciao-log-1-trace");
 
     CNR_INFO_THROTTLE(*logger,  1.0, "Ciao-log-1-info");
+    CNR_WARN_THROTTLE(*logger, 1.0, "Ciao-log-1-warn");
     CNR_DEBUG_THROTTLE(*logger, 1.0, "Ciao-log-1-debug");
     CNR_FATAL_THROTTLE(*logger, 1.0, "Ciao-log-1-fatal");
     CNR_TRACE_THROTTLE(*logger, 1.0, "Ciao-log-1-trace");
 
     CNR_INFO_COND(*logger, true, "Ciao-log-1-info");
+    CNR_WARN_COND(*logger, true, "Ciao-log-1-warn");
     CNR_DEBUG_COND(*logger, false, "Ciao-log-1debug");
     CNR_FATAL_COND(*logger, true, "Ciao-log-1fatal");
     CNR_TRACE_COND(*logger, false, "Ciao-log-1trace");
 
-    CNR_INFO_COND_THROTTLE( *logger, true , 1.0, "THROTTLE Ciao-log-1-info");
+    CNR_INFO_COND_THROTTLE(*logger, true, 1.0, "THROTTLE Ciao-log-1-info");
+    CNR_WARN_COND_THROTTLE(*logger, true, 1.0, "THROTTLE Ciao-log-1-warn");
     CNR_DEBUG_COND_THROTTLE(*logger, false, 1.0, "THROTTLE Ciao-log-1-debug");
-    CNR_FATAL_COND_THROTTLE(*logger, true , 1.0, "THROTTLE Ciao-log-1-fatal");
+    CNR_FATAL_COND_THROTTLE(*logger, true, 1.0, "THROTTLE Ciao-log-1-fatal");
     CNR_TRACE_COND_THROTTLE(*logger, false, 1.0, "THROTTLE Ciao-log-1-trace");
 
 #if defined(ROS_NOT_AVAILABLE)
@@ -240,23 +248,27 @@ TEST(TestSuite, flushOnlsyScreen)
   for (size_t i = 0; i < 5; i++)
   {
     CNR_INFO(*logger, "Ciao-log-1-info");
+    CNR_WARN(*logger, "Ciao-log-1-warn");
     CNR_DEBUG(*logger, "Ciao-log-1-debug");
     CNR_FATAL(*logger, "Ciao-log-1-fatal");
     CNR_TRACE(*logger, "Ciao-log-1-trace");
 
     CNR_INFO_THROTTLE(*logger,  1.0, "Ciao-log-1-info");
+    CNR_WARN_THROTTLE(*logger, 1.0, "Ciao-log-1-warn");
     CNR_DEBUG_THROTTLE(*logger, 1.0, "Ciao-log-1-debug");
     CNR_FATAL_THROTTLE(*logger, 1.0, "Ciao-log-1-fatal");
     CNR_TRACE_THROTTLE(*logger, 1.0, "Ciao-log-1-trace");
 
     CNR_INFO_COND(*logger, true, "Ciao-log-1-info");
+    CNR_WARN_COND(*logger, true, "Ciao-log-1-warn");
     CNR_DEBUG_COND(*logger, false, "Ciao-log-1debug");
     CNR_FATAL_COND(*logger, true, "Ciao-log-1fatal");
     CNR_TRACE_COND(*logger, false, "Ciao-log-1trace");
 
-    CNR_INFO_COND_THROTTLE(*logger , true , 1.0, "THROTTLE Ciao-log-1-info");
+    CNR_INFO_COND_THROTTLE(*logger, true, 1.0, "THROTTLE Ciao-log-1-info");
+    CNR_WARN_COND_THROTTLE(*logger, true, 1.0, "THROTTLE Ciao-log-1-warn");
     CNR_DEBUG_COND_THROTTLE(*logger, false, 1.0, "THROTTLE Ciao-log-1-debug");
-    CNR_FATAL_COND_THROTTLE(*logger, true , 1.0, "THROTTLE Ciao-log-1-fatal");
+    CNR_FATAL_COND_THROTTLE(*logger, true, 1.0, "THROTTLE Ciao-log-1-fatal");
     CNR_TRACE_COND_THROTTLE(*logger, false, 1.0, "THROTTLE Ciao-log-1-trace");
 
 #if defined(ROS_NOT_AVAILABLE)

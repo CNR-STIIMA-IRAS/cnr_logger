@@ -124,21 +124,21 @@ std::string to_string(const ros::Time& now)
 template<typename T>
 #if defined(ROS_NOT_AVAILABLE)
 bool extract(T& val,
-              const YAML::Node& path,
+              const YAML::Node* path,
                 const std::string& leaf,
                     const T& default_val)
 #else
 bool extract(T& val,
-              const std::string& path,
+              const std::string* path,
                 const std::string& leaf,
                   const T& default_val)
 #endif
 {
   bool ret = false;
 #if defined(ROS_NOT_AVAILABLE)
-  ret = path[leaf];
+  ret = path != nullptr ? (*path)[leaf] : false;
 #else
-  ret = ros::param::get(path + "/" + leaf, val);
+  ret = path != nullptr ? ros::param::get(*path + "/" + leaf, val) : false;
 #endif
   if(!ret)
   {
@@ -147,7 +147,7 @@ bool extract(T& val,
 #if defined(ROS_NOT_AVAILABLE)
   else
   {
-    val = path[leaf].as<T>();
+    val = (*path)[leaf].as<T>();
   }
 #endif
   return ret;
@@ -155,21 +155,21 @@ bool extract(T& val,
 
 #if defined(ROS_NOT_AVAILABLE)
 bool extractVector(std::vector<std::string>& val,
-              const YAML::Node& path,
+              const YAML::Node* path,
                 const std::string& leaf,
                     const std::vector<std::string>& default_val)
 #else
 bool extractVector(std::vector<std::string>& val,
-                      const std::string& path,
+                      const std::string* path,
                         const std::string& leaf,
                           const std::vector<std::string>& default_val)
 #endif
 {
   bool ret = false;
 #if defined(ROS_NOT_AVAILABLE)
-  ret = path[leaf];
+  ret = (path != nullptr) ? (*path)[leaf] : false;
 #else
-  ret = ros::param::get(path + "/" + leaf, val);
+  ret = (path != nullptr) ? ros::param::get(*path + "/" + leaf, val) : false;
 #endif
   if(!ret && default_val.size())
   {
@@ -177,9 +177,9 @@ bool extractVector(std::vector<std::string>& val,
     std::copy(default_val.begin(), default_val.end(), val.begin());
   }
 #if defined(ROS_NOT_AVAILABLE)
-  else
+  else if(ret)
   {
-    for(YAML::const_iterator it=path[leaf].begin();it!=path[leaf].end();++it)
+    for(YAML::const_iterator it=(*path)[leaf].begin();it!=(*path)[leaf].end();++it)
     {
       val.push_back(it->as<std::string>());
     }
@@ -197,36 +197,28 @@ TraceLogger::TraceLogger(const std::string& logger_id, const std::string& path,
                          const bool star_header, const bool default_values)
   : TraceLogger()
 {
+  std::string err = "[" + logger_id + "] Error in creating the TraceLogger.\n"
+      +  std::string("INPUT logger_id      : ") + logger_id + "\n"
+      +  std::string("INPUT path           : ") + path + "\n"
+      +  std::string("INPUT star_header    : ") + std::to_string(star_header) + "\n"
+      +  std::string("INPUT default_values : ") + std::to_string(default_values) + "\n";
+
   try
   {
-    if(!init(logger_id, path, star_header, default_values))
+    if(init(logger_id, path, star_header, default_values))
     {
-      std::cerr << "[" << logger_id << "] Error in creating the TraceLogger. " << std::endl;
-      std::cerr << "[" << logger_id << "] INPUT logger_id      : "<< logger_id << std::endl;
-      std::cerr << "[" << logger_id << "] INPUT path           : "<< path << std::endl;
-      std::cerr << "[" << logger_id << "] INPUT star_header    : "<< star_header << std::endl;
-      std::cerr << "[" << logger_id << "] INPUT default_values : "<< default_values << std::endl;      
+      return;
     }
   }
   catch (std::exception& e)
   {
-    std::cerr << logger_id << ": Error in creating the TraceLogger" << std::endl;
-    std::cerr << "[" << logger_id << "] INPUT logger_id      : "<< logger_id << std::endl;
-    std::cerr << "[" << logger_id << "] INPUT path           : "<< path << std::endl;
-    std::cerr << "[" << logger_id << "] INPUT star_header    : "<< star_header << std::endl;
-    std::cerr << "[" << logger_id << "] INPUT default_values : "<< default_values << std::endl;
     std::cerr << "[" << logger_id << "] Exception: " << e.what() << std::endl;
   }
   catch (...)
   {
-    std::cerr << logger_id << ": Error in creating the TraceLogger." << std::endl;
-    std::cerr << "[" << logger_id << "] INPUT logger_id      : "<< logger_id << std::endl;
-    std::cerr << "[" << logger_id << "] INPUT path           : "<< path << std::endl;
-    std::cerr << "[" << logger_id << "] INPUT star_header    : "<< star_header << std::endl;
-    std::cerr << "[" << logger_id << "] INPUT default_values : "<< default_values << std::endl;
     std::cerr << "[" << logger_id << "] Unhandled Exception" << std::endl;
-
   }
+  std::cerr << err << std::endl;
 }
 
 
@@ -275,6 +267,9 @@ bool TraceLogger::init(const std::string& logger_id, const std::string& path,
 
   if((!default_values) && (!check(path)))
   {
+    std::cerr<< "[" << logger_id_ << "] Error in configuration:"<<std::endl;
+    std::cerr<< "[" << logger_id_ << "] -> default_values: " << default_values<<std::endl;
+    std::cerr<< "[" << logger_id_ << "] -> check(path)   : " << check(path)<<std::endl;
     return false;
   }
 
@@ -284,19 +279,25 @@ bool TraceLogger::init(const std::string& logger_id, const std::string& path,
   // =======================================================================================
   std::vector<std::string> appenders, levels;
 #if defined(ROS_NOT_AVAILABLE)
-  YAML::Node _path = YAML::LoadFile(path);
-  auto now = std::time(0);
+  YAML::Node* _path = nullptr;
+  if(exists_test(path))
+  {
+     _path = new YAML::Node();
+    *_path = YAML::LoadFile(path);
+  }  
 #else
-  std::string _path = path;
-    auto now = ros::Time::now();
+  std::string* _path = &path;
 #endif
 
+  auto now = TIME_NOW();
+
   std::vector<std::string> empty;
+
   if(!extractVector(appenders, _path, "appenders", empty))
   {
     std::cerr << logger_id_ << ": Paremeter missing: path='"<<path<<"', key='"<<"appenders'"<<std::endl;
   }
-
+  
   if(!extractVector(levels, _path, "levels", empty))
   {
     std::cerr << logger_id_ << ": Paremeter missing: path='"<<path<<"', key='"<<"levels'"<<std::endl;
@@ -305,7 +306,7 @@ bool TraceLogger::init(const std::string& logger_id, const std::string& path,
   if(appenders.size() != levels.size())
   {
     std::cerr << logger_id_
-                << ": Size of appenders and levels mismatch! Default INFO level for all the appenders" << std::endl;
+                << ": Size of appenders and levels mismatch! Default DEBUG level for all the appenders" << std::endl;
     levels.clear();
     levels.resize(appenders.size(), "DEBUG");
   }
