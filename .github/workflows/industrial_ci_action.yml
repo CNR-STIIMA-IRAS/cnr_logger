@@ -21,7 +21,7 @@ jobs:
     strategy:
       matrix:
         env:
-          - {ROS_DISTRO: melodic, ROS_REPO: testing, CMAKE_ARGS: '-DUSE_ROS=ON -DENABLE_TESTING=ON -DENABLE_COVERAGE_TESTING=ON' }
+          - {ROS_DISTRO: melodic, ROS_REPO: testing, CMAKE_ARGS: '-DBUILD_TYPE=Debug -DUSE_ROS=ON -DENABLE_TESTING=ON -DENABLE_COVERAGE_TESTING=ON' }
           - {ROS_DISTRO: melodic, ROS_REPO: main}
     env:
       CCACHE_DIR: /github/home/.ccache # Directory for ccache (and how we enable ccache in industrial_ci)
