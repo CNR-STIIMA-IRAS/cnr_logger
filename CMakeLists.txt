@@ -97,6 +97,11 @@ if(USE_ROS)
     find_package(rostest REQUIRED)
     add_rostest_gtest(${PROJECT_NAME}_test test/test.launch test/test_cnr_logger.cpp)
     target_link_libraries(${PROJECT_NAME}_test ${PROJECT_NAME} ${CNR_LOGGER_TARGET_LINK_LIBRARIES} ${rostest_LIBRARIES} )
+    target_compile_definitions(${PROJECT_NAME}_test PUBLIC FORCE_ROS_TIME_USE=1)
+
+    add_rostest_gtest(${PROJECT_NAME}_test_std_time test/test_std_time.launch test/test_cnr_logger.cpp)
+    target_link_libraries(${PROJECT_NAME}_test_std_time ${PROJECT_NAME} ${CNR_LOGGER_TARGET_LINK_LIBRARIES} ${rostest_LIBRARIES} )
+    target_compile_definitions(${PROJECT_NAME}_test_std_time PUBLIC FORCE_ROS_TIME_USE=0)
 
     if(ENABLE_COVERAGE_TESTING)
       set(COVERAGE_EXCLUDES "*/${PROJECT_NAME}/test*")
@@ -110,7 +115,6 @@ if(USE_ROS)
 #################
 else()
 #################
-
   enable_testing()
   find_package(GTest REQUIRED)
   include_directories(${GTEST_INCLUDE_DIRS})
@@ -118,9 +122,8 @@ else()
   add_executable(${PROJECT_NAME}_test test/test_cnr_logger.cpp)
   target_link_libraries(${PROJECT_NAME}_test ${PROJECT_NAME} ${CNR_LOGGER_TARGET_LINK_LIBRARIES}  gtest pthread)
   target_compile_definitions(${PROJECT_NAME}_test PRIVATE TEST_DIR="${CMAKE_CURRENT_LIST_DIR}/test")
-
-  include(GoogleTest)
-  gtest_add_tests(${PROJECT_NAME}_test)
+  
+  gtest_add_tests(${PROJECT_NAME}_test "${CMAKE_SOURCE_DIR}/test/config/" AUTO)
 endif()
 
 

@@ -62,6 +62,12 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
+bool exists_test (const std::string& name) 
+{
+  struct stat buffer;   
+  return (stat (name.c_str(), &buffer) == 0); 
+}
+
 std::string mkLogDir()
 {
   struct passwd *pw = getpwuid(getuid());
@@ -195,16 +201,31 @@ TraceLogger::TraceLogger(const std::string& logger_id, const std::string& path,
   {
     if(!init(logger_id, path, star_header, default_values))
     {
-      std::cerr << logger_id << ": Error in creating the TraceLogger. " << std::endl;
+      std::cerr << "[" << logger_id << "] Error in creating the TraceLogger. " << std::endl;
+      std::cerr << "[" << logger_id << "] INPUT logger_id      : "<< logger_id << std::endl;
+      std::cerr << "[" << logger_id << "] INPUT path           : "<< path << std::endl;
+      std::cerr << "[" << logger_id << "] INPUT star_header    : "<< star_header << std::endl;
+      std::cerr << "[" << logger_id << "] INPUT default_values : "<< default_values << std::endl;      
     }
   }
   catch (std::exception& e)
   {
-    std::cerr << logger_id << ": Error in creating the TraceLogger. Exception: " << e.what() << std::endl;
+    std::cerr << logger_id << ": Error in creating the TraceLogger" << std::endl;
+    std::cerr << "[" << logger_id << "] INPUT logger_id      : "<< logger_id << std::endl;
+    std::cerr << "[" << logger_id << "] INPUT path           : "<< path << std::endl;
+    std::cerr << "[" << logger_id << "] INPUT star_header    : "<< star_header << std::endl;
+    std::cerr << "[" << logger_id << "] INPUT default_values : "<< default_values << std::endl;
+    std::cerr << "[" << logger_id << "] Exception: " << e.what() << std::endl;
   }
   catch (...)
   {
-    std::cerr << logger_id << ": Error in creating the TraceLogger. Unhandled Exception" << std::endl;
+    std::cerr << logger_id << ": Error in creating the TraceLogger." << std::endl;
+    std::cerr << "[" << logger_id << "] INPUT logger_id      : "<< logger_id << std::endl;
+    std::cerr << "[" << logger_id << "] INPUT path           : "<< path << std::endl;
+    std::cerr << "[" << logger_id << "] INPUT star_header    : "<< star_header << std::endl;
+    std::cerr << "[" << logger_id << "] INPUT default_values : "<< default_values << std::endl;
+    std::cerr << "[" << logger_id << "] Unhandled Exception" << std::endl;
+
   }
 }
 
@@ -213,14 +234,21 @@ bool TraceLogger::check(const std::string& path)
 {
   bool res = true;
 #if defined(ROS_NOT_AVAILABLE)
-  YAML::Node config = YAML::LoadFile(path);
+  if(!exists_test(path))
+  {
+    res = false;
+  }
+  else
+  {
+    YAML::Node config = YAML::LoadFile(path);
 
-  res &= (config["appenders"] && config["appenders"].IsSequence());
-  res &= (config["levels"]?config["levels"].IsSequence():true);
-  res &= (config["pattern_layout"]?config["pattern_layout"].IsScalar():true);
-  res &= (config["file_name"]?config["file_name"].IsScalar():true);
-  res &= (config["append_date_to_file_name"]?config["append_date_to_file_name"].IsScalar():true);
-  res &= (config["append_to_file"]?config["append_to_file"].IsScalar():true);
+    res &= (config["appenders"] && config["appenders"].IsSequence());
+    res &= (config["levels"]?config["levels"].IsSequence():true);
+    res &= (config["pattern_layout"]?config["pattern_layout"].IsScalar():true);
+    res &= (config["file_name"]?config["file_name"].IsScalar():true);
+    res &= (config["append_date_to_file_name"]?config["append_date_to_file_name"].IsScalar():true);
+    res &= (config["append_to_file"]?config["append_to_file"].IsScalar():true);
+  }
 #else
   res = ros::param::has(path + "/appenders")
          || ros::param::has(path + "/levels")
@@ -257,7 +285,7 @@ bool TraceLogger::init(const std::string& logger_id, const std::string& path,
   std::vector<std::string> appenders, levels;
 #if defined(ROS_NOT_AVAILABLE)
   YAML::Node _path = YAML::LoadFile(path);
-  auto now = time(0);
+  auto now = std::time(0);
 #else
   std::string _path = path;
     auto now = ros::Time::now();
