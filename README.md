@@ -1,6 +1,7 @@
 # cnr_logger #
 
-[![Build Status][t]][1]
+[![Build Status - Plain CMake][p]][0]
+[![Build Status - ROS Toolchain][t]][1]
 [![codecov][c]][2] 
 [![Codacy Badge][y]][3]
 [![FOSSA Status][f]][4]
@@ -242,6 +243,9 @@ The macros to be used within the code are:
 
 [//]: # ([t]:https://travis-ci.org/CNR-STIIMA-IRAS/cnr_logger.svg?branch=master)
 [//]: # ([1]:https://travis-ci.org/CNR-STIIMA-IRAS/cnr_logger)
+
+[p]:https://github.com/CNR-STIIMA-IRAS/cnr_logger/actions/workflows/build_cmake.yml/badge.svg
+[0]:https://github.com/CNR-STIIMA-IRAS/cnr_logger/actions/workflows/build_cmake.yml
 
 [t]:https://github.com/CNR-STIIMA-IRAS/cnr_logger/actions/workflows/industrial_ci_action.yml/badge.svg?branch=master
 [1]:https://github.com/CNR-STIIMA-IRAS/cnr_logger/actions/workflows/industrial_ci_action.yml
