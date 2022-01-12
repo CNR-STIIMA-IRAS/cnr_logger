@@ -284,12 +284,18 @@ bool TraceLogger::init(const std::string& logger_id, const std::string& path,
   {
      _path = new YAML::Node();
     *_path = YAML::LoadFile(path);
-  }  
+  } 
+  auto now = std::time(0); 
 #else
   const std::string* _path = &path;
+  #if defined(FORCE_ROS_TIME_USE)
+  auto now = ros::Time::now();
+  #else
+    auto now = std::time(0);
+  #endif
 #endif
 
-  auto now = TIME_NOW();
+
 
   std::vector<std::string> empty;
 
