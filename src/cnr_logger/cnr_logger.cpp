@@ -286,7 +286,7 @@ bool TraceLogger::init(const std::string& logger_id, const std::string& path,
     *_path = YAML::LoadFile(path);
   }  
 #else
-  std::string* _path = &path;
+  const std::string* _path = &path;
 #endif
 
   auto now = TIME_NOW();
