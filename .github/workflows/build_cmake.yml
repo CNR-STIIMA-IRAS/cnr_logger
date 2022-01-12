@@ -1,7 +1,14 @@
-name: CMake Build Matrix
+name: 'PLAIN CMake CI'
 
-on: [push]
-
+on:
+  push:
+    branches: [ master ]
+    paths-ignore:
+    - 'docs/**'
+    - 'README.md'
+  pull_request:
+    branches: [ master ]
+    
 jobs:
   build:
     name: ${{ matrix.config.name }}
@@ -26,15 +33,22 @@ jobs:
             os: ubuntu-latest,
             build_type: "Release", cc: "gcc", cxx: "g++", cmake_version_used: "3.16.2"
           }
-        # - {
-        #     name: "Ubuntu Old GCC", artifact: "Linux.tar.xz",
-        #     os: ubuntu-14.04,
-        #     build_type: "Release", cc: "gcc", cxx: "g++", cmake_version_used: "2.8.10.2"
-        #   }
+        - {
+            name: "Ubuntu Old GCC", artifact: "Linux.tar.xz",
+            os: ubuntu-14.04,
+            build_type: "Release", cc: "gcc", cxx: "g++", cmake_version_used: "2.8.10.2"
+          }
     steps:
     - uses: actions/checkout@v1
 
+    - name: Choco help
+      uses: crazy-max/ghaction-chocolatey@v1
+      if: ${{ runner.os == 'Windows' }}
+      with:
+        args: -h
+
     - name: Install dependencies
+      if: ${{ runner.os == 'Linux' }}
       run: sudo apt-get install -y libyaml-cpp-dev libboost-date-time-dev liblog4cxx-dev libgtest-dev cmake tree
 
     - name: Download Ninja and CMake
@@ -42,7 +56,7 @@ jobs:
       shell: cmake -P {0}
       run: |
         set(ninja_version "1.9.0")
-        set(cmake_version "3.16.2")
+        set(cmake_version "${{ matrix.config.cmake_version_used }}")
         
         message(STATUS "Using host CMake version: ${CMAKE_VERSION}")
 
@@ -150,9 +164,6 @@ jobs:
         if (NOT result EQUAL 0)
           message(FATAL_ERROR "Running tests failed!")
         endif()
-    # - name: Test
-    #   working-directory: "${{runner.workspace}}"
-    #   run: cd build && GTEST_OUTPUT=xml:test-results/ GTEST_COLOR=1 ctest -V
 
     - name: Upload test results
       uses: actions/upload-artifact@v2
