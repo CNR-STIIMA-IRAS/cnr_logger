@@ -29,14 +29,9 @@ jobs:
         #     build_type: "Release", cc: "gcc", cxx: "g++"
         #   }
         - {
-            name: "Ubuntu Latest GCC", artifact: "Linux.tar.xz",
+            name: "Ubuntu CMake 3.16.2", artifact: "Linux.tar.xz",
             os: ubuntu-latest,
             build_type: "Release", cc: "gcc", cxx: "g++", cmake_version_used: "3.16.2"
-          }
-        - {
-            name: "Ubuntu Old GCC", artifact: "Linux.tar.xz",
-            os: ubuntu-14.04,
-            build_type: "Release", cc: "gcc", cxx: "g++", cmake_version_used: "2.8.10.2"
           }
     steps:
     - uses: actions/checkout@v1
@@ -49,7 +44,7 @@ jobs:
 
     - name: Install dependencies
       if: ${{ runner.os == 'Linux' }}
-      run: sudo apt-get install -y libyaml-cpp-dev libboost-date-time-dev liblog4cxx-dev libgtest-dev cmake tree
+      run: sudo apt-get install -y libyaml-cpp-dev libboost-date-time-dev liblog4cxx-dev libgtest-dev cmake tree man-db
 
     - name: Download Ninja and CMake
       id: cmake_and_ninja
@@ -66,8 +61,17 @@ jobs:
           set(cmake_dir "cmake-${cmake_version}-win64-x64/bin")
         elseif ("${{ runner.os }}" STREQUAL "Linux")
           set(ninja_suffix "linux.zip")
-          set(cmake_suffix "Linux-x86_64.tar.gz")
-          set(cmake_dir "cmake-${cmake_version}-Linux-x86_64/bin")
+          message(STATUS "cmake_version: ${cmake_version}")
+          
+          if("${cmake_version}" VERSION_GREATER "3.0.0")
+            message(STATUS "cmake_version: ${cmake_version}")
+            set(cmake_suffix "Linux-x86_64.tar.gz")
+            set(cmake_dir "cmake-${cmake_version}-Linux-x86_64/bin")
+          else()
+            message(STATUS "cmake_version: ${cmake_version}")
+            set(cmake_suffix "Linux-i386.tar.gz")
+            set(cmake_dir "cmake-${cmake_version}-Linux-i386/bin")
+          endif()
         elseif ("${{ runner.os }}" STREQUAL "macOS")
           set(ninja_suffix "mac.zip")
           set(cmake_suffix "Darwin-x86_64.tar.gz")
@@ -119,8 +123,6 @@ jobs:
             -S .
             -B build
             -D CMAKE_BUILD_TYPE=${{ matrix.config.build_type }}
-            -G Ninja
-            -D CMAKE_MAKE_PROGRAM=${ninja_program}
             -D USE_ROS=OFF
           RESULT_VARIABLE result
         )
@@ -171,3 +173,11 @@ jobs:
       with:
         name: test_results_xml
         path: ${{runner.workspace}}/build/test-results/**/*.xml
+
+    - uses: codecov/codecov-action@v1
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        flags: unittests # optional
+        name: codecov-umbrella # optional
+        fail_ci_if_error: false # optional (default = false)
+        verbose: true # optional (default = false)
