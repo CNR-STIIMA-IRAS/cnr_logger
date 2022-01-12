@@ -95,7 +95,7 @@ namespace cnr_logger
  * @brief Utility to print nicely the time.
  * @param now Time to translate in string.
  */
-#if defined(ROS_NOT_AVAILABLE)
+#if defined(ROS_NOT_AVAILABLE) || !defined(FORCE_ROS_TIME_USE)
 std::string to_string(const time_t& now)
 #else
 std::string to_string(const ros::Time& now)
@@ -289,7 +289,7 @@ bool TraceLogger::init(const std::string& logger_id, const std::string& path,
 #else
   const std::string* _path = &path;
   #if defined(FORCE_ROS_TIME_USE)
-  auto now = ros::Time::now();
+    auto now = ros::Time::now();
   #else
     auto now = std::time(0);
   #endif
