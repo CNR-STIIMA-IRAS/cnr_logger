@@ -29,9 +29,9 @@ jobs:
         #     build_type: "Release", cc: "gcc", cxx: "g++"
         #   }
         - {
-            name: "Ubuntu CMake 3.16.2", artifact: "Linux.tar.xz",
+            name: "Ubuntu Debug", artifact: "Linux.tar.xz",
             os: ubuntu-latest,
-            build_type: "Release", cc: "gcc", cxx: "g++", cmake_version_used: "3.16.2"
+            build_type: "Debug", cc: "gcc", cxx: "g++", cmake_version_used: "3.16.2"
           }
     steps:
     - uses: actions/checkout@v1
@@ -44,7 +44,7 @@ jobs:
 
     - name: Install dependencies
       if: ${{ runner.os == 'Linux' }}
-      run: sudo apt-get install -y libyaml-cpp-dev libboost-date-time-dev liblog4cxx-dev libgtest-dev cmake tree man-db
+      run: sudo apt-get install -y libyaml-cpp-dev libboost-date-time-dev liblog4cxx-dev libgtest-dev cmake tree lcov gcovr python3-coverage
 
     - name: Download Ninja and CMake
       id: cmake_and_ninja
@@ -124,6 +124,8 @@ jobs:
             -B build
             -D CMAKE_BUILD_TYPE=${{ matrix.config.build_type }}
             -D USE_ROS=OFF
+            -D ENABLE_TESTING=ON
+            -D ENABLE_COVERAGE_TESTING=ON
           RESULT_VARIABLE result
         )
         if (NOT result EQUAL 0)
@@ -167,6 +169,10 @@ jobs:
           message(FATAL_ERROR "Running tests failed!")
         endif()
 
+    - name: Tests results
+      shell: bash
+      run: find ${{runner.workspace}} -name *.xml
+
     - name: Upload test results
       uses: actions/upload-artifact@v2
       if: failure()
@@ -178,6 +184,7 @@ jobs:
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
         flags: unittests # optional
+        files: ${{runner.workspace}}/build/test-results/**/*.xml
         name: codecov-umbrella # optional
         fail_ci_if_error: false # optional (default = false)
-        verbose: true # optional (default = false)
+        verbose: false # optional (default = false)
