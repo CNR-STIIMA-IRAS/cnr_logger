@@ -16,12 +16,12 @@ The package has been designed to have a logger separated from the standard ros l
 
 The package is based on [Log4cxx](https://logging.apache.org/log4cxx/latest_stable/), and it can be built on top of [ros](www.ros.org) distribution, or having installed  [yaml-cpp](https://yaml-cpp.docsforge.com/)
 
-The configuration is done through CMake. Enabling the cmake option `ROS_DISABLED`, the package looks for the `yaml-cpp` (the FindLog4cxx.cmake is [here](./cmake/FindLog4cxx.cmake)).
+The configuration is done through CMake. Enabling the cmake option `USE_ROS`, the package looks for the `yaml-cpp` (the FindLog4cxx.cmake is [here](./cmake/FindLog4cxx.cmake)).
 
 ```cmake
-option(ROS_DISABLED "ROS ENABLED" OFF)
+option(USE_ROS "ROS ENABLED" OFF)
 
-if(ROS_DISABLED)
+if(NOT USE_ROS)
   set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
   find_package(yaml-cpp REQUIRED)
   find_package(Log4cxx)
@@ -236,7 +236,7 @@ The macros to be used within the code are:
 
 ### Contact ###
 
-<mailto:<mailto:nicola.pedrocchi@stiima.cnr.it>>
+<mailto:nicola.pedrocchi@stiima.cnr.it>
 
 ## License ##
 [![FOSSA Status][o]][5]
