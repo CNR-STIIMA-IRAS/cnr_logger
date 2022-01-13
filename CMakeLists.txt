@@ -5,7 +5,7 @@ project(cnr_logger)
 ###################
 ## OPTIONS       ##
 ###################
-option(USE_ROS "ROS SUPPORT" ON)
+option(USE_ROS "ROS SUPPORT" OFF)
 option(ENABLE_TESTING "ENABLE TESTING" OFF)
 option(ENABLE_COVERAGE_TESTING "ENABLE COVERAGE TESTING" OFF)
 
@@ -94,7 +94,8 @@ else(USE_ROS)
     endif(ENABLE_COVERAGE_TESTING)
   endif(ENABLE_TESTING)
 
-  add_compile_definitions(ROS_NOT_AVAILABLE)
+  #add_compile_definitions(ROS_NOT_AVAILABLE)
+  add_definitions(-DROS_NOT_AVAILABLE)
 
   set(CNR_LOGGER_TARGET_LINK_LIBRARIES  ${YAML_CPP_LIBRARIES} ${Log4cxx_LIBRARY})
   set(CNR_LOGGER_TARGET_INCLUDE_DIRS    ${YAML_CPP_INCLUDE_DIRS})
