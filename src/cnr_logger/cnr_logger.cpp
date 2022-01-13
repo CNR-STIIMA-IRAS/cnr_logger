@@ -197,7 +197,7 @@ TraceLogger::TraceLogger()
 
 TraceLogger::TraceLogger(const std::string& logger_id, const std::string& path,
                          const bool star_header, const bool default_values)
-  : TraceLogger()
+  : logger_id_(""), path_(""), default_values_(false), initialized_(false) // TraceLogger() Enrico 03/12/2021 the compiler can't find the TraceLogger() constructor
 {
   std::string err = "[" + logger_id + "] Error in creating the TraceLogger.\n"
       +  std::string("INPUT logger_id      : ") + logger_id + "\n"
