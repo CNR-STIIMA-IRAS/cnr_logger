@@ -5,7 +5,7 @@ project(cnr_logger)
 ###################
 ## OPTIONS       ##
 ###################
-option(USE_ROS "ROS SUPPORT" OFF)
+option(USE_ROS "ROS SUPPORT" ON)
 option(ENABLE_TESTING "ENABLE TESTING" OFF)
 option(ENABLE_COVERAGE_TESTING "ENABLE COVERAGE TESTING" OFF)
 
