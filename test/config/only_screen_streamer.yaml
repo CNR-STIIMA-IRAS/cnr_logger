@@ -1,2 +1,2 @@
 appenders: [screen]
-levels: [debug]
+levels: [trace]
