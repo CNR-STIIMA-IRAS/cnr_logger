@@ -27,7 +27,8 @@ jobs:
 
     - name: Install dependencies
       if: ${{ runner.os == 'Linux' }}
-      run: sudo apt-get update && sudo apt-get install -y --fix-missing libyaml-cpp-dev libboost-date-time-dev liblog4cxx-dev libgtest-dev cmake tree lcov gcovr python3-coverage
+      run: sudo apt-get update && sudo apt-get install -y --fix-missing libyaml-cpp-dev libboost-date-time-dev liblog4cxx-dev libgtest-dev cmake tree lcov gcovr 
+      # python3-coverage
 
     - name: Download Ninja and CMake
       id: cmake_and_ninja
