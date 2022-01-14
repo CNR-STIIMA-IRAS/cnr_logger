@@ -153,10 +153,6 @@ jobs:
           message(FATAL_ERROR "Running tests failed!")
         endif()
 
-    - name: Tests results
-      shell: bash
-      run: find ${{runner.workspace}} -name *.xml
-
     - name: Upload test results
       uses: actions/upload-artifact@v2
       if: failure()
