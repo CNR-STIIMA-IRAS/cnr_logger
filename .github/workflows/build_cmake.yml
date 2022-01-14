@@ -110,7 +110,7 @@ jobs:
             -D USE_ROS=OFF
             -D ENABLE_TESTING=ON
             -D ENABLE_COVERAGE_TESTING=ON
-            -D COMPILE_EXAMPLE=ON
+            -D COMPILE_EXAMPLE=OFF
           RESULT_VARIABLE result
         )
         if (NOT result EQUAL 0)
