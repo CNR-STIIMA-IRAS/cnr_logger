@@ -107,7 +107,7 @@ endif(USE_ROS)
 ## TARGETS              ##
 ##########################
 include_directories( include ${CNR_LOGGER_TARGET_INCLUDE_DIRS} )
-add_library           (${PROJECT_NAME} src/${PROJECT_NAME}/cnr_logger.cpp )
+add_library           (${PROJECT_NAME} SHARED src/${PROJECT_NAME}/cnr_logger.cpp )
 target_link_libraries (${PROJECT_NAME} ${CNR_LOGGER_TARGET_LINK_LIBRARIES})
 target_compile_options(${PROJECT_NAME}
   PUBLIC $<$<CONFIG:Release>:-Ofast -funroll-loops -ffast-math >)
