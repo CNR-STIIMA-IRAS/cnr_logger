@@ -180,8 +180,8 @@ TEST(TestSuite, flushFileAndScreen)
     CNR_WARN_COND(*logger, true, "Log warn");
     CNR_DEBUG_COND(*logger, false, "Log debug");
     CNR_ERROR_COND(*logger, true, "Log error");
-    CNR_FATAL_COND(*logger, true, "Ciao-log-1fatal");
-    CNR_TRACE_COND(*logger, false, "Ciao-log-1trace");
+    CNR_FATAL_COND(*logger, true, "Log fatal");
+    CNR_TRACE_COND(*logger, false, "Log trace");
 
     CNR_INFO_COND_THROTTLE(*logger, true, 1.0, "THROTTLE Log info");
     CNR_WARN_COND_THROTTLE(*logger, true, 1.0, "THROTTLE Log warn");
@@ -222,9 +222,9 @@ TEST(TestSuite, flushOnlyFile)
 
     CNR_INFO_COND(*logger, true, "Log info");
     CNR_WARN_COND(*logger, true, "Log warn");
-    CNR_DEBUG_COND(*logger, false, "Ciao-log-1debug");
-    CNR_FATAL_COND(*logger, true, "Ciao-log-1fatal");
-    CNR_TRACE_COND(*logger, false, "Ciao-log-1trace");
+    CNR_DEBUG_COND(*logger, false, "Log debug");
+    CNR_FATAL_COND(*logger, true, "Log fatal");
+    CNR_TRACE_COND(*logger, false, "Log trace");
 
     CNR_INFO_COND_THROTTLE(*logger, true, 1.0, "THROTTLE Log info");
     CNR_WARN_COND_THROTTLE(*logger, true, 1.0, "THROTTLE Log warn");
@@ -265,9 +265,9 @@ TEST(TestSuite, flushOnlsyScreen)
 
     CNR_INFO_COND(*logger, true, "Log info");
     CNR_WARN_COND(*logger, true, "Log warn");
-    CNR_DEBUG_COND(*logger, false, "Ciao-log-1debug");
-    CNR_FATAL_COND(*logger, true, "Ciao-log-1fatal");
-    CNR_TRACE_COND(*logger, false, "Ciao-log-1trace");
+    CNR_DEBUG_COND(*logger, false, "Log debug");
+    CNR_FATAL_COND(*logger, true, "Log fatal");
+    CNR_TRACE_COND(*logger, false, "Log trace");
 
     CNR_INFO_COND_THROTTLE(*logger, true, 1.0, "THROTTLE Log info");
     CNR_WARN_COND_THROTTLE(*logger, true, 1.0, "THROTTLE Log warn");
