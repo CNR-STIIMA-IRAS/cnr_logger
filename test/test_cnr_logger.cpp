@@ -191,7 +191,7 @@ TEST(TestSuite, flushFileAndScreen)
     CNR_TRACE_COND_THROTTLE(*logger, false, 1.0, "THROTTLE Log trace");
 
 #if defined(ROS_NOT_AVAILABLE)
-    sleep(1);
+    sleep(0.1);
 #else
     ros::Duration(0.1).sleep();
 #endif
@@ -233,7 +233,7 @@ TEST(TestSuite, flushOnlyFile)
     CNR_TRACE_COND_THROTTLE(*logger, false, 1.0, "THROTTLE Log trace");
 
 #if defined(ROS_NOT_AVAILABLE)
-    sleep(1);
+    sleep(0.1);
 #else
     ros::Duration(0.1).sleep();
 #endif
@@ -276,7 +276,7 @@ TEST(TestSuite, flushOnlsyScreen)
     CNR_TRACE_COND_THROTTLE(*logger, false, 1.0, "THROTTLE Log trace");
 
 #if defined(ROS_NOT_AVAILABLE)
-    sleep(1);
+    sleep(0.1);
 #else
     ros::Duration(0.1).sleep();
 #endif

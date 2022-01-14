@@ -8,6 +8,7 @@ project(cnr_logger)
 option(USE_ROS "ROS SUPPORT" ON)
 option(ENABLE_TESTING "ENABLE TESTING" OFF)
 option(ENABLE_COVERAGE_TESTING "ENABLE COVERAGE TESTING" OFF)
+option(COMPILE_EXAMPLE "COMPILE THE EXAMPLE" OFF)
 
 if(USE_ROS)
   set(ENABLE_TESTING ${CATKIN_ENABLE_TESTING})
@@ -106,7 +107,7 @@ endif(USE_ROS)
 ##########################
 ## TARGETS              ##
 ##########################
-include_directories( include ${CNR_LOGGER_TARGET_INCLUDE_DIRS} )
+include_directories   (include ${CNR_LOGGER_TARGET_INCLUDE_DIRS} )
 add_library           (${PROJECT_NAME} SHARED src/${PROJECT_NAME}/cnr_logger.cpp )
 target_link_libraries (${PROJECT_NAME} ${CNR_LOGGER_TARGET_LINK_LIBRARIES})
 target_compile_options(${PROJECT_NAME}
@@ -124,6 +125,11 @@ if(${CMAKE_VERSION} VERSION_GREATER  "3.16.0")
             <log4cxx/rollingfileappender.h>
             <log4cxx/consoleappender.h>
             <log4cxx/patternlayout.h> )
+endif()
+
+if(COMPILE_EXAMPLE)
+  add_executable        (${PROJECT_NAME}_example src/cnr_logger_example.cpp )
+  target_link_libraries (${PROJECT_NAME}_example ${PROJECT_NAME} ${CNR_LOGGER_TARGET_LINK_LIBRARIES})
 endif()
 
 ##########################
