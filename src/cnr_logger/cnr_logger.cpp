@@ -85,6 +85,73 @@ std::string mkLogDir()
   return homedir_string;
 }
 
+
+namespace log4cxx
+{
+class LOG4CXX_EXPORT ColorPatternLayout : public log4cxx::PatternLayout
+{
+public:
+  DECLARE_LOG4CXX_OBJECT(ColorPatternLayout)
+  BEGIN_LOG4CXX_CAST_MAP()
+  LOG4CXX_CAST_ENTRY(ColorPatternLayout)
+  LOG4CXX_CAST_ENTRY_CHAIN(Layout)
+  END_LOG4CXX_CAST_MAP()
+
+  ColorPatternLayout() : log4cxx::PatternLayout() {}
+  explicit ColorPatternLayout(const log4cxx::LogString &s)
+    : log4cxx::PatternLayout(s)
+  {
+
+  }
+  virtual void format(log4cxx::LogString &output,
+                      const log4cxx::spi::LoggingEventPtr &event,
+                      log4cxx::helpers::Pool &pool) const override
+  {
+    try
+    {
+      log4cxx::LogString tmp;
+      if (event)
+      {
+        log4cxx::PatternLayout::format(tmp, event, pool);
+        log4cxx::LevelPtr lvl = event->getLevel();
+        switch (lvl->toInt())
+        {
+        case log4cxx::Level::FATAL_INT:
+          output.append("\u001b[0;41m");  // red BG
+          break;
+        case log4cxx::Level::ERROR_INT:
+          output.append("\u001b[0;31m");  // red FG
+          break;
+        case log4cxx::Level::WARN_INT:
+          output.append("\u001b[0;33m");  // Yellow FG
+          break;
+        case log4cxx::Level::INFO_INT:
+          output.append("\u001b[1m");     // Bright
+          break;
+        case log4cxx::Level::DEBUG_INT:
+          output.append("\u001b[1;32m");  // Green FG
+          break;
+        case log4cxx::Level::TRACE_INT:
+          output.append("\u001b[0;34m");  // Black FG
+          break;
+        default:
+          break;
+        }
+      }
+      output.append(tmp);
+      output.append("\u001b[m");
+    }
+    catch (std::exception& e)
+    {
+      std::cerr << __PRETTY_FUNCTION__<<":" << __LINE__<<": Exception: "<< e.what() << std::endl;
+    }
+  }
+};
+LOG4CXX_PTR_DEF(ColorPatternLayout);
+
+}  // namespace log4cxx
+
+
 using log4cxx::ColorPatternLayout;
 IMPLEMENT_LOG4CXX_OBJECT(ColorPatternLayout);
 
