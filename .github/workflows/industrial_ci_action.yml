@@ -19,25 +19,37 @@ on:
 jobs:
   industrial_ci:
     strategy:
-      matrix:
-        env:
-          - {ROS_DISTRO: melodic, ROS_REPO: testing, CMAKE_ARGS: '-DCMAKE_BUILD_TYPE=Debug -DUSE_ROS=ON -DENABLE_TESTING=ON -DENABLE_COVERAGE_TESTING=ON', CODACY="true", CODECOV="true" }
-          - {ROS_DISTRO: melodic, ROS_REPO: main, CODACY="true", CODECOV="true" }
+      matrix: # matrix is the product of entries
+        ROS_DISTRO: [melodic, noetic]
+        ROS_REPO: [main]
+        build_type: [Release, Debug]
+
     env:
       CCACHE_DIR: /github/home/.ccache # Directory for ccache (and how we enable ccache in industrial_ci)
       CODE_COVERAGE: codecov.io
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      # This step will fetch/store the directory used by ccache before/after the ci run
-      - uses: actions/cache@v2
+      - uses: actions/checkout@v2   # clone target repository
+      - uses: actions/cache@v2      # fetch/store the directory used by ccache before/after the ci run
         with:
           path: ${{ env.CCACHE_DIR }}
-          key: ccache-${{ matrix.env.ROS_DISTRO }}-${{ matrix.env.ROS_REPO }}
+          key: ccache-${{ matrix.ROS_DISTRO }}-${{ matrix.ROS_REPO }}-${{github.run_id}}
+          restore-keys: |
+            ccache-${{ matrix.ROS_DISTRO }}-${{ matrix.ROS_REPO }}-
       # Run industrial_ci
       - uses: 'ros-industrial/industrial_ci@master'
-        env: ${{ matrix.env }}
+        env: 
+          ROS_DISTRO: ${{ matrix.ROS_DISTRO }}
+          ROS_REPO: ${{ matrix.ROS_REPO }}
+          ADDITIONAL_DEBS: git
+          CATKIN_LINT: false
+          NOT_TEST_BUILD: true
+          PARALLEL_TESTS: false
+          AFTER_SCRIPT: 'ls -al && ./'
+          CMAKE_ARGS:  '-DCMAKE_BUILD_TYPE=${{matrix.build_tyoe}} -DUSE_ROS=ON -DENABLE_TESTING=ON -DENABLE_COVERAGE_TESTING=ON'
       - uses: actions/checkout@master
+      - name: Install dependencies
+        run: 
       - uses: codecov/codecov-action@v1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
