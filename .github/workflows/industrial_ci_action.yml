@@ -48,7 +48,7 @@ jobs:
           NOT_TEST_BUILD: true
           PARALLEL_TESTS: false
           CMAKE_ARGS:  '-DCMAKE_BUILD_TYPE=Debug -DUSE_ROS=ON -DENABLE_TESTING=ON -DENABLE_COVERAGE_TESTING=ON'
-          AFTER_SCRIPT: './.coverage.sh'
+          AFTER_SCRIPT: 'pwd && ./.coverage.sh'
       - name: industrial_ci-release
         if: ${{matrix.build_type == 'Release'}}
         uses: 'ros-industrial/industrial_ci@master'
@@ -60,14 +60,12 @@ jobs:
           NOT_TEST_BUILD: true
           PARALLEL_TESTS: false
       - uses: actions/checkout@master
-      # - name: Install dependencies
-      #   run: 
-      # - name: 
-      #   uses: codecov/codecov-action@v1
-
-      #   with:
-      #     token: ${{ secrets.CODECOV_TOKEN }}
-      #     flags: unittests # optional
-      #     name: codecov-umbrella # optional
-      #     fail_ci_if_error: false # optional (default = false)
-      #     verbose: true # optional (default = false)
+      - name: 
+        if: ${{matrix.build_type == 'Debug'}}
+        uses: codecov/codecov-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          flags: unittests # optional
+          name: codecov-umbrella # optional
+          fail_ci_if_error: false # optional (default = false)
+          verbose: true # optional (default = false)
