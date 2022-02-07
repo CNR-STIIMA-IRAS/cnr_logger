@@ -37,7 +37,9 @@ jobs:
           restore-keys: |
             ccache-${{ matrix.ROS_DISTRO }}-${{ matrix.ROS_REPO }}-
       # Run industrial_ci
-      - uses: 'ros-industrial/industrial_ci@master'
+      - name: industrial_ci-debug
+        if: ${{matrix.build_type == 'Debug'}}
+        uses: 'ros-industrial/industrial_ci@master'
         env: 
           ROS_DISTRO: ${{ matrix.ROS_DISTRO }}
           ROS_REPO: ${{ matrix.ROS_REPO }}
@@ -45,15 +47,27 @@ jobs:
           CATKIN_LINT: false
           NOT_TEST_BUILD: true
           PARALLEL_TESTS: false
-          AFTER_SCRIPT: 'ls -al && ./'
-          CMAKE_ARGS:  '-DCMAKE_BUILD_TYPE=${{matrix.build_tyoe}} -DUSE_ROS=ON -DENABLE_TESTING=ON -DENABLE_COVERAGE_TESTING=ON'
+          CMAKE_ARGS:  '-DCMAKE_BUILD_TYPE=Debug -DUSE_ROS=ON -DENABLE_TESTING=ON -DENABLE_COVERAGE_TESTING=ON'
+          AFTER_SCRIPT: 'ls -al && ./.codecoverage.sh'
+      - name: industrial_ci-release
+        if: ${{matrix.build_type == 'Release'}}
+        uses: 'ros-industrial/industrial_ci@master'
+        env: 
+          ROS_DISTRO: ${{ matrix.ROS_DISTRO }}
+          ROS_REPO: ${{ matrix.ROS_REPO }}
+          ADDITIONAL_DEBS: git
+          CATKIN_LINT: false
+          NOT_TEST_BUILD: true
+          PARALLEL_TESTS: false
       - uses: actions/checkout@master
-      - name: Install dependencies
-        run: 
-      - uses: codecov/codecov-action@v1
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          flags: unittests # optional
-          name: codecov-umbrella # optional
-          fail_ci_if_error: false # optional (default = false)
-          verbose: true # optional (default = false)
+      # - name: Install dependencies
+      #   run: 
+      # - name: 
+      #   uses: codecov/codecov-action@v1
+
+      #   with:
+      #     token: ${{ secrets.CODECOV_TOKEN }}
+      #     flags: unittests # optional
+      #     name: codecov-umbrella # optional
+      #     fail_ci_if_error: false # optional (default = false)
+      #     verbose: true # optional (default = false)
