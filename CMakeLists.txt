@@ -62,7 +62,7 @@ if(USE_ROS)
   #     find_package(code_coverage REQUIRED)
   #     APPEND_COVERAGE_COMPILER_FLAGS()
   #   endif(ENABLE_COVERAGE_TESTING)
-  # endif(ENABLE_TESTING)
+  endif(ENABLE_TESTING)
 
 
   set(CNR_LOGGER_TARGET_LINK_LIBRARIES  ${catkin_LIBRARIES} )
