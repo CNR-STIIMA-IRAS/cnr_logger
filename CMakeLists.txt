@@ -44,9 +44,6 @@ endif()
 ## common
 find_package(Boost REQUIRED COMPONENTS date_time )
 
-
-
-
 if(USE_ROS)
 
   MESSAGE(STATUS "ROS SUPPORT ENABLED")
@@ -58,10 +55,14 @@ if(USE_ROS)
   if(ENABLE_TESTING)
     find_package(rostest REQUIRED)
 
-  #   if(ENABLE_COVERAGE_TESTING)
-  #     find_package(code_coverage REQUIRED)
-  #     APPEND_COVERAGE_COMPILER_FLAGS()
-  #   endif(ENABLE_COVERAGE_TESTING)
+    # if(ENABLE_COVERAGE_TESTING)
+    #   find_package(code_coverage REQUIRED)
+    #   APPEND_COVERAGE_COMPILER_FLAGS()
+    # endif(ENABLE_COVERAGE_TESTING)
+    if(ENABLE_COVERAGE_TESTING)
+      set(CMAKE_CXX_FLAGS "-Wno-deprecated-register ${CMAKE_CXX_FLAGS}")
+      set(CMAKE_CXX_FLAGS_DEBUG "-Wno-deprecated-register -O0 -g -fprofile-arcs -ftest-coverage ${CMAKE_CXX_FLAGS_DEBUG}")
+  endif(ENABLE_COVERAGE_TESTING)
   endif(ENABLE_TESTING)
 
 
@@ -86,6 +87,18 @@ else(USE_ROS)
 
   ### Log4cxx
   find_package(Log4cxx)
+
+  if(ENABLE_TESTING)
+    message(STATUS "Enable testing enable_testing")
+    enable_testing()
+    find_package(GTest REQUIRED)
+    
+    if(ENABLE_COVERAGE_TESTING)
+      set(CMAKE_CXX_FLAGS "-Wno-deprecated-register ${CMAKE_CXX_FLAGS}")
+      set(CMAKE_CXX_FLAGS_DEBUG "-Wno-deprecated-register -O0 -g -fprofile-arcs -ftest-coverage ${CMAKE_CXX_FLAGS_DEBUG}")
+    endif(ENABLE_COVERAGE_TESTING)
+  endif(ENABLE_TESTING)
+
   #add_compile_definitions(ROS_NOT_AVAILABLE)
   add_definitions(-DROS_NOT_AVAILABLE)
 
@@ -94,18 +107,6 @@ else(USE_ROS)
   set(CNR_LOGGER_INSTALL_INCLUDE_DIR    "${CMAKE_INSTALL_PREFIX}/include")
   set(CNR_LOGGER_INSTALL_LIB_DIR        "${CMAKE_INSTALL_PREFIX}/lib")
 endif(USE_ROS)
-
-if(ENABLE_TESTING)
-message(STATUS "Enable testing enable_testing")
-enable_testing()
-find_package(GTest REQUIRED)
-
-if(ENABLE_COVERAGE_TESTING)
-  set(CMAKE_CXX_FLAGS "-Wno-deprecated-register ${CMAKE_CXX_FLAGS}")
-  set(CMAKE_CXX_FLAGS_DEBUG "-Wno-deprecated-register -O0 -g -fprofile-arcs -ftest-coverage ${CMAKE_CXX_FLAGS_DEBUG}")
-endif(ENABLE_COVERAGE_TESTING)
-endif(ENABLE_TESTING)
-
 
 ##########################
 ## TARGETS              ##
@@ -167,19 +168,19 @@ endif(ENABLE_TESTING)
 ##########################
 ## Coverage Testing     ##
 ##########################
-#if( ENABLE_TESTING AND ENABLE_COVERAGE_TESTING)
-#  if(USE_ROS)
-#    message(STATUS "The coverage testing is enabled")
-#    set(COVERAGE_EXCLUDES "*/${PROJECT_NAME}/test*")
-#    add_code_coverage(
-#      NAME ${PROJECT_NAME}_coverage_report
-#      DEPENDENCIES ${PROJECT_NAME}_test
-#    )
-#  else()
-#    ## NOTHING TO DO, SINCE GTEST ALREADY CREATES THE COVERAGE 
-#    ## IF THE COMPILING OPTIONS ARE SET
-#  endif()
-#endif()
+# if( ENABLE_TESTING AND ENABLE_COVERAGE_TESTING)
+#   if(USE_ROS)
+#     message(STATUS "The coverage testing is enabled")
+#     set(COVERAGE_EXCLUDES "*/${PROJECT_NAME}/test*")
+#     add_code_coverage(
+#       NAME ${PROJECT_NAME}_coverage_report
+#       DEPENDENCIES ${PROJECT_NAME}_test
+#     )
+#   else()
+#     ## NOTHING TO DO, SINCE GTEST ALREADY CREATES THE COVERAGE 
+#     ## IF THE COMPILING OPTIONS ARE SET
+#   endif()
+# endif()
 
 
 
