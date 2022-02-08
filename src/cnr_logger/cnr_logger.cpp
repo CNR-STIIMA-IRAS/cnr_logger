@@ -62,9 +62,6 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
-#include <cerrno>
-#include <cstring>
-
 bool exists_test (const std::string& name) 
 {
   struct stat buffer;   
@@ -77,15 +74,14 @@ std::string mkLogDir()
   const char *homedir = pw->pw_dir;
   std::string homedir_string = std::string(homedir) + "/.local/log";
   DIR* dir = opendir(homedir_string.c_str());
-  if (ENOENT == errno)
+  if (dir)
+  {
+    closedir(dir);
+  }
+  else if (ENOENT == errno)
   {
     mkdir(homedir_string.c_str(),0777);
   }
-  else 
-  {
-    std::cerr << __FUNCTION__ << ": " << std::strerror(errno) << std::endl;
-  }
-  closedir(dir);
   return homedir_string;
 }
 
