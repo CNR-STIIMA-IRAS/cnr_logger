@@ -60,12 +60,3 @@ jobs:
           NOT_TEST_BUILD: true
           PARALLEL_TESTS: false
       - uses: actions/checkout@master
-      - name: codecov.io
-        if: ${{matrix.build_type == 'Debug'}}
-        uses: codecov/codecov-action@v1
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          flags: unittests # optional
-          name: codecov-umbrella # optional
-          fail_ci_if_error: false # optional (default = false)
-          verbose: true # optional (default = false)
