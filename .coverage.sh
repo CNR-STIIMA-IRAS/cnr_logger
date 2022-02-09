@@ -5,7 +5,7 @@
 
 # echo "Generating coverage for 'cnr_logger'"
 
-# ws=~/target_ws
+ws=~/target_ws
 # extend="/opt/ros/$ROS_DISTRO"
 # ici_exec_in_workspace "$extend" "$ws"
 catkin build cnr_logger -v --no-deps --catkin-make-args coverage_report
