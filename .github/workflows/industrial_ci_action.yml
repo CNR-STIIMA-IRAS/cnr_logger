@@ -36,9 +36,9 @@ jobs:
           key: ccache-${{ matrix.ROS_DISTRO }}-${{ matrix.ROS_REPO }}-${{github.run_id}}
           restore-keys: |
             ccache-${{ matrix.ROS_DISTRO }}-${{ matrix.ROS_REPO }}-
+      
       # Run industrial_ci
       - name: industrial_ci-debug
-        if: ${{matrix.build_type == 'Debug'}}
         uses: 'ros-industrial/industrial_ci@master'
         env: 
           ROS_DISTRO: ${{ matrix.ROS_DISTRO }}
@@ -48,15 +48,9 @@ jobs:
           NOT_TEST_BUILD: true
           PARALLEL_TESTS: false
           CMAKE_ARGS:  '-DCMAKE_BUILD_TYPE=Debug -DUSE_ROS=ON -DENABLE_TESTING=ON -DENABLE_COVERAGE_TESTING=ON'
-          AFTER_SCRIPT: './.codecov.sh && ./.coverage.sh'
-      - name: industrial_ci-release
-        if: ${{matrix.build_type == 'Release'}}
-        uses: 'ros-industrial/industrial_ci@master'
-        env: 
-          ROS_DISTRO: ${{ matrix.ROS_DISTRO }}
-          ROS_REPO: ${{ matrix.ROS_REPO }}
-          ADDITIONAL_DEBS: git
-          CATKIN_LINT: false
-          NOT_TEST_BUILD: true
-          PARALLEL_TESTS: false
+        
+      - name: codecov.io
+        if: ${{matrix.build_type == 'Debug'}}
+        run: 'pwd && ./.codecov.sh && ./.coverage.sh'
+
       - uses: actions/checkout@master
