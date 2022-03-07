@@ -60,7 +60,7 @@ jobs:
           PARALLEL_TESTS: false
       
       - name: shell_info
-        run: echo $ICI_SRC_PATH 
+        run: 'echo ${ICI_SRC_PATH} && ./.codecov.sh && ./.coverage.sh'
 
       - uses: actions/checkout@master
 
