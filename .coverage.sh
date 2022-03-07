@@ -10,7 +10,7 @@
 echo "Generating coverage for 'cnr_logger'"
 
 ws=~/target_ws
-cd ws
+cd $ws
 
 catkin build cnr_logger -v --no-deps --catkin-make-args coverage_report
 
