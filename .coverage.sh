@@ -8,7 +8,7 @@ echo "Generating coverage for 'cnr_logger'"
 ws=~/target_ws
 cd $ws
 
-catkin build cnr_logger --cmake-args -DCMAKE_BUILD_TYPE=Debug -DUSE_ROS=ON -DENABLE_TESTING=ON -DENABLE_COVERAGE_TESTING=ON
+catkin config --cmake-args -DENABLE_COVERAGE_TESTING=ON -DCMAKE_BUILD_TYPE=Debug -DUSE_ROS=ON -DENABLE_TESTING=ON
 catkin build cnr_logger --catkin-make-args run_tests
 catkin build cnr_logger -v --no-deps --catkin-make-args coverage_report
 
