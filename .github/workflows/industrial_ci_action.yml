@@ -42,7 +42,6 @@ jobs:
           ROS_REPO: ${{ matrix.ROS_REPO }}
       
       - name: codecov.io
-        if: ${{matrix.build_type == 'Debug'}}
         run: './.codecov.sh && ./.coverage.sh'
 
       - uses: actions/checkout@master
