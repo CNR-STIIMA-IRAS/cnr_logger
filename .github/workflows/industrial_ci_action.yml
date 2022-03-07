@@ -60,7 +60,5 @@ jobs:
           PARALLEL_TESTS: false
       - uses: actions/checkout@master
       - name: shell_info
-        run:
-          - pwd
-          - ls -al
+        run: pwd && ls -al
 
