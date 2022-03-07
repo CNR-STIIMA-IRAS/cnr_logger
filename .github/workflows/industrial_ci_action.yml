@@ -20,9 +20,9 @@ jobs:
   industrial_ci:
     strategy:
       matrix: # matrix is the product of entries
-        ROS_DISTRO: [melodic, noetic]
+        ROS_DISTRO: [noetic]
         ROS_REPO: [main]
-        build_type: [Release, Debug]
+        build_type: [Debug]
     env:
       CCACHE_DIR: /github/home/.ccache # Directory for ccache (and how we enable ccache in industrial_ci)
       ISOLATION: "shell"
@@ -58,7 +58,9 @@ jobs:
           CATKIN_LINT: false
           NOT_TEST_BUILD: true
           PARALLEL_TESTS: false
-      - uses: actions/checkout@master
+      
       - name: shell_info
         run: pwd && ls -al
+
+      - uses: actions/checkout@master
 
