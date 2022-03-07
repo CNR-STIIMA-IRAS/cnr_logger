@@ -24,7 +24,7 @@ jobs:
         ROS_REPO: [main]
         build_type: [Debug]
     env:
-      CCACHE_DIR: /github/home/.ccache # Directory for ccache (and how we enable ccache in industrial_ci)
+      CCACHE_DIR: "/home/runner/target_ws/.ccache"  #/github/home/.ccache # Directory for ccache (and how we enable ccache in industrial_ci)
       ISOLATION: "shell"
     runs-on: ubuntu-latest
     steps:
