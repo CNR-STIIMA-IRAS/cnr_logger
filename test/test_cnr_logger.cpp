@@ -301,7 +301,7 @@ int main(int argc, char **argv)
 #endif
 
 #if defined(FORCE_ROS_TIME_USE)
-  std::cerr << "Time used: ROS WALL TIME (" << FORCE_ROS_TIME_USE << ")" << std::endl;
+  std::cerr << "Time used: ROS WALL TIME" << std::endl;
 #else
   std::cerr << "Time used: STD CTIME" << std::endl;
 #endif
