@@ -23,7 +23,7 @@ jobs:
         ROS_DISTRO: [melodic, noetic]
         ROS_REPO: [main]
         build_type: [Release, Debug]
-
+        ISOLATION: "shell"
     env:
       CCACHE_DIR: /github/home/.ccache # Directory for ccache (and how we enable ccache in industrial_ci)
       CODE_COVERAGE: codecov.io
@@ -60,3 +60,8 @@ jobs:
           NOT_TEST_BUILD: true
           PARALLEL_TESTS: false
       - uses: actions/checkout@master
+      - name: shell_info
+        run:
+          - pwd
+          - ls -al
+          
