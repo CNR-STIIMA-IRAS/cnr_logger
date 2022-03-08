@@ -1,13 +1,11 @@
 #!/bin/bash
 
-#source "${ICI_SRC_PATH}/workspace.sh"
-#source "${ICI_SRC_PATH}/util.sh"
-
 echo "Generating coverage for 'cnr_logger'"
 
 ws=~/target_ws
 cd $ws
 
+catkin build cnr_logger --no-deps --catkin-make-args run_tests 
 catkin build cnr_logger --no-deps --catkin-make-args coverage_report --cmake-args -DENABLE_COVERAGE_TESTING=ON -DCMAKE_BUILD_TYPE=Debug -DUSE_ROS=ON -DENABLE_TESTING=ON
 
 echo "Uploading coverage results to codecov.io"
@@ -16,5 +14,3 @@ echo "Uploading coverage results to codecov.io"
 rm "$ws/build/cnr_logger/coverage_report.info.cleaned"
 rm "$ws/build/cnr_logger/coverage_report.info.removed"
 
-# Actually upload coverage information
-#bash <(curl -s https://codecov.io/bash) -s "$ws/build/cnr_logger/"
