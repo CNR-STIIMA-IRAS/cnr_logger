@@ -19,4 +19,4 @@ rm "$ws/build/cnr_logger/coverage_report.info.cleaned"
 rm "$ws/build/cnr_logger/coverage_report.info.removed"
 
 # Actually upload coverage information
-bash <(curl -s https://codecov.io/bash) -s "$ws/build/cnr_logger/"
+#bash <(curl -s https://codecov.io/bash) -s "$ws/build/cnr_logger/"
