@@ -42,7 +42,7 @@ jobs:
           ROS_REPO: ${{ matrix.ROS_REPO }}
       
       - name: code_coverage
-        run: './.codecov.sh && ./.coverage.sh'
+        run: './.coverage.sh'
       - uses: codecov/codecov-action@v2
         with:
           token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
