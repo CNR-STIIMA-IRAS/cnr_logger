@@ -329,18 +329,6 @@ bool TraceLogger::init_logger(const std::string& logger_id, const std::string& p
 }
 
 bool TraceLogger::init(const std::string& logger_id, const std::string& path,
-                          const bool star_header, const bool default_values)
-{
-  std::string what;
-  bool ret = this->init(logger_id, path, star_header, default_values, &what);
-  if(what.length()>0)
-  { 
-    std::cerr << what << std::endl;
-  }
-  return ret;
-}
-
-bool TraceLogger::init(const std::string& logger_id, const std::string& path,
                           const bool star_header, const bool default_values, std::string* what)
 {
   if(initialized_)

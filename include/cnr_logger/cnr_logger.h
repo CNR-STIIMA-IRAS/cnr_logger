@@ -110,9 +110,7 @@ public:
    */
   bool init(const std::string& logger_id, const std::string& path,
               const bool star_header = false, const bool default_values = true, std::string* what = nullptr);
-  [[deprecated("Use the init(const std::string&, const std::string&, const bool, const bool, std::string*)")]]
-  bool init(const std::string& logger_id, const std::string& path,
-              const bool star_header = false, const bool default_values = true);
+
   [[deprecated("Use the init(const std::string&, const std::string&, const bool, const bool, std::string*)")]]
   bool init_logger(const std::string& logger_id, const std::string& path,
               const bool star_header = false, const bool default_values = true, std::string* what = nullptr);
