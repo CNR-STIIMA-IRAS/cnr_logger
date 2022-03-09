@@ -263,7 +263,7 @@ TraceLogger::TraceLogger()
 }
 
 TraceLogger::TraceLogger(const std::string& logger_id, const std::string& path,
-                         const bool star_header, const bool default_values)
+                         const bool star_header, const bool default_values, std::string* what)
   : logger_id_(""), path_(""), default_values_(false), initialized_(false) // TraceLogger() Enrico 03/12/2021 the compiler can't find the TraceLogger() constructor
 {
   std::string err = "[" + logger_id + "] Error in creating the TraceLogger.\n"
@@ -274,7 +274,7 @@ TraceLogger::TraceLogger(const std::string& logger_id, const std::string& path,
 
   try
   {
-    if(init(logger_id, path, star_header, default_values))
+    if(init_logger(logger_id, path, star_header, default_values, what))
     {
       return;
     }
@@ -288,6 +288,7 @@ TraceLogger::TraceLogger(const std::string& logger_id, const std::string& path,
     std::cerr << "[" << logger_id << "] Unhandled Exception" << std::endl;
   }
   std::cerr << err << std::endl;
+  throw std::runtime_error((std::string(__PRETTY_FUNCTION__) + "Error in init the logger. Abort.").c_str());
 }
 
 
@@ -321,12 +322,13 @@ bool TraceLogger::check(const std::string& path)
   return res;
 }
 
-bool TraceLogger::init(const std::string& logger_id, const std::string& path,
-                          const bool star_header, const bool default_values)
+bool TraceLogger::init_logger(const std::string& logger_id, const std::string& path,
+                          const bool star_header, const bool default_values, std::string* what)
 {
   if(initialized_)
   {
-    std::cerr<< logger_id_ << ": Logger already initialized."<<std::endl;
+    if(what)
+      *what = "Logger ID: " + logger_id_ + ", Logger already initialized.";
     return false;
   }
 
@@ -336,9 +338,11 @@ bool TraceLogger::init(const std::string& logger_id, const std::string& path,
 
   if((!default_values) && (!check(path)))
   {
-    std::cerr<< "[" << logger_id_ << "] Error in configuration:"<<std::endl;
-    std::cerr<< "[" << logger_id_ << "] -> default_values: " << default_values<<std::endl;
-    std::cerr<< "[" << logger_id_ << "] -> check(path)   : " << check(path)<<std::endl;
+    if(what)
+    {
+      *what =  "Logger ID:" + logger_id +  ", Error in initialization. "
+              +  "  [IN: default_values=" + std::to_string(default_values) + ", path=" + path + " ]";
+    }
     return false;
   }
 
@@ -367,21 +371,20 @@ bool TraceLogger::init(const std::string& logger_id, const std::string& path,
 
 
   std::vector<std::string> empty;
-
+  std::vector<std::string> warnings;
   if(!extractVector(appenders, _path, "appenders", empty))
   {
-    std::cerr << logger_id_ << ": Paremeter missing: path='"<<path<<"', key='"<<"appenders'"<<std::endl;
+    warnings.push_back("Paremeter missing: path='"+path+"', key='appenders'");
   }
   
   if(!extractVector(levels, _path, "levels", empty))
   {
-    std::cerr << logger_id_ << ": Paremeter missing: path='"<<path<<"', key='"<<"levels'"<<std::endl;
+    warnings.push_back("Paremeter missing: path='"+path+"', key='levels'");
   }
 
   if(appenders.size() != levels.size())
   {
-    std::cerr << logger_id_
-                << ": Size of appenders and levels mismatch! Default DEBUG level for all the appenders" << std::endl;
+    warnings.push_back("Size of appenders and levels mismatch! Default DEBUG level for all the appenders");
     levels.clear();
     levels.resize(appenders.size(), "DEBUG");
   }
@@ -473,7 +476,7 @@ bool TraceLogger::init(const std::string& logger_id, const std::string& path,
   std::string default_pattern_layout = "[%5p][%d{HH:mm:ss,SSS}][%M:%L][%c] %m%n";
   if(!extract(pattern_layout, _path, "pattern_layout", default_pattern_layout))
   {
-    std::cerr << logger_id_ << ": Paremeter missing: path='"<<path<<"', key='"<<"pattern_layout'"<<std::endl;
+    warnings.push_back("Paremeter missing: path='"+path+"', key='pattern_layout'");
   }
   log4cxx::ColorPatternLayoutPtr layout = new log4cxx::ColorPatternLayout(pattern_layout);
   // =======================================================================================
@@ -491,16 +494,16 @@ bool TraceLogger::init(const std::string& logger_id, const std::string& path,
   {
     if(!extract(log_file_name, _path, "file_name", default_log_file_name))
     {
-      std::cerr << logger_id_ << ": Paremeter missing: path='"<<path<<"', key='"<<"file_name"
-                  << ", default superimposed: "<< default_log_file_name <<std::endl;
+      warnings.push_back("Paremeter missing: path='" + path + "', key='file_name'");
+      warnings.push_back("Parameter superimposed: log file name= '" + default_log_file_name +"'");
     }
 
     bool append_date_to_file_name = false;
     bool default_append_date_to_file_name = false;
     if(!extract(append_date_to_file_name, _path, "append_date_to_file_name", default_append_date_to_file_name))
     {
-      std::cerr << logger_id_ << ": Paremeter missing: path='"<<path<<"', key='"<<"append_date_to_file_name"
-                  << ", default superimposed: "<< default_append_date_to_file_name <<std::endl;
+      warnings.push_back("Paremeter missing: path='" + path + "', key='append_date_to_file_name'");
+      warnings.push_back("Parameter superimposed: append date to file= '" + std::to_string(append_date_to_file_name) +"'");
     }
 
     log_file_name +=  append_date_to_file_name  ? ("." + to_string(now) + ".log") : ".log";
@@ -509,8 +512,8 @@ bool TraceLogger::init(const std::string& logger_id, const std::string& path,
     bool default_append_to_file = true;
     if(!extract(append_to_file, _path, "append_to_file", default_append_to_file))
     {
-      std::cerr << logger_id_ << ": Paremeter missing: path='"<<path<<"', key='"<<"append_to_file"
-                  << ", default superimposed: "<< default_append_to_file <<std::endl;
+      warnings.push_back("Paremeter missing: path='" + path + "', key='append_to_file'");
+      warnings.push_back("Parameter superimposed: append data to file= '" + std::to_string(default_append_to_file) +"'");
     }
 
     log4cxx::RollingFileAppenderPtr appender = new log4cxx::RollingFileAppender(layout, log_file_name, append_to_file);
@@ -558,8 +561,16 @@ bool TraceLogger::init(const std::string& logger_id, const std::string& path,
   // =======================================================================================
   if(!extract(default_throttle_time_, _path, "default_throttle_time", -1.0))
   {
-    std::cerr << logger_id_ << ": Paremeter missing: path='"<<path<<"', key='"<<"default_throttle_time"
-                << ", default superimposed: "<< -1.0 <<std::endl;
+    warnings.push_back("Paremeter missing: path='" + path + "', key='default_throttle_time'");
+    warnings.push_back("Parameter superimposed: default throttle time= '" + std::to_string(default_throttle_time_) +"'");
+  }
+  if(what)
+  {
+    *what = "Logger Creation has active warnings [Logger ID: " + logger_id_ + "]\n";
+    for(size_t i=0;i<warnings.size();i++)
+    {
+      *what += std::to_string(i+1) + "#1 " + warnings.at(i) + "\n";
+    }
   }
 
   initialized_ = true;
@@ -568,9 +579,10 @@ bool TraceLogger::init(const std::string& logger_id, const std::string& path,
 
 TraceLogger& TraceLogger::operator=(const TraceLogger& rhs)
 {
-  if(!this->init(rhs.logger_id_, rhs.path_, false, rhs.default_values_))
+  if(!this->init_logger(rhs.logger_id_, rhs.path_, false, rhs.default_values_))
   {
     std::cerr << rhs.logger_id_ << ": ERROR - THE LOGGER INITIALIZATION FAILED." << std::endl;
+    throw std::runtime_error((std::string(__PRETTY_FUNCTION__) + "Error in initializing the logger()").c_str());
   }
   return *this;
 }

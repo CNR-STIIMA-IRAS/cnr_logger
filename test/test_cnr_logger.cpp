@@ -87,7 +87,8 @@ TEST(TestSuite, fullConstructor1)
   std::string path1 = path("file_and_screen_different_appenders");
 #
   EXPECT_NO_FATAL_FAILURE(logger.reset(new cnr_logger::TraceLogger("log1",path1 )));
-  EXPECT_FALSE(logger->init("log1", path1, false, false));  // Already initialized
+  std::string what;
+  EXPECT_FALSE(logger->init_logger("log1", path1, false, false, &what));  // Already initialized
 
 
   EXPECT_TRUE(logger->logFile());
@@ -131,18 +132,35 @@ TEST(TestSuite, fullConstructor2)
 TEST(TestSuite, partialConstructor)
 {
   std::string path1 = path("file_and_screen_different_appenders");
-
+  std::string what;
   EXPECT_NO_FATAL_FAILURE(logger.reset(new cnr_logger::TraceLogger()));
-  EXPECT_TRUE(logger->init("log1", path1, false, false));
-  EXPECT_FALSE(logger->init("log1",path1, false, false));  // Already initialized
+  EXPECT_TRUE(logger->init_logger("log1", path1, false, false, &what));
+  if(what.length()>0)
+  {
+    std::cout << what << std::endl;
+  }
+  EXPECT_FALSE(logger->init_logger("log1",path1, false, false, &what));  // Already initialized
+  if(what.length()>0)
+  {
+    std::cout << what << std::endl;
+  }
   EXPECT_NO_FATAL_FAILURE(logger.reset());
 }
 
 TEST(TestSuite, wrongConstructor)
 {
   EXPECT_NO_FATAL_FAILURE(logger.reset(new cnr_logger::TraceLogger( )));
-  EXPECT_FALSE(logger->init("log1", "/this_namespace_does_not_exist", false, false));
-  EXPECT_TRUE(logger->init("log1", "/this_namespace_does_not_exist", false, true));   // default vaules depiste none parameters
+  std::string what;
+  EXPECT_FALSE(logger->init_logger("log1", "/this_namespace_does_not_exist", false, false, &what));
+  if(what.length()>0)
+  {
+    std::cout << what << std::endl;
+  }
+  EXPECT_TRUE(logger->init_logger("log1", "/this_namespace_does_not_exist", false, true, &what));   // default vaules depiste none parameters
+  if(what.length()>0)
+  {
+    std::cout << what << std::endl;
+  }
   // exits
   EXPECT_NO_FATAL_FAILURE(logger.reset());
 }
@@ -151,8 +169,12 @@ TEST(TestSuite, wrongConstructor)
 TEST(TestSuite, flushFileAndScreen)
 {
   std::string path1 = path("file_and_screen_same_appender");
-
-  EXPECT_NO_FATAL_FAILURE(logger.reset(new cnr_logger::TraceLogger("log1", path1, true)));
+  std::string what;
+  EXPECT_NO_FATAL_FAILURE(logger.reset(new cnr_logger::TraceLogger("log1", path1, true, true, &what)));
+  if(what.length()>0)
+  {
+    std::cout << what << std::endl;
+  }
 
   std::cout << *logger << std::endl;
 

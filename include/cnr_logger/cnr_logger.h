@@ -94,7 +94,7 @@ public:
    * configuration is loaded. If FALSE, the function returns false if the parameters are not found.
    */
   TraceLogger(const std::string& logger_id, const std::string& path,
-                const bool star_header=false, const bool default_values=true);
+                const bool star_header=false, const bool default_values=true, std::string* what=nullptr);
   ~TraceLogger();
 
   /**
@@ -107,8 +107,8 @@ public:
    * configuration is loaded. If FALSE, the function returns false if the parameters are not found.
    * @return True if correctly initialized
    */
-  bool init(const std::string& logger_id, const std::string& path,
-              const bool star_header = false, const bool default_values = true);
+  bool init_logger(const std::string& logger_id, const std::string& path,
+              const bool star_header = false, const bool default_values = true, std::string* what = nullptr);
 
   TraceLogger& operator=(const TraceLogger& rhs);
 
