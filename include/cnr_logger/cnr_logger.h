@@ -105,8 +105,15 @@ public:
    * @param star_header: if the first log is with '***' to make easy to find the start of the logging in the file.
    * @param default_values: in the case the parameters are not found under the input namespace, the default
    * configuration is loaded. If FALSE, the function returns false if the parameters are not found.
+   * @param what: if it is different from nullptr, it stores warnings and errors 
    * @return True if correctly initialized
    */
+  bool init(const std::string& logger_id, const std::string& path,
+              const bool star_header = false, const bool default_values = true, std::string* what = nullptr);
+  [[deprecated("Use the init(const std::string&, const std::string&, const bool, const bool, std::string*)")]]
+  bool init(const std::string& logger_id, const std::string& path,
+              const bool star_header = false, const bool default_values = true);
+  [[deprecated("Use the init(const std::string&, const std::string&, const bool, const bool, std::string*)")]]
   bool init_logger(const std::string& logger_id, const std::string& path,
               const bool star_header = false, const bool default_values = true, std::string* what = nullptr);
 

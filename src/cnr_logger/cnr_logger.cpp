@@ -274,7 +274,7 @@ TraceLogger::TraceLogger(const std::string& logger_id, const std::string& path,
 
   try
   {
-    if(init_logger(logger_id, path, star_header, default_values, what))
+    if(init(logger_id, path, star_header, default_values, what))
     {
       return;
     }
@@ -323,6 +323,24 @@ bool TraceLogger::check(const std::string& path)
 }
 
 bool TraceLogger::init_logger(const std::string& logger_id, const std::string& path,
+                          const bool star_header, const bool default_values, std::string* what)
+{
+  return this->init(logger_id, path, star_header, default_values, what);
+}
+
+bool TraceLogger::init(const std::string& logger_id, const std::string& path,
+                          const bool star_header, const bool default_values)
+{
+  std::string what;
+  bool ret = this->init(logger_id, path, star_header, default_values, &what);
+  if(what.length()>0)
+  { 
+    std::cerr << what << std::endl;
+  }
+  return ret;
+}
+
+bool TraceLogger::init(const std::string& logger_id, const std::string& path,
                           const bool star_header, const bool default_values, std::string* what)
 {
   if(initialized_)
@@ -579,9 +597,11 @@ bool TraceLogger::init_logger(const std::string& logger_id, const std::string& p
 
 TraceLogger& TraceLogger::operator=(const TraceLogger& rhs)
 {
-  if(!this->init_logger(rhs.logger_id_, rhs.path_, false, rhs.default_values_))
+  std::string what;
+  if(!this->init(rhs.logger_id_, rhs.path_, false, rhs.default_values_, &what))
   {
     std::cerr << rhs.logger_id_ << ": ERROR - THE LOGGER INITIALIZATION FAILED." << std::endl;
+    std::cerr << what << std::endl;
     throw std::runtime_error((std::string(__PRETTY_FUNCTION__) + "Error in initializing the logger()").c_str());
   }
   return *this;
