@@ -190,11 +190,12 @@ public:
   }
 };
 
-
-LOG4CXX_PTR_DEF(log4cxx::ColorPatternLayout);
-IMPLEMENT_LOG4CXX_OBJECT(log4cxx::ColorPatternLayout);
+LOG4CXX_PTR_DEF(ColorPatternLayout);
 
 }  // namespace log4cxx
+
+using log4cxx::ColorPatternLayout;
+IMPLEMENT_LOG4CXX_OBJECT(ColorPatternLayout);
 
 #endif
 
