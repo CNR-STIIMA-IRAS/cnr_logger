@@ -36,6 +36,7 @@
 #include <string>
 #include <vector>
 #include <iostream>
+
 #include <cnr_logger/cnr_logger.h>
 
 #if defined(ROS_NOT_AVAILABLE)
@@ -53,41 +54,71 @@
   #endif
 #endif
 
-#include <fstream>
-#include <pwd.h>
-#include <dirent.h>
-#include <unistd.h>
-#include <sys/types.h>
-#include <bits/stdc++.h>
-#include <sys/stat.h>
-#include <sys/types.h>
+#include <cstdlib>
+#include <boost/filesystem.hpp>
+#include <log4cxx/helpers/transcoder.h>
 
-bool exists_test (const std::string& name) 
+#define MAX_PATH 1024
+
+std::string get_homedir(void)
 {
-  struct stat buffer;   
-  return (stat (name.c_str(), &buffer) == 0); 
+    std::string homedir;
+
+#if defined(_WIN32) || defined(_WIN64)
+    homedir = std::string(std::getenv("HOMEDRIVE")) + std::string(getenv("HOMEPATH"));
+#else
+    homedir = std::getenv("HOME");
+#endif
+    return homedir;
 }
 
-std::string mkLogDir()
+
+bool exists_test (const std::string& name, const bool is_a_file = true) 
 {
-  struct passwd *pw = getpwuid(getuid());
-  const char *homedir = pw->pw_dir;
-  std::string homedir_string = std::string(homedir) + "/.local/log";
-  DIR* dir = opendir(homedir_string.c_str());
-  if (dir)
+  boost::filesystem::path p(name);
+  if(!boost::filesystem::exists(p)) // does path p actually exist?
   {
-    closedir(dir);
+    return false;
   }
-  else if (ENOENT == errno)
+  
+  if(is_a_file && !boost::filesystem::is_regular_file(p))  // is path p a regular file?
   {
-    mkdir(homedir_string.c_str(),0777);
+      return false;
   }
-  return homedir_string;
+
+  if(!is_a_file && !boost::filesystem::is_directory(p))  // is path p a directory file?
+  {
+      return false;
+  }
+
+  return true;
+  // struct stat buffer;   
+  // return (stat (name.c_str(), &buffer) == 0); 
 }
 
+
+bool mkLogDir(std::string& dir)
+{
+  dir = get_homedir() + "/.ros/log";
+  if(!exists_test (dir, false))
+  {
+    boost::filesystem::path p(dir);
+	  if(!boost::filesystem::create_directories(p)) 
+    {
+		  return false;
+	  }
+  }
+ 
+  return true;
+}
+
+
+#if !defined(_WIN32) && !defined(_WIN64)
 
 namespace log4cxx
 {
+
+
 class LOG4CXX_EXPORT ColorPatternLayout : public log4cxx::PatternLayout
 {
 public:
@@ -114,32 +145,43 @@ public:
       {
         log4cxx::PatternLayout::format(tmp, event, pool);
         log4cxx::LevelPtr lvl = event->getLevel();
+        std::string color ="";
         switch (lvl->toInt())
         {
         case log4cxx::Level::FATAL_INT:
-          output.append("\u001b[0;41m");  // red BG
+          color = "\u001b[0;41m";
           break;
         case log4cxx::Level::ERROR_INT:
-          output.append("\u001b[0;31m");  // red FG
+          color = "\u001b[0;31m";  // red FG
           break;
         case log4cxx::Level::WARN_INT:
-          output.append("\u001b[0;33m");  // Yellow FG
+          color = "\u001b[0;33m";  // Yellow FG
           break;
         case log4cxx::Level::INFO_INT:
-          output.append("\u001b[1m");     // Bright
+          color = "\u001b[1m";     // Bright
           break;
         case log4cxx::Level::DEBUG_INT:
-          output.append("\u001b[1;32m");  // Green FG
+          color = "\u001b[1;32m";  // Green FG
           break;
         case log4cxx::Level::TRACE_INT:
-          output.append("\u001b[0;34m");  // Black FG
+          color = "\u001b[0;34m";  // Black FG
           break;
         default:
           break;
         }
+        if(color.length()>0)
+        {
+          log4cxx::LogString _color;
+          log4cxx::helpers::Transcoder::decode( color, _color);
+          output.append(_color);  // red BG
+        }
       }
       output.append(tmp);
-      output.append("\u001b[m");
+      
+      std::string color = "\u001b[m"; 
+      log4cxx::LogString _color;
+      log4cxx::helpers::Transcoder::decode( color, _color);
+      output.append(_color);
     }
     catch (std::exception& e)
     {
@@ -147,13 +189,14 @@ public:
     }
   }
 };
-LOG4CXX_PTR_DEF(ColorPatternLayout);
+
+
+LOG4CXX_PTR_DEF(log4cxx::ColorPatternLayout);
+IMPLEMENT_LOG4CXX_OBJECT(log4cxx::ColorPatternLayout);
 
 }  // namespace log4cxx
 
-
-using log4cxx::ColorPatternLayout;
-IMPLEMENT_LOG4CXX_OBJECT(ColorPatternLayout);
+#endif
 
 namespace cnr_logger
 {
@@ -484,7 +527,15 @@ bool TraceLogger::init(const std::string& logger_id, const std::string& path,
   {
     warnings.push_back("Paremeter missing: path='"+path+"', key='pattern_layout'");
   }
-  log4cxx::ColorPatternLayoutPtr layout = new log4cxx::ColorPatternLayout(pattern_layout);
+  log4cxx::LogString _pattern_layout;
+  log4cxx::helpers::Transcoder::decode( pattern_layout, _pattern_layout);
+  
+
+#if !defined(_WIN32) && !defined(_WIN64)
+  log4cxx::ColorPatternLayoutPtr layout = new log4cxx::ColorPatternLayout(_pattern_layout);
+#else
+  log4cxx::PatternLayoutPtr layout = new log4cxx::PatternLayout(_pattern_layout);
+#endif
   // =======================================================================================
 
 
@@ -494,7 +545,13 @@ bool TraceLogger::init(const std::string& logger_id, const std::string& path,
   //
   // =======================================================================================
   std::string log_file_name;
-  std::string root_path = mkLogDir();
+  std::string root_path; 
+  if(!mkLogDir(root_path))
+  {
+    if(what)
+      *what = "Logger ID: " + logger_id_ + ", Impossible to create/access the log directory";
+    return false;
+  }
   std::string default_log_file_name = log_file_name = root_path + "/" + logger_id_;
   if(logFile() || logSyncFileAndScreen())
   {
@@ -522,7 +579,10 @@ bool TraceLogger::init(const std::string& logger_id, const std::string& path,
       warnings.push_back("Parameter superimposed: append data to file= '" + std::to_string(default_append_to_file) +"'");
     }
 
-    log4cxx::RollingFileAppenderPtr appender = new log4cxx::RollingFileAppender(layout, log_file_name, append_to_file);
+
+    log4cxx::LogString _log_file_name;
+    log4cxx::helpers::Transcoder::decode(log_file_name,_log_file_name);
+    log4cxx::RollingFileAppenderPtr appender = new log4cxx::RollingFileAppender(layout, _log_file_name, append_to_file);
     loggers_[ logFile() ? FILE_STREAM : SYNC_FILE_AND_CONSOLE ]->addAppender(appender);
 
     appender->setMaximumFileSize(100 * 1024 * 1024);
@@ -533,7 +593,9 @@ bool TraceLogger::init(const std::string& logger_id, const std::string& path,
 
   if(logScreen() || logSyncFileAndScreen())
   {
-    log4cxx::ConsoleAppenderPtr appender = new log4cxx::ConsoleAppender(layout, logger_id_);
+    log4cxx::LogString _logger_id_;
+    log4cxx::helpers::Transcoder::decode(logger_id_,_logger_id_);
+    log4cxx::ConsoleAppenderPtr appender = new log4cxx::ConsoleAppender(layout, _logger_id_);
     loggers_[  logScreen() ? CONSOLE_STREAM : SYNC_FILE_AND_CONSOLE ]->addAppender(appender);
   }
 
