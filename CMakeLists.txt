@@ -42,7 +42,7 @@ endif()
 #################
 
 ## common
-find_package(Boost REQUIRED COMPONENTS date_time )
+find_package(Boost REQUIRED COMPONENTS date_time filesystem)
 
 if(USE_ROS)
 
@@ -55,17 +55,17 @@ if(USE_ROS)
   if(ENABLE_TESTING)
     find_package(rostest REQUIRED)
 
-    if(ENABLE_COVERAGE_TESTING)
+    if(ENABLE_COVERAGE_TESTING AND NOT WIN32)
       find_package(code_coverage REQUIRED)
       APPEND_COVERAGE_COMPILER_FLAGS()
-    endif(ENABLE_COVERAGE_TESTING)
+    endif(ENABLE_COVERAGE_TESTING AND NOT WIN32)
   endif(ENABLE_TESTING)
 
 
   set(CNR_LOGGER_TARGET_LINK_LIBRARIES  ${catkin_LIBRARIES} )
   set(CNR_LOGGER_TARGET_INCLUDE_DIRS    ${catkin_INCLUDE_DIRS} )
-  set(CNR_LOGGER_INSTALL_INCLUDE_DIR    ${CATKIN_PACKAGE_INCLUDE_DESTINATION})
-  set(CNR_LOGGER_INSTALL_LIB_DIR        ${CATKIN_PACKAGE_LIB_DESTINATION})
+  set(CNR_LOGGER_INSTALL_INCLUDE_DIR    include)
+  set(CNR_LOGGER_INSTALL_LIB_DIR        lib)
 
   set(ROSLINT_CPP_OPTS
   "--filter=-whitespace/braces,--filter=-runtime/references,-runtime/int,--max-line-length=180")
@@ -89,16 +89,16 @@ else(USE_ROS)
     enable_testing()
     find_package(GTest REQUIRED)
     
-    if(ENABLE_COVERAGE_TESTING)
+    if(ENABLE_COVERAGE_TESTING AND NOT WIN32)
       set(CMAKE_CXX_FLAGS "-Wno-deprecated-register ${CMAKE_CXX_FLAGS}")
       set(CMAKE_CXX_FLAGS_DEBUG "-Wno-deprecated-register -O0 -g -fprofile-arcs -ftest-coverage ${CMAKE_CXX_FLAGS_DEBUG}")
-    endif(ENABLE_COVERAGE_TESTING)
+    endif(ENABLE_COVERAGE_TESTING AND NOT WIN32)
   endif(ENABLE_TESTING)
 
   #add_compile_definitions(ROS_NOT_AVAILABLE)
   add_definitions(-DROS_NOT_AVAILABLE)
 
-  set(CNR_LOGGER_TARGET_LINK_LIBRARIES  ${YAML_CPP_LIBRARIES} ${Log4cxx_LIBRARY})
+  set(CNR_LOGGER_TARGET_LINK_LIBRARIES  ${YAML_CPP_LIBRARIES} ${Log4cxx_LIBRARY} ${Boost_LIBRARIES})
   set(CNR_LOGGER_TARGET_INCLUDE_DIRS    ${YAML_CPP_INCLUDE_DIRS})
   set(CNR_LOGGER_INSTALL_INCLUDE_DIR    "${CMAKE_INSTALL_PREFIX}/include")
   set(CNR_LOGGER_INSTALL_LIB_DIR        "${CMAKE_INSTALL_PREFIX}/lib")
@@ -160,11 +160,16 @@ if(ENABLE_TESTING)
   endif(USE_ROS)
 endif(ENABLE_TESTING)
 
+IF (WIN32)
+  # set stuff for windows
+ELSE()
+  # set stuff for other systems
+ENDIF()
 
 ##########################
 ## Coverage Testing     ##
 ##########################
-if( ENABLE_TESTING AND ENABLE_COVERAGE_TESTING)
+if( ENABLE_TESTING AND ENABLE_COVERAGE_TESTING AND NOT WIN32 )
   if(USE_ROS)
     message(STATUS "The coverage testing is enabled")
     set(COVERAGE_EXCLUDES "*/${PROJECT_NAME}/test*")

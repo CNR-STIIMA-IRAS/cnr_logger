@@ -85,6 +85,10 @@
    std::time(0)
 #endif
 
+#if !defined(__PRETTY_FUNCTION__) && !defined(__GNUC__)
+#define __PRETTY_FUNCTION__ __FUNCSIG__
+#endif
+
 
 /**
  * @namespace cnr_logger
