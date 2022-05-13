@@ -20,7 +20,9 @@
   <build_depend>rostest</build_depend>
 
   <exec_depend>rosconsole</exec_depend>
+  
   <test_depend>curl</test_depend>
+  <test_depend>code_coverage</test_depend>
   
   <export>
     <rosdoc config="rosdoc.yaml" />
