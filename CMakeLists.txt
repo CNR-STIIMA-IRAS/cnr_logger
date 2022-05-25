@@ -64,8 +64,8 @@ if(USE_ROS)
 
   set(CNR_LOGGER_TARGET_LINK_LIBRARIES  ${catkin_LIBRARIES} )
   set(CNR_LOGGER_TARGET_INCLUDE_DIRS    ${catkin_INCLUDE_DIRS} )
-  set(CNR_LOGGER_INSTALL_INCLUDE_DIR    include)
-  set(CNR_LOGGER_INSTALL_LIB_DIR        lib)
+  set(CNR_LOGGER_INSTALL_INCLUDE_DIR    ${CATKIN_PACKAGE_INCLUDE_DESTINATION})
+  set(CNR_LOGGER_INSTALL_LIB_DIR        ${CATKIN_PACKAGE_LIB_DESTINATION})
 
   set(ROSLINT_CPP_OPTS
   "--filter=-whitespace/braces,--filter=-runtime/references,-runtime/int,--max-line-length=180")
