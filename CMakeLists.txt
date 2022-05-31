@@ -14,28 +14,10 @@ if(USE_ROS)
   set(ENABLE_TESTING ${CATKIN_ENABLE_TESTING})
 endif()
 
-###################
-## PRELIMINARIES ##
-###################
-if(NOT CMAKE_BUILD_TYPE)
-  set(CMAKE_BUILD_TYPE Release)
-endif()
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/cnrConfigMacros.cmake)
 
-if(NOT CMAKE_C_STANDARD)
-  set(CMAKE_C_STANDARD 99)
-endif()
+cnr_set_flags()
 
-IF("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" LESS 3.0)
-  set(CMAKE_CXX_FLAGS "-std=c++11")
-ELSE()
-  # Default to C++14
-  if(NOT CMAKE_CXX_STANDARD)
-    set(CMAKE_CXX_STANDARD 14)
-  endif()
-
-  set(CMAKE_CXX_STANDARD_REQUIRED ON)
-  set(CMAKE_CXX_EXTENSIONS OFF)
-endif()
 
 #################
 ## DEPENDECIES ##
@@ -43,6 +25,7 @@ endif()
 
 ## common
 find_package(Boost REQUIRED COMPONENTS date_time filesystem)
+find_package(Threads REQUIRED)
 
 if(USE_ROS)
 
@@ -110,8 +93,8 @@ endif(USE_ROS)
 include_directories   (include ${CNR_LOGGER_TARGET_INCLUDE_DIRS} )
 add_library           (${PROJECT_NAME} SHARED src/${PROJECT_NAME}/cnr_logger.cpp )
 target_link_libraries (${PROJECT_NAME} ${CNR_LOGGER_TARGET_LINK_LIBRARIES})
-target_compile_options(${PROJECT_NAME}
-  PUBLIC $<$<CONFIG:Release>:-Ofast -funroll-loops -ffast-math >)
+
+cnr_target_compile_options(${PROJECT_NAME})
 
 if(${CMAKE_VERSION} VERSION_GREATER  "3.16.0")
   target_precompile_headers(${PROJECT_NAME} PUBLIC
@@ -130,6 +113,7 @@ endif()
 if(COMPILE_EXAMPLE)
   add_executable        (${PROJECT_NAME}_example src/cnr_logger_example.cpp )
   target_link_libraries (${PROJECT_NAME}_example ${PROJECT_NAME} ${CNR_LOGGER_TARGET_LINK_LIBRARIES})
+  cnr_target_compile_options(${PROJECT_NAME}_example)
 endif()
 
 ##########################
@@ -142,29 +126,36 @@ if(ENABLE_TESTING)
     add_rostest_gtest(${PROJECT_NAME}_test test/test.launch test/test_cnr_logger.cpp)
     target_link_libraries(${PROJECT_NAME}_test ${PROJECT_NAME} ${CNR_LOGGER_TARGET_LINK_LIBRARIES} ${rostest_LIBRARIES} )
     target_compile_definitions(${PROJECT_NAME}_test PUBLIC FORCE_ROS_TIME_USE=1)
+    cnr_target_compile_options(${PROJECT_NAME}_test)
 
     # Test using STD TIME
     add_rostest_gtest(${PROJECT_NAME}_test_std_time test/test_std_time.launch test/test_cnr_logger.cpp)
     target_link_libraries(${PROJECT_NAME}_test_std_time ${PROJECT_NAME} ${CNR_LOGGER_TARGET_LINK_LIBRARIES} ${rostest_LIBRARIES} )
     target_compile_definitions(${PROJECT_NAME}_test_std_time PUBLIC FORCE_ROS_TIME_USE=0)
+    cnr_target_compile_options(${PROJECT_NAME}_test_std_time)
 
   else()
 
     include_directories(${GTEST_INCLUDE_DIRS})
     add_executable(${PROJECT_NAME}_test test/test_cnr_logger.cpp)
-    target_link_libraries(${PROJECT_NAME}_test ${PROJECT_NAME} ${CNR_LOGGER_TARGET_LINK_LIBRARIES}  gtest pthread)
+    if(${CMAKE_VERSION} VERSION_GREATER  "3.16.0")
+      target_link_libraries(${PROJECT_NAME}_test ${PROJECT_NAME} ${CNR_LOGGER_TARGET_LINK_LIBRARIES} gtest Threads::Threads)
+    else()
+      if(THREADS_HAVE_PTHREAD_ARG)
+        target_compile_options(${PROJECT_NAME}_test PUBLIC "-pthread")
+      endif()
+      if(CMAKE_THREAD_LIBS_INIT)
+        target_link_libraries(${PROJECT_NAME}_test "${CMAKE_THREAD_LIBS_INIT}")
+      endif()
+    endif()
     target_compile_definitions(${PROJECT_NAME}_test PRIVATE TEST_DIR="${CMAKE_CURRENT_LIST_DIR}/test")
+    cnr_target_compile_options(${PROJECT_NAME}_test)
 
     gtest_add_tests(${PROJECT_NAME}_test "${CMAKE_SOURCE_DIR}/test/config/" AUTO)
 
   endif(USE_ROS)
 endif(ENABLE_TESTING)
 
-IF (WIN32)
-  # set stuff for windows
-ELSE()
-  # set stuff for other systems
-ENDIF()
 
 ##########################
 ## Coverage Testing     ##

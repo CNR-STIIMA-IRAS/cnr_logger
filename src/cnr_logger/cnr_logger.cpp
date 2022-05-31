@@ -666,6 +666,41 @@ TraceLogger::~TraceLogger()
   }
 }
 
+bool TraceLogger::logFile()
+{
+  return (loggers_.find(FILE_STREAM) != loggers_.end());
+}
+/**
+ * @brief Configuration getter.
+ * @return True if the logger has an appender linked to a the console, false otherwise
+ */
+bool TraceLogger::logScreen()
+{
+  return (loggers_.find(CONSOLE_STREAM) != loggers_.end());
+}
+
+/**
+ * @brief Configuration getter.
+ * @return True if the logger has an appender linked to both the console and the file, false otherwise
+ */
+bool TraceLogger::logSyncFileAndScreen()
+{
+  return (loggers_.find(SYNC_FILE_AND_CONSOLE) != loggers_.end());
+}
+
+const double& TraceLogger::defaultThrottleTime() const
+{
+  return default_throttle_time_;
+}
+
+bool TraceLogger::logFatal() const {return FATAL<=max_level_;};
+bool TraceLogger::logError() const {return ERROR<=max_level_;};
+bool TraceLogger::logWarn()  const {return WARN <=max_level_;};
+bool TraceLogger::logInfo()  const {return INFO <=max_level_;};
+bool TraceLogger::logDebug() const {return DEBUG<=max_level_;};
+bool TraceLogger::logTrace() const {return TRACE<=max_level_;};
+
+
 std::string to_string(const TraceLogger& logger)
 {
   std::string ret;

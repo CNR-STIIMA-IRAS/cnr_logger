@@ -121,44 +121,32 @@ public:
    * @brief Configuration getter.
    * @return True if the logger has an appender linked to a file, false otherwise
    */
-  bool logFile()
-  {
-    return (loggers_.find(FILE_STREAM) != loggers_.end());
-  }
+  bool logFile();
   /**
    * @brief Configuration getter.
    * @return True if the logger has an appender linked to a the console, false otherwise
    */
-  bool logScreen()
-  {
-    return (loggers_.find(CONSOLE_STREAM) != loggers_.end());
-  }
+  bool logScreen();
 
   /**
    * @brief Configuration getter.
    * @return True if the logger has an appender linked to both the console and the file, false otherwise
    */
-  bool logSyncFileAndScreen()
-  {
-    return (loggers_.find(SYNC_FILE_AND_CONSOLE) != loggers_.end());
-  }
+  bool logSyncFileAndScreen();
 
   std::map<AppenderType, log4cxx::LoggerPtr> loggers_;
   std::map<AppenderType, Level> levels_;
   std::string logger_id_;
   std::string path_;
   bool default_values_;
-  const double& defaultThrottleTime() const
-  {
-    return default_throttle_time_;
-  }
+  const double& defaultThrottleTime() const;
 
-  bool logFatal() const {return FATAL<=max_level_;};
-  bool logError() const {return ERROR<=max_level_;};
-  bool logWarn()  const {return WARN <=max_level_;};
-  bool logInfo()  const {return INFO <=max_level_;};
-  bool logDebug() const {return DEBUG<=max_level_;};
-  bool logTrace() const {return TRACE<=max_level_;};
+  bool logFatal() const;
+  bool logError() const;
+  bool logWarn()  const;
+  bool logInfo()  const;
+  bool logDebug() const;
+  bool logTrace() const;
 
   friend std::string to_string(const TraceLogger& logger);
   friend std::ofstream& operator<<(std::ofstream& out, const TraceLogger& logger);
