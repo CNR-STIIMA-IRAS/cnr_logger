@@ -25,7 +25,6 @@ cnr_set_flags()
 
 ## common
 find_package(Boost REQUIRED COMPONENTS date_time filesystem)
-find_package(Threads REQUIRED)
 
 if(USE_ROS)
 
@@ -66,6 +65,9 @@ else(USE_ROS)
 
   ### Log4cxx
   find_package(Log4cxx)
+
+  ### Log4cxx Threads
+  find_package(Threads REQUIRED)
 
   if(ENABLE_TESTING)
     message(STATUS "Enable testing enable_testing")
