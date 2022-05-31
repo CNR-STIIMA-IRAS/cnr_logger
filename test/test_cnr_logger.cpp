@@ -72,7 +72,7 @@ TEST(TestSuite, colorTest)
 std::string path(const std::string& what)
 {
   std::string ret;
-  #if defined(ROS_NOT_AVAILABLE)
+#if defined(ROS_NOT_AVAILABLE)
   ret = path_to_src + "/" + what + ".yaml";
 #else
   ret = "/" + what ;
@@ -85,7 +85,7 @@ return ret;
 TEST(TestSuite, fullConstructor1)
 {
   std::string path1 = path("file_and_screen_different_appenders");
-#
+
   EXPECT_NO_FATAL_FAILURE(logger.reset(new cnr_logger::TraceLogger("log1",path1 )));
   std::string what;
   EXPECT_FALSE(logger->init("log1", path1, false, false, &what));  // Already initialized
