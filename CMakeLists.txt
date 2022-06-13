@@ -1,6 +1,11 @@
 cmake_minimum_required(VERSION 2.8.3)
 
-project(cnr_logger)
+if(${CMAKE_VERSION} VERSION_GREATER  "3.0.0")
+  cmake_policy(SET CMP0048 NEW)
+  project(cnr_logger VERSION 1.0.0)
+else()
+  project(cnr_logger)
+endif()
 
 ###################
 ## OPTIONS       ##
@@ -96,7 +101,7 @@ include_directories   (include ${CNR_LOGGER_TARGET_INCLUDE_DIRS} )
 add_library           (${PROJECT_NAME} SHARED src/${PROJECT_NAME}/cnr_logger.cpp )
 target_link_libraries (${PROJECT_NAME} ${CNR_LOGGER_TARGET_LINK_LIBRARIES})
 
-cnr_target_compile_options(${PROJECT_NAME})
+#cnr_target_compile_options(${PROJECT_NAME})
 
 if(${CMAKE_VERSION} VERSION_GREATER  "3.16.0")
   target_precompile_headers(${PROJECT_NAME} PUBLIC
@@ -122,19 +127,19 @@ endif()
 ## Testing              ##
 ##########################
 if(ENABLE_TESTING)
-
   if(USE_ROS)
+    MESSAGE(STATUS "??????????????????????????????")
     # Test using ROS TIME
     add_rostest_gtest(${PROJECT_NAME}_test test/test.launch test/test_cnr_logger.cpp)
     target_link_libraries(${PROJECT_NAME}_test ${PROJECT_NAME} ${CNR_LOGGER_TARGET_LINK_LIBRARIES} ${rostest_LIBRARIES} )
     target_compile_definitions(${PROJECT_NAME}_test PUBLIC FORCE_ROS_TIME_USE=1)
-    cnr_target_compile_options(${PROJECT_NAME}_test)
+    #cnr_target_compile_options(${PROJECT_NAME}_test)
 
     # Test using STD TIME
     add_rostest_gtest(${PROJECT_NAME}_test_std_time test/test_std_time.launch test/test_cnr_logger.cpp)
     target_link_libraries(${PROJECT_NAME}_test_std_time ${PROJECT_NAME} ${CNR_LOGGER_TARGET_LINK_LIBRARIES} ${rostest_LIBRARIES} )
     target_compile_definitions(${PROJECT_NAME}_test_std_time PUBLIC FORCE_ROS_TIME_USE=0)
-    cnr_target_compile_options(${PROJECT_NAME}_test_std_time)
+    #cnr_target_compile_options(${PROJECT_NAME}_test_std_time)
 
   else()
 
@@ -151,7 +156,7 @@ if(ENABLE_TESTING)
       endif()
     endif()
     target_compile_definitions(${PROJECT_NAME}_test PRIVATE TEST_DIR="${CMAKE_CURRENT_LIST_DIR}/test")
-    cnr_target_compile_options(${PROJECT_NAME}_test)
+    #cnr_target_compile_options(${PROJECT_NAME}_test)
 
     gtest_add_tests(${PROJECT_NAME}_test "${CMAKE_SOURCE_DIR}/test/config/" AUTO)
 
@@ -178,10 +183,6 @@ endif()
 
 
 
-
-
-
-
 #############
 ## Install ##
 #############
@@ -196,3 +197,11 @@ install(TARGETS ${PROJECT_NAME}
   LIBRARY DESTINATION ${CNR_LOGGER_INSTALL_LIB_DIR}
   RUNTIME DESTINATION ${CNR_LOGGER_INSTALL_LIB_DIR}
 )
+
+install(DIRECTORY test/
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch
+  PATTERN ".svn" EXCLUDE)
+
+install(DIRECTORY launch/
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch
+  PATTERN ".svn" EXCLUDE)

@@ -46,6 +46,67 @@ std::string path_to_src = "";
 std::shared_ptr<cnr_logger::TraceLogger> logger;
 std::shared_ptr<cnr_logger::TraceLogger> logger2;
 
+
+namespace detail
+{
+  struct unwrapper
+  {
+    unwrapper(std::exception_ptr pe) : pe_(pe) {}
+
+    operator bool() const
+    {
+      return bool(pe_);
+    }
+
+    friend auto operator<<(std::ostream& os, unwrapper const& u) -> std::ostream&
+    {
+      try
+      {
+          std::rethrow_exception(u.pe_);
+          return os << "no exception";
+      }
+      catch(std::runtime_error const& e)
+      {
+          return os << "runtime_error: " << e.what();
+      }
+      catch(std::logic_error const& e)
+      {
+          return os << "logic_error: " << e.what();
+      }
+      catch(std::exception const& e)
+      {
+          return os << "exception: " << e.what();
+      }
+      catch(...)
+      {
+          return os << "non-standard exception";
+      }
+    }
+    std::exception_ptr pe_;
+  };
+}
+
+auto unwrap(std::exception_ptr pe)
+{
+  return detail::unwrapper(pe);
+}
+
+template<class F>
+::testing::AssertionResult does_not_throw(F&& f)
+{
+  try
+  {
+     f();
+     return ::testing::AssertionSuccess();
+  }
+  catch(...)
+  {
+     return ::testing::AssertionFailure() << unwrap(std::current_exception());
+  }
+};
+
+
+
 TEST(TestSuite, colorTest)
 {
   std::cout << "Color Test" << std::endl;
@@ -304,6 +365,185 @@ TEST(TestSuite, flushOnlsyScreen)
 #endif
   }
   EXPECT_NO_FATAL_FAILURE(logger.reset());
+}
+
+TEST(TestSuite, testMacros)
+{
+  EXPECT_NO_FATAL_FAILURE( CNR_FATAL(*logger, "TEST"));
+  EXPECT_NO_FATAL_FAILURE( CNR_ERROR(*logger, "TEST"));
+  EXPECT_NO_FATAL_FAILURE( CNR_WARN(*logger, "TEST"));
+  EXPECT_NO_FATAL_FAILURE( CNR_INFO(*logger, "TEST"));
+  EXPECT_NO_FATAL_FAILURE( CNR_INFO_ONLY_FILE(*logger, "TEST"));
+  EXPECT_NO_FATAL_FAILURE( CNR_DEBUG(*logger, "TEST"));
+  EXPECT_NO_FATAL_FAILURE( CNR_TRACE(*logger, "TEST"));
+  EXPECT_NO_FATAL_FAILURE( CNR_FATAL_THROTTLE(*logger, 1.0, "TEST"));
+  EXPECT_NO_FATAL_FAILURE( CNR_ERROR_THROTTLE(*logger, 1.0, "TEST"));
+  EXPECT_NO_FATAL_FAILURE( CNR_WARN_THROTTLE(*logger, 1.0, "TEST"));
+  EXPECT_NO_FATAL_FAILURE( CNR_INFO_THROTTLE(*logger, 1.0, "TEST"));
+  EXPECT_NO_FATAL_FAILURE( CNR_DEBUG_THROTTLE(*logger, 1.0, "TEST"));
+  EXPECT_NO_FATAL_FAILURE( CNR_TRACE_THROTTLE(*logger, 1.0, "TEST"));
+  EXPECT_NO_FATAL_FAILURE( CNR_FATAL_COND(*logger, 1, "TEST"));
+  EXPECT_NO_FATAL_FAILURE( CNR_FATAL_COND(*logger, 0, "TEST"));
+  EXPECT_NO_FATAL_FAILURE( CNR_ERROR_COND(*logger, 1, "TEST"));
+  EXPECT_NO_FATAL_FAILURE( CNR_ERROR_COND(*logger, 0, "TEST"));
+  EXPECT_NO_FATAL_FAILURE( CNR_WARN_COND(*logger, 1, "TEST"));
+  EXPECT_NO_FATAL_FAILURE( CNR_WARN_COND(*logger, 0, "TEST"));
+  EXPECT_NO_FATAL_FAILURE( CNR_INFO_COND(*logger, 1, "TEST"));
+  EXPECT_NO_FATAL_FAILURE( CNR_INFO_COND(*logger, 0, "TEST"));
+  EXPECT_NO_FATAL_FAILURE( CNR_DEBUG_COND(*logger, 1, "TEST"));
+  EXPECT_NO_FATAL_FAILURE( CNR_DEBUG_COND(*logger, 0, "TEST"));
+  EXPECT_NO_FATAL_FAILURE( CNR_TRACE_COND(*logger, 1, "TEST"));
+  EXPECT_NO_FATAL_FAILURE( CNR_TRACE_COND(*logger, 0, "TEST"));
+
+  EXPECT_NO_FATAL_FAILURE( CNR_FATAL_COND_THROTTLE(*logger, 1, 1.0, "TEST"));
+  EXPECT_NO_FATAL_FAILURE( CNR_FATAL_COND_THROTTLE(*logger, 0, 1.0, "TEST"));
+  EXPECT_NO_FATAL_FAILURE( CNR_ERROR_COND_THROTTLE(*logger, 1, 1.0, "TEST"));
+  EXPECT_NO_FATAL_FAILURE( CNR_ERROR_COND_THROTTLE(*logger, 0, 1.0, "TEST"));
+  EXPECT_NO_FATAL_FAILURE( CNR_WARN_COND_THROTTLE(*logger, 1,  1.0, "TEST"));
+  EXPECT_NO_FATAL_FAILURE( CNR_WARN_COND_THROTTLE(*logger, 0,  1.0, "TEST"));
+  EXPECT_NO_FATAL_FAILURE( CNR_INFO_COND_THROTTLE(*logger, 1,  1.0, "TEST"));
+  EXPECT_NO_FATAL_FAILURE( CNR_INFO_COND_THROTTLE(*logger, 0,  1.0, "TEST"));
+  EXPECT_NO_FATAL_FAILURE( CNR_DEBUG_COND_THROTTLE(*logger, 1, 1.0, "TEST"));
+  EXPECT_NO_FATAL_FAILURE( CNR_DEBUG_COND_THROTTLE(*logger, 0, 1.0, "TEST"));
+  EXPECT_NO_FATAL_FAILURE( CNR_TRACE_COND_THROTTLE(*logger, 1, 1.0, "TEST"));
+  EXPECT_NO_FATAL_FAILURE( CNR_TRACE_COND_THROTTLE(*logger, 0, 1.0, "TEST"));
+
+  EXPECT_NO_FATAL_FAILURE( CNR_TRACE_START(*logger));
+  EXPECT_NO_FATAL_FAILURE( CNR_TRACE_START(*logger,"TEST"));
+  EXPECT_NO_FATAL_FAILURE( CNR_TRACE_END(*logger));
+  EXPECT_NO_FATAL_FAILURE( CNR_TRACE_END(*logger,"TEST"));
+
+  EXPECT_NO_FATAL_FAILURE( CNR_TRACE_START_THROTTLE(*logger, 1.0));
+  EXPECT_NO_FATAL_FAILURE( CNR_TRACE_START_THROTTLE(*logger, 1.0, "TEST"));
+
+  EXPECT_NO_FATAL_FAILURE( CNR_TRACE_START_THROTTLE_DEFAULT(*logger));
+  EXPECT_NO_FATAL_FAILURE( CNR_TRACE_START_THROTTLE_DEFAULT(*logger, "TEST"));
+
+  auto f0 = [](){CNR_RETURN_BOOL(*logger, 1);};  
+  EXPECT_TRUE( f0() );
+
+  auto f1 = [](){CNR_RETURN_BOOL(*logger, 0);};
+  EXPECT_FALSE( f1() );
+
+  auto f2 = [](){CNR_RETURN_BOOL(*logger, 1,"TEST");};
+  EXPECT_TRUE( f2() );
+
+  auto f3 = [](){CNR_RETURN_BOOL(*logger, 0,"TEST");};
+  EXPECT_FALSE( f3() );
+
+  auto f4 = [](){CNR_RETURN_TRUE(*logger);};
+  EXPECT_TRUE( f4() );
+
+  auto f5 = [](){CNR_RETURN_FALSE(*logger);};
+  EXPECT_FALSE( f5() );
+
+  auto f6 = [](){CNR_RETURN_TRUE(*logger,"TEST");};
+  EXPECT_TRUE( f6() );
+
+  auto f7 = [](){CNR_RETURN_FALSE(*logger,"TEST");};
+  EXPECT_FALSE( f7() );
+
+  auto f8 = [](){CNR_RETURN_FATAL(*logger);};
+  EXPECT_FALSE( f8() );
+
+  auto f9 = [](){CNR_RETURN_FATAL(*logger,"TEST");};
+  EXPECT_FALSE( f9() );
+
+  auto f10 = [](){CNR_RETURN_OK(*logger, void());};
+  EXPECT_NO_FATAL_FAILURE( f10() );
+
+  auto f11 = [](){CNR_RETURN_OK(*logger,void(), "TEST");};
+  EXPECT_NO_FATAL_FAILURE( f11() );
+
+  auto f12 = [](){CNR_RETURN_NOTOK(*logger, void());};
+  EXPECT_NO_FATAL_FAILURE( f12() );
+
+  auto f13 = [](){CNR_RETURN_NOTOK(*logger,void(), "TEST");};
+  EXPECT_NO_FATAL_FAILURE( f13() );
+
+  auto f14 = [](){CNR_EXIT_EX(*logger, 0);};
+  EXPECT_FALSE(does_not_throw([&]{ f14(); }));
+
+  auto f15 = [](){CNR_EXIT_EX(*logger, 1);};
+  EXPECT_NO_FATAL_FAILURE( f15() );
+
+  auto f16 = [](){CNR_EXIT_EX(*logger,0, "TEST");};
+  EXPECT_FALSE(does_not_throw([&]{ f16(); }));
+
+  auto f17 = [](){CNR_EXIT_EX(*logger,1, "TEST");};
+  EXPECT_NO_FATAL_FAILURE( f17() );
+
+  auto f18 = [](){CNR_RETURN_BOOL_THROTTLE(*logger, 1, 1.0);};
+  EXPECT_TRUE( f18() );
+
+  auto f19 = [](){CNR_RETURN_BOOL_THROTTLE(*logger, 0, 1.0);};
+  EXPECT_FALSE( f19() );
+
+  auto f20 = [](){CNR_RETURN_BOOL_THROTTLE(*logger, 1,1.0, "TEST");};
+  EXPECT_TRUE( f20() );
+
+  auto f21 = [](){CNR_RETURN_BOOL_THROTTLE(*logger, 0,1.0, "TEST");};
+  EXPECT_FALSE( f21() );
+
+  auto f22 = [](){CNR_RETURN_TRUE_THROTTLE(*logger,1.0);};
+  EXPECT_TRUE( f22() );
+
+  auto f23 = [](){CNR_RETURN_FALSE_THROTTLE(*logger,1.0);};
+  EXPECT_FALSE( f23() );
+
+  auto f24 = [](){CNR_RETURN_TRUE_THROTTLE(*logger,1.0, "TEST");};
+  EXPECT_TRUE( f24() );
+
+  auto f25 = [](){CNR_RETURN_FALSE_THROTTLE(*logger,1.0, "TEST");};
+  EXPECT_FALSE( f25() );
+
+  auto f26 = [](){CNR_RETURN_OK_THROTTLE(*logger, void(), 1.0);};
+  EXPECT_NO_FATAL_FAILURE( f26() );
+
+  auto f27 = [](){CNR_RETURN_OK_THROTTLE(*logger,void(), 1.0, "TEST");};
+  EXPECT_NO_FATAL_FAILURE( f27() );
+
+  auto f28 = [](){CNR_RETURN_NOTOK_THROTTLE(*logger, void(),1.0);};
+  EXPECT_NO_FATAL_FAILURE( f28() );
+
+  auto f29 = [](){CNR_RETURN_NOTOK_THROTTLE(*logger,void(), 1.0, "TEST");};
+  EXPECT_NO_FATAL_FAILURE( f29() );
+
+  auto f30 = [](){CNR_RETURN_BOOL_THROTTLE_DEFAULT(*logger, 1);};
+  EXPECT_TRUE( f30() );
+
+  auto f31 = [](){CNR_RETURN_BOOL_THROTTLE_DEFAULT(*logger, 0);};
+  EXPECT_FALSE( f31() );
+
+  auto f32 = [](){CNR_RETURN_BOOL_THROTTLE_DEFAULT(*logger, 1, "TEST");};
+  EXPECT_TRUE( f32() );
+
+  auto f33 = [](){CNR_RETURN_BOOL_THROTTLE_DEFAULT(*logger, 0, "TEST");};
+  EXPECT_FALSE( f33() );
+
+  auto f34 = [](){CNR_RETURN_TRUE_THROTTLE_DEFAULT(*logger);};
+  EXPECT_TRUE( f34() );
+  
+  auto f35 = [](){CNR_RETURN_FALSE_THROTTLE_DEFAULT(*logger);};
+  EXPECT_FALSE( f35() );
+
+  auto f36 = [](){CNR_RETURN_TRUE_THROTTLE_DEFAULT(*logger,"TEST");};
+  EXPECT_TRUE( f36() );
+
+  auto f37 = [](){CNR_RETURN_FALSE_THROTTLE_DEFAULT(*logger,"TEST");};
+  EXPECT_FALSE( f37() );
+
+  auto f38 = [](){CNR_RETURN_OK_THROTTLE_DEFAULT(*logger, void());};
+  EXPECT_NO_FATAL_FAILURE( f38() );
+
+  auto f39 = [](){CNR_RETURN_OK_THROTTLE_DEFAULT(*logger,void(), "TEST");};
+  EXPECT_NO_FATAL_FAILURE( f39() );
+
+  auto f40 = [](){CNR_RETURN_NOTOK_THROTTLE_DEFAULT(*logger, void());};
+  EXPECT_NO_FATAL_FAILURE( f40() );
+
+  auto f41 = [](){CNR_RETURN_NOTOK_THROTTLE_DEFAULT(*logger,void(),"TEST");};
+  EXPECT_NO_FATAL_FAILURE( f41() );
 }
 
 // Run all the tests that were declared with TEST()

@@ -48,6 +48,7 @@
 #ifndef CNR_LOGGER_CNR_LOGGER_MACROS_H
 #define CNR_LOGGER_CNR_LOGGER_MACROS_H
 
+#include <tuple>
 #include <string>
 #include <log4cxx/logger.h>
 #include <log4cxx/basicconfigurator.h>
@@ -255,7 +256,7 @@ inline cnr_logger::TraceLogger* getTraceLogger(TraceLoggerPtr logger)
   else
   {
     std::cerr << __PRETTY_FUNCTION__ << ":" << __LINE__
-                <<": The logger is not initialized. Fake loggin enabled." << std::endl;
+                <<": The logger is not initialized. Fake log enabled." << std::endl;
     std::shared_ptr<TraceLogger> ret(new TraceLogger());
     return ret.get();
   }
@@ -558,15 +559,35 @@ return ret;\
 
 
 #define CNR_RETURN_TRUE(logger,  ...)\
-  CNR_RETURN_BOOL(logger, true, __VA_ARGS__);
+do\
+{\
+  if(std::string(__VA_ARGS__).length()>0)\
+  {\
+    CNR_RETURN_BOOL(logger, true, __VA_ARGS__);\
+  }\
+  else\
+  {\
+    CNR_RETURN_BOOL(logger, true,"");\
+  }\
+} while (false);\
 
 #define CNR_RETURN_FALSE(logger, ...)\
-  CNR_RETURN_BOOL(logger, false, __VA_ARGS__);
+do\
+{\
+  if(std::string(__VA_ARGS__).length()>0)\
+  {\
+    CNR_RETURN_BOOL(logger, false, __VA_ARGS__);\
+  }\
+  else\
+  {\
+    CNR_RETURN_BOOL(logger, false,"");\
+  }\
+} while (false);\
 
 #define CNR_RETURN_FATAL(logger, ...)\
   do\
   {\
-    CNR_FATAL_COND(logger, std::string(__VA_ARGS__).length() > 0, __VA_ARGS__);\
+    CNR_FATAL_COND(logger, std::string(__VA_ARGS__).length() > 0, std::string(__VA_ARGS__));\
     CNR_TRACE(logger, (cnr_logger::RED() + "[FAILED] " + cnr_logger::RESET())<< __FUNCTION__);\
   } while (false);\
   return false;\
