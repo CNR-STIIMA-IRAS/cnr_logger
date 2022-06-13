@@ -196,12 +196,12 @@ TEST(TestSuite, partialConstructor)
   std::string what;
   EXPECT_NO_FATAL_FAILURE(logger.reset(new cnr_logger::TraceLogger()));
   EXPECT_TRUE(logger->init("log1", path1, false, false, &what));
-  if(what.length()>0)
+  if(what.length()>0u)
   {
     std::cout << what << std::endl;
   }
   EXPECT_FALSE(logger->init("log1",path1, false, false, &what));  // Already initialized
-  if(what.length()>0)
+  if(what.length()>0u)
   {
     std::cout << what << std::endl;
   }
@@ -213,12 +213,12 @@ TEST(TestSuite, wrongConstructor)
   EXPECT_NO_FATAL_FAILURE(logger.reset(new cnr_logger::TraceLogger( )));
   std::string what;
   EXPECT_FALSE(logger->init("log1", "/this_namespace_does_not_exist", false, false, &what));
-  if(what.length()>0)
+  if(what.length()>0u)
   {
     std::cout << what << std::endl;
   }
   EXPECT_TRUE(logger->init_logger("log1", "/this_namespace_does_not_exist", false, true, &what));   // default vaules depiste none parameters
-  if(what.length()>0)
+  if(what.length()>0u)
   {
     std::cout << what << std::endl;
   }
@@ -232,7 +232,7 @@ TEST(TestSuite, flushFileAndScreen)
   std::string path1 = path("file_and_screen_same_appender");
   std::string what;
   EXPECT_NO_FATAL_FAILURE(logger.reset(new cnr_logger::TraceLogger("log1", path1, true, true, &what)));
-  if(what.length()>0)
+  if(what.length()>0u)
   {
     std::cout << what << std::endl;
   }

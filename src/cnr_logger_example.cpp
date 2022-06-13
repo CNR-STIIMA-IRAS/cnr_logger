@@ -56,7 +56,7 @@ int main(int argc, char **argv)
 
   logger.reset(new cnr_logger::TraceLogger("log1", "/file_and_screen_same_appender", true));
 
-  for (size_t i = 0; i < 10; i++)
+  for (size_t i = 0u; i < 10u; i++)
   {
     CNR_INFO(*logger, "Ciao-log-1-info");
     CNR_DEBUG(*logger, "Ciao-log-1-debug");

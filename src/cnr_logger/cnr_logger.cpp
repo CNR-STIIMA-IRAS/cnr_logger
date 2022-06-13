@@ -606,14 +606,14 @@ bool TraceLogger::init(const std::string& logger_id, const std::string& path,
     loggers_str += std::to_string(l.first) + "|";
   }
 
-  loggers_str += (levels_.size() > 0 ?  " l: " : "");
+  loggers_str += (levels_.size() > 0u ?  " l: " : "");
   for(auto const & l : levels_)
   {
     loggers_str += std::to_string(l.first) + "|";
   }
 
   std::string log_start = "LOG START: " + logger_id_  + ", " + to_string(now) + ", " + loggers_str
-                          + (log_file_name.size() > 0 ?  ", fn: " + log_file_name : "");
+                          + (log_file_name.size() > 0u ?  ", fn: " + log_file_name : "");
   if(star_header)
   {
     CNR_INFO_ONLY_FILE((*this), "\n ==================================\n\n"
