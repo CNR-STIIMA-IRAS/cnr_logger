@@ -243,7 +243,7 @@ TEST(TestSuite, flushFileAndScreen)
   EXPECT_FALSE(logger->logScreen());
   EXPECT_TRUE(logger->logSyncFileAndScreen());
 
-  for (size_t i = 0; i < 5; i++)
+  for (size_t i = 0u; i < 5u; i++)
   {
     CNR_INFO(*logger, "Log info");
     CNR_WARN(*logger, "Log warn");
@@ -289,7 +289,7 @@ TEST(TestSuite, flushOnlyFile)
 
   EXPECT_NO_FATAL_FAILURE(logger.reset(new cnr_logger::TraceLogger("log1", path1, true)));
 
-  for (size_t i = 0; i < 5; i++)
+  for (size_t i = 0u; i < 5u; i++)
   {
     CNR_INFO(*logger, "Log info");
     CNR_WARN(*logger, "Log warn");
@@ -332,7 +332,7 @@ TEST(TestSuite, flushOnlsyScreen)
 
   EXPECT_NO_FATAL_FAILURE(logger.reset(new cnr_logger::TraceLogger("log1", path1, true)));
 
-  for (size_t i = 0; i < 5; i++)
+  for (size_t i = 0u; i < 5u; i++)
   {
     CNR_INFO(*logger, "Log info");
     CNR_WARN(*logger, "Log warn");
