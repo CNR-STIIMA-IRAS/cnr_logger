@@ -615,6 +615,16 @@ do\
 } while (false);\
 return(var);
 
+#define CNR_RETURN_VOID(logger, ok, ...)\
+  if(ok)\
+  {\
+    CNR_RETURN_OK(logger,void(),__VA_ARGS__);\
+  }\
+  else\
+  {\
+    CNR_RETURN_NOTOK(logger,void(),__VA_ARGS__);\
+  }
+
 #define CNR_EXIT_EX(logger, ok, ...)\
 do\
 {\
