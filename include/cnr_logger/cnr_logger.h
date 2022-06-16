@@ -83,6 +83,12 @@ public:
    * @brief TraceLogger. The constructor does not initilize the class. The function init() must be called afterwards.
    */
   explicit TraceLogger();
+  
+  TraceLogger(const TraceLogger&) = delete;
+  TraceLogger(TraceLogger&&) noexcept = delete;
+
+  ~TraceLogger();
+
   /**
    * @brief TraceLogger: The constructor fully initilize the class.
    * @param[IN] logger_id: unique id for the logger.
@@ -95,7 +101,7 @@ public:
    */
   TraceLogger(const std::string& logger_id, const std::string& path,
                 const bool star_header=false, const bool default_values=true, std::string* what=nullptr);
-  ~TraceLogger();
+  
 
   /**
    * @brief init
@@ -116,6 +122,7 @@ public:
               const bool star_header = false, const bool default_values = true, std::string* what = nullptr);
 
   TraceLogger& operator=(const TraceLogger& rhs);
+  TraceLogger const & operator=(TraceLogger &&) = delete; 
 
   /**
    * @brief Configuration getter.
