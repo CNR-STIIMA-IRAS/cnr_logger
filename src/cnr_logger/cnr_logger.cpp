@@ -59,8 +59,6 @@
 #include <boost/filesystem.hpp>
 #include <log4cxx/helpers/transcoder.h>
 
-constexpr size_t MAX_PATH = 1024;
-
 std::string get_homedir(void)
 {
     std::string homedir;
@@ -127,12 +125,7 @@ public:
   LOG4CXX_CAST_ENTRY_CHAIN(Layout)
   END_LOG4CXX_CAST_MAP()
 
-  ColorPatternLayout() : log4cxx::PatternLayout() {}
-  explicit ColorPatternLayout(const log4cxx::LogString &s)
-    : log4cxx::PatternLayout(s)
-  {
-
-  }
+  using log4cxx::PatternLayout::PatternLayout;
   virtual void format(log4cxx::LogString &output,
                       const log4cxx::spi::LoggingEventPtr &event,
                       log4cxx::helpers::Pool &pool) const override
@@ -182,7 +175,7 @@ public:
       log4cxx::helpers::Transcoder::decode( color, _color);
       output.append(_color);
     }
-    catch (std::exception& e)
+    catch (const std::exception& e)
     {
       std::cerr << __PRETTY_FUNCTION__<<":" << __LINE__<<": Exception: "<< e.what() << std::endl;
     }
@@ -305,11 +298,6 @@ bool extractVector(std::vector<std::string>& val,
   return ret;
 }
 
-TraceLogger::TraceLogger()
-  : logger_id_(""), path_(""), default_values_(false), initialized_(false)
-{
-}
-
 TraceLogger::TraceLogger(const std::string& logger_id, const std::string& path,
                          const bool star_header, const bool default_values, std::string* what)
   : logger_id_(""), path_(""), default_values_(false), initialized_(false) // TraceLogger() Enrico 03/12/2021 the compiler can't find the TraceLogger() constructor
@@ -327,7 +315,7 @@ TraceLogger::TraceLogger(const std::string& logger_id, const std::string& path,
       return;
     }
   }
-  catch (std::exception& e)
+  catch (const std::exception& e)
   {
     std::cerr << "[" << logger_id << "] Exception: " << e.what() << std::endl;
   }
@@ -404,7 +392,8 @@ bool TraceLogger::init(const std::string& logger_id, const std::string& path,
   // Extract the info to constructs the logger
   //
   // =======================================================================================
-  std::vector<std::string> appenders, levels;
+  std::vector<std::string> appenders;
+  std::vector<std::string> levels;
 #if defined(ROS_NOT_AVAILABLE)
   YAML::Node* _path = nullptr;
   if(exists_test(path))

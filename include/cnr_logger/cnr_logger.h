@@ -82,7 +82,7 @@ public:
   /**
    * @brief TraceLogger. The constructor does not initilize the class. The function init() must be called afterwards.
    */
-  explicit TraceLogger();
+  explicit TraceLogger()= default;
   
   TraceLogger(const TraceLogger&) = delete;
   TraceLogger(TraceLogger&&) noexcept = delete;
@@ -143,9 +143,9 @@ public:
 
   std::map<AppenderType, log4cxx::LoggerPtr> loggers_;
   std::map<AppenderType, Level> levels_;
-  std::string logger_id_;
-  std::string path_;
-  bool default_values_;
+  std::string logger_id_ ="";
+  std::string path_ = "";
+  bool default_values_ = false;
   const double& defaultThrottleTime() const;
 
   bool logFatal() const;
@@ -160,7 +160,7 @@ public:
 
 private:
   bool check(const std::string& path);
-  bool initialized_;
+  bool initialized_ = false;
   double default_throttle_time_;
   Level max_level_;
 };
