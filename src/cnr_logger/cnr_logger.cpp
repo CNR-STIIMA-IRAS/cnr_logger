@@ -93,8 +93,6 @@ bool exists_test (const std::string& name, const bool is_a_file = true)
   }
 
   return true;
-  // struct stat buffer;   
-  // return (stat (name.c_str(), &buffer) == 0); 
 }
 
 
@@ -187,6 +185,10 @@ public:
     catch (std::exception& e)
     {
       std::cerr << __PRETTY_FUNCTION__<<":" << __LINE__<<": Exception: "<< e.what() << std::endl;
+    }
+    catch (...)
+    {
+      std::cerr << __PRETTY_FUNCTION__<<":" << __LINE__<<": Unhandled Exception" << std::endl;
     }
   }
 };

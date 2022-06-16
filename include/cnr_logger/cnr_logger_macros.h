@@ -263,7 +263,7 @@ inline cnr_logger::TraceLogger* getTraceLogger(TraceLoggerPtr logger)
   {
     std::cerr << __PRETTY_FUNCTION__ << ":" << __LINE__
                 <<": The logger is not initialized. Fake log enabled." << std::endl;
-    std::shared_ptr<TraceLogger> ret(new TraceLogger());
+    std::shared_ptr<TraceLogger> ret = std::make_shared<TraceLogger>();
     return ret.get();
   }
 }
@@ -529,10 +529,6 @@ do\
 {\
   if (cond) { CNR_TRACE_THROTTLE(logger, period, args); }\
 } while (false)
-
-
-//CNR_INFO_COND(logger, (std::string(__VA_ARGS__).length() > 0), std::string(__VA_ARGS__));
-
 
 // ============================== IN/OUT Functions
 #define CNR_TRACE_START(logger, ...)\
