@@ -25,10 +25,6 @@ jobs:
     env:
       CCACHE_DIR: "/home/runner/target_ws/.ccache"  #/github/home/.ccache # Directory for ccache (and how we enable ccache in industrial_ci)
       ISOLATION: "shell"
-      SONAR_SCANNER_VERSION: 4.4.0.2170
-      SONAR_SERVER_URL: "https://sonarcloud.io"
-      BUILD_WRAPPER_OUT_DIR: /home/runner/target_ws/
-
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2   # clone target repository
@@ -46,6 +42,7 @@ jobs:
           ROS_REPO: ${{ matrix.ROS_REPO }}
       - name: code_coverage
         run: './.coverage.sh'
+
       - uses: codecov/codecov-action@v2
         with:
           token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
@@ -55,54 +52,57 @@ jobs:
           fail_ci_if_error: true # optional (default = false)
           verbose: true # optional (default = false)
 
-        - name: Set up JDK 11
-          uses: actions/setup-java@v1
-          with:
-            java-version: 11
-        
-        - name: Download and set up sonar-scanner
-          env:
-            SONAR_SCANNER_DOWNLOAD_URL: https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-${{ env.SONAR_SCANNER_VERSION }}-linux.zip
-          run: |
-            curl -sSLo /home/runner/target_ws/sonar-scanner.zip ${{ env.SONAR_SCANNER_DOWNLOAD_URL }} 
-            unzip -o /home/runner/target_ws/sonar-scanner.zip -d /home/runner/target_ws/
-            echo "/home/runner/target_ws/sonar-scanner-${{ env.SONAR_SCANNER_VERSION }}-linux/bin" >> $GITHUB_PATH
-     
-        - name: Download and set up build-wrapper
-          env:
-            BUILD_WRAPPER_DOWNLOAD_URL: ${{ env.SONAR_SERVER_URL }}/static/cpp/build-wrapper-linux-x86.zip
-          run: |
-            curl -sSLo /home/runner/target_ws/build-wrapper-linux-x86.zip ${{ env.BUILD_WRAPPER_DOWNLOAD_URL }}
-            unzip -o /home/runner/target_ws/build-wrapper-linux-x86.zip -d /home/runner/target_ws/
-            echo "/home/runner/target_ws/build-wrapper-linux-x86" >> $GITHUB_PATH
-        - name: Run build-wrapper
-          run: |
-            cd /home/runner/target_ws/
-            catkin clean -y
-            source /opt/ros/${{ matrix.ROS_DISTRO }}/setup.bash
-            build-wrapper-linux-x86-64 --out-dir ${{ env.BUILD_WRAPPER_OUT_DIR }} catkin build 
+      - name: Set up JDK 11
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+      
+      - name: Download and set up sonar-scanner
+        env:
+          SONAR_SCANNER_DOWNLOAD_URL: https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-${{ env.SONAR_SCANNER_VERSION }}-linux.zip
+        run: |
+          curl -sSLo /home/runner/target_ws/sonar-scanner.zip ${{ env.SONAR_SCANNER_DOWNLOAD_URL }} 
+          unzip -o /home/runner/target_ws/sonar-scanner.zip -d /home/runner/target_ws/
+          echo "/home/runner/target_ws/sonar-scanner-${{ env.SONAR_SCANNER_VERSION }}-linux/bin" >> $GITHUB_PATH
+    
+      - name: Download and set up build-wrapper
+        env:
+          BUILD_WRAPPER_DOWNLOAD_URL: ${{ env.SONAR_SERVER_URL }}/static/cpp/build-wrapper-linux-x86.zip
+        run: |
+          curl -sSLo /home/runner/target_ws/build-wrapper-linux-x86.zip ${{ env.BUILD_WRAPPER_DOWNLOAD_URL }}
+          unzip -o /home/runner/target_ws/build-wrapper-linux-x86.zip -d /home/runner/target_ws/
+          echo "/home/runner/target_ws/build-wrapper-linux-x86" >> $GITHUB_PATH
+      - name: Run build-wrapper
+        run: |
+          cd /home/runner/target_ws/
+          catkin clean -y
+          source /opt/ros/${{ matrix.ROS_DISTRO }}/setup.bash
+          build-wrapper-linux-x86-64 --out-dir ${{ env.BUILD_WRAPPER_OUT_DIR }} catkin build 
+          
+      - name: Run sonar-scanner
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          cd /home/runner/target_ws/
+          sonar-scanner --define sonar.host.url="${{ env.SONAR_SERVER_URL }}" --define sonar.cfamily.build-wrapper-output="${{ env.BUILD_WRAPPER_OUT_DIR }}" \
+            -Dsonar.projectKey=muttistefano_icp_docking \
+            -Dsonar.organization=muttistefano \
+            -Dsonar.cfamily.threads=2 \
+            -Dsonar.projectBaseDir=/home/runner/target_ws/ \
+            -Dsonar.sources=src
             
-        - name: Run sonar-scanner
-          env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-            SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          run: |
-            cd /home/runner/target_ws/
-            sonar-scanner --define sonar.host.url="${{ env.SONAR_SERVER_URL }}" --define sonar.cfamily.build-wrapper-output="${{ env.BUILD_WRAPPER_OUT_DIR }}" \
-             -Dsonar.cfamily.threads=2 \
-             -Dsonar.projectBaseDir=/home/runner/target_ws/ \
-             -Dsonar.sources=src
-             
-        - name: cccc action step
-          uses: sarnold/cccc-action@main
-          with:
-            github_token: ${{ secrets.GITHUB_TOKEN }}
+      - name: cccc action step
+        uses: sarnold/cccc-action@main
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
 
-        - name: upload metrics report
-          uses: actions/upload-artifact@v2
-          with:
-            name: metrics
-            path: ./metrics
+      - name: upload metrics report
+        uses: actions/upload-artifact@v2
+        with:
+          name: metrics
+          path: ./metrics
+
 
       - uses: actions/checkout@master
 
