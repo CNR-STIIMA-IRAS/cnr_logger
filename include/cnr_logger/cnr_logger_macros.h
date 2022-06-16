@@ -92,9 +92,9 @@
 #endif
 #endif
 
-#ifndef __PRETTY_FUNCTION__
-#define __PRETTY_FUNCTION__ __func__
-#endif
+// #ifndef __PRETTY_FUNCTION__
+// #define __PRETTY_FUNCTION__ __func__
+// #endif
 
 
 /**
