@@ -106,7 +106,3 @@ jobs:
         with:
           name: metrics
           path: ./metrics
-
-
-      #- uses: actions/checkout@master
-
