@@ -86,8 +86,6 @@ jobs:
         run: |
           cd /home/runner/target_ws/
           sonar-scanner --define sonar.host.url="${{ env.SONAR_SERVER_URL }}" --define sonar.cfamily.build-wrapper-output="${{ env.BUILD_WRAPPER_OUT_DIR }}" \
-            -Dsonar.projectKey=muttistefano_icp_docking \
-            -Dsonar.organization=muttistefano \
             -Dsonar.cfamily.threads=2 \
             -Dsonar.projectBaseDir=/home/runner/target_ws/ \
             -Dsonar.sources=src
