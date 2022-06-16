@@ -165,7 +165,7 @@ private:
   Level max_level_;
 };
 
-typedef std::shared_ptr< TraceLogger > TraceLoggerPtr;
+using  TraceLoggerPtr = std::shared_ptr< TraceLogger >;
 
 std::string to_string(const TraceLogger& logger);
 std::ostream& operator<<(std::ostream& out, const TraceLogger& logger);
