@@ -37,6 +37,7 @@
 #include <vector>
 #include <iostream>
 
+//
 #include <cnr_logger/cnr_logger.h>
 
 #if defined(ROS_NOT_AVAILABLE)

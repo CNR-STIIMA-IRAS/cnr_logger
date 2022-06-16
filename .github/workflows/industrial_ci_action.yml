@@ -91,7 +91,7 @@ jobs:
           cd /home/runner/target_ws/
           sonar-scanner --define sonar.host.url="${{ env.SONAR_SERVER_URL }}" --define sonar.cfamily.build-wrapper-output="${{ env.BUILD_WRAPPER_OUT_DIR }}" \
             -Dsonar.projectKey=CNR-STIIMA-IRAS_cnr_logger\
-            -Dsonar.organization=cnr-stiima-iras
+            -Dsonar.organization=cnr-stiima-iras\
             -Dsonar.cfamily.threads=2 \
             -Dsonar.projectBaseDir=/home/runner/target_ws/ \
             -Dsonar.sources=src
