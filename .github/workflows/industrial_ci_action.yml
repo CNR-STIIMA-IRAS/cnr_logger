@@ -25,6 +25,10 @@ jobs:
     env:
       CCACHE_DIR: "/home/runner/target_ws/.ccache"  #/github/home/.ccache # Directory for ccache (and how we enable ccache in industrial_ci)
       ISOLATION: "shell"
+      SONAR_SCANNER_VERSION: 4.4.0.2170
+      SONAR_SERVER_URL: "https://sonarcloud.io"
+      BUILD_WRAPPER_OUT_DIR: /home/runner/target_ws/
+      
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2   # clone target repository
