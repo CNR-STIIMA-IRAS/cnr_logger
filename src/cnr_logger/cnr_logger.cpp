@@ -217,7 +217,6 @@ std::string to_string(const ros::Time& now)
 {
   std::string ret;
 #if defined(ROS_NOT_AVAILABLE) || !defined(FORCE_ROS_TIME_USE)
-  //char* date_time = ctime(&now);
   char date_time[1024] = {0};
   ctime_r(&now, date_time);
   ret = std::string(date_time);

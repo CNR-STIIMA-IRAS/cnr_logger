@@ -76,8 +76,8 @@ namespace cnr_logger
 class TraceLogger
 {
 public:
-  enum AppenderType {FILE_STREAM=0, CONSOLE_STREAM=1, SYNC_FILE_AND_CONSOLE=2};
-  enum Level {FATAL=0, ERROR=1, WARN=2, INFO=3, DEBUG=4, TRACE=5};
+  enum AppenderType : int {FILE_STREAM=0, CONSOLE_STREAM=1, SYNC_FILE_AND_CONSOLE=2};
+  enum Level : int {FATAL=0, ERROR=1, WARN=2, INFO=3, DEBUG=4, TRACE=5};
 
   /**
    * @brief TraceLogger. The constructor does not initilize the class. The function init() must be called afterwards.
