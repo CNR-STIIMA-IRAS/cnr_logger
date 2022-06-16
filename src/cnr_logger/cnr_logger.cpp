@@ -59,7 +59,7 @@
 #include <boost/filesystem.hpp>
 #include <log4cxx/helpers/transcoder.h>
 
-#define MAX_PATH 1024
+constexpr size_t MAX_PATH = 1024;
 
 std::string get_homedir(void)
 {
@@ -417,7 +417,7 @@ bool TraceLogger::init(const std::string& logger_id, const std::string& path,
   #if defined(FORCE_ROS_TIME_USE)
     auto now = ros::Time::now();
   #else
-    auto now = std::time(0);
+    auto now = std::time(nullptr);
   #endif
 #endif
 
