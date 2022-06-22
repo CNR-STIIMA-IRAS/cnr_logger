@@ -406,7 +406,8 @@ TEST(TestSuite, fullConstructor1)
   std::string path1 = path("file_and_screen_different_appenders");
 
   std::shared_ptr<cnr_logger::TraceLogger> logger;
-  EXPECT_FALSE(does_not_throw([&logger]{ logger.reset(new cnr_logger::TraceLogger("log1",path1 )); }));
+  EXPECT_FALSE(does_not_throw([&logger,&path1]
+    {logger.reset(new cnr_logger::TraceLogger("log1",path1 )); }));
   
   std::string what;
   EXPECT_FALSE(logger->init("log1", path1, false, false, &what));  // Already initialized
