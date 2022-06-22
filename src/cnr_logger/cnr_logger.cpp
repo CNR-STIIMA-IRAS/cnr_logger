@@ -510,7 +510,7 @@ void extractAppendersAndLevels(const std::string* path,
   }
 }
 
-void setLoggers(const std::string logger_id, 
+void setLoggers(const std::string& logger_id, 
                   const std::vector<std::string>& appenders_data,
                     const std::vector<std::string>& levels_data,
                       std::map<TraceLogger::AppenderType, log4cxx::LoggerPtr>& loggers,
@@ -521,6 +521,8 @@ void setLoggers(const std::string logger_id,
   auto it_screen   = std::find(appenders_data.begin(), appenders_data.end(), "screen");
   int  idx_file    = (it_file   != appenders_data.end()) ? std::distance(appenders_data.begin(), it_file) : -1;
   int  idx_screen  = (it_screen != appenders_data.end()) ? std::distance(appenders_data.begin(), it_screen) : -1;
+
+  std::cout << __LINE__ << ":" << logger_id << std::endl:
 
   if(((idx_file >= 0) && (idx_screen >= 0)) && (levels_data.at(idx_file) == levels_data.at(idx_screen)))   // 1 logger and 2 appenders
   {
