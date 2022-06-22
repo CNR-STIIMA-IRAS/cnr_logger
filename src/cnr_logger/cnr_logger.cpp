@@ -522,7 +522,7 @@ void setLoggers(const std::string& logger_id,
   int  idx_file    = (it_file   != appenders_data.end()) ? std::distance(appenders_data.begin(), it_file) : -1;
   int  idx_screen  = (it_screen != appenders_data.end()) ? std::distance(appenders_data.begin(), it_screen) : -1;
 
-  std::cout << __LINE__ << ":" << logger_id << std::endl:
+  std::cout << __LINE__ << ":" << logger_id << std::endl;
 
   if(((idx_file >= 0) && (idx_screen >= 0)) && (levels_data.at(idx_file) == levels_data.at(idx_screen)))   // 1 logger and 2 appenders
   {
