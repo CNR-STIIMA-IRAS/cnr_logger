@@ -159,7 +159,7 @@ public:
   friend std::ofstream& operator<<(std::ofstream& out, const TraceLogger& logger);
 
 private:
-  bool check(const std::string& path);
+  bool check(const std::string& path) const;
   bool initialized_ = false;
   double default_throttle_time_;
   Level max_level_;

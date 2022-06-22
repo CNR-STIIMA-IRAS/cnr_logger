@@ -36,6 +36,7 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include <cctype>
 
 //
 #include <cnr_logger/cnr_logger.h>
@@ -328,7 +329,7 @@ TraceLogger::TraceLogger(const std::string& logger_id, const std::string& path,
 }
 
 
-bool TraceLogger::check(const std::string& path)
+bool TraceLogger::check(const std::string& path) const
 {
   bool res = true;
 #if defined(ROS_NOT_AVAILABLE)
@@ -417,17 +418,17 @@ bool TraceLogger::init(const std::string& logger_id, const std::string& path,
   std::vector<std::string> warnings;
   if(!extractVector(appenders, _path, "appenders", empty))
   {
-    warnings.push_back("Paremeter missing: path='"+path+"', key='appenders'");
+    warnings.emplace_back("Paremeter missing: path='"+path+"', key='appenders'");
   }
   
   if(!extractVector(levels, _path, "levels", empty))
   {
-    warnings.push_back("Paremeter missing: path='"+path+"', key='levels'");
+    warnings.emplace_back("Paremeter missing: path='"+path+"', key='levels'");
   }
 
   if(appenders.size() != levels.size())
   {
-    warnings.push_back("Size of appenders and levels mismatch! Default DEBUG level for all the appenders");
+    warnings.emplace_back("Size of appenders and levels mismatch! Default DEBUG level for all the appenders");
     levels.clear();
     levels.resize(appenders.size(), "DEBUG");
   }
@@ -437,11 +438,11 @@ bool TraceLogger::init(const std::string& logger_id, const std::string& path,
   {
     std::for_each(appenders[i].begin(), appenders[i].end(), [](char & c)
     {
-      c = ::tolower(c);
+      c = std::tolower(c);
     });
     std::for_each(levels   [i].begin(), levels   [i].end(), [](char & c)
     {
-      c = ::toupper(c);
+      c = std::toupper(c);
     });
     if(appenders[i] == "file")
     {
