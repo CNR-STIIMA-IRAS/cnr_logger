@@ -452,61 +452,35 @@ bool TraceLogger::init_logger(const std::string& logger_id, const std::string& p
   return this->init(logger_id, path, star_header, default_values, what);
 }
 
-bool TraceLogger::init(const std::string& logger_id, const std::string& path,
-                          const bool star_header, const bool default_values, std::string* what)
-{
-  if(initialized_)
-  {
-    if_error_fill(what, "Logger ID: " + logger_id_ + ", Logger already initialized.");
-    return false;
-  }
 
-  logger_id_ = logger_id;
-  path_ = path;
-  default_values_ = default_values;
-
-  if((!default_values) && (!check(path)))
-  {
-    if_error_fill(what, "Logger ID:" + logger_id +  ", Error in initialization. "
-              +  "  [IN: default_values=" + std::to_string(default_values) + ", path=" + path + " ]");
-    return false;
-  }
-
-  // =======================================================================================
-  // Extract the info to constructs the logger
-  //
-  // =======================================================================================
-  std::vector<std::string> appenders;
-  std::vector<std::string> levels;
 #if defined(ROS_NOT_AVAILABLE)
-  YAML::Node* _path = nullptr;
-  if(exists_test(path))
-  {
-     _path = new YAML::Node();
-    *_path = YAML::LoadFile(path);
-  } 
-  auto now = std::time(0); 
+void extractAppendersAndLevels(const YAML::Node* path,
+                                std::vector<std::string>& appenders,
+                                  std::vector<std::string>& levels,
+                                    std::vector<std::string>& warnings)
 #else
-  const std::string* _path = &path;
-  #if defined(FORCE_ROS_TIME_USE)
-    auto now = ros::Time::now();
-  #else
-    auto now = std::time(nullptr);
-  #endif
+void extractAppendersAndLevels(const std::string* path,
+                                std::vector<std::string>& appenders,
+                                  std::vector<std::string>& levels,
+                                    std::vector<std::string>& warnings)
 #endif
+
+{
+  appenders.clear();
+  levels.clear();
+
 
 
 
   std::vector<std::string> empty;
-  std::vector<std::string> warnings;
-  if(!extractVector(appenders, _path, "appenders", empty))
+  if(!extractVector(appenders, path, "appenders", empty))
   {
-    warnings.emplace_back("Paremeter missing: path='"+path+"', key='appenders'");
+    warnings.emplace_back("Paremeter missing: key='appenders'");
   }
   
-  if(!extractVector(levels, _path, "levels", empty))
+  if(!extractVector(levels, path, "levels", empty))
   {
-    warnings.emplace_back("Paremeter missing: path='"+path+"', key='levels'");
+    warnings.emplace_back("Paremeter missing: key='levels'");
   }
 
   if(appenders.size() != levels.size())
@@ -537,6 +511,56 @@ bool TraceLogger::init(const std::string& logger_id, const std::string& path,
       appenders[i] = "screen";
     }
   }
+}
+
+
+bool TraceLogger::init(const std::string& logger_id, const std::string& path,
+                          const bool star_header, const bool default_values, std::string* what)
+{
+  if(initialized_)
+  {
+    if_error_fill(what, "Logger ID: " + logger_id_ + ", Logger already initialized.");
+    return false;
+  }
+
+  logger_id_ = logger_id;
+  path_ = path;
+  default_values_ = default_values;
+
+  if((!default_values) && (!check(path)))
+  {
+    if_error_fill(what, "Logger ID:" + logger_id +  ", Error in initialization. "
+              +  "  [IN: default_values=" + std::to_string(default_values) + ", path=" + path + " ]");
+    return false;
+  }
+
+  // =======================================================================================
+  // Extract the info to constructs the logger
+  //
+  // =======================================================================================
+  std::vector<std::string> appenders;
+  std::vector<std::string> levels;
+  std::vector<std::string> warnings;
+
+  
+#if defined(ROS_NOT_AVAILABLE)
+  YAML::Node* _path = nullptr;
+  if(exists_test(path))
+  {
+     _path = new YAML::Node();
+    *_path = YAML::LoadFile(path);
+  } 
+  auto now = std::time(nullptr); 
+#else
+  const std::string* _path = &path;
+  #if defined(FORCE_ROS_TIME_USE)
+    auto now = ros::Time::now();
+  #else
+    auto now = std::time(nullptr);
+  #endif
+#endif
+
+  extractAppendersAndLevels(_path, appenders,levels, warnings);
 
   auto it_file     = std::find(appenders.begin(), appenders.end(), "file");
   auto it_screen   = std::find(appenders.begin(), appenders.end(), "screen");
