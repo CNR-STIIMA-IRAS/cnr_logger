@@ -56,6 +56,13 @@
   #endif
 #endif
 
+#if defined(__STDC_LIB_EXT1__)
+#define  __STDC_WANT_LIB_EXT1__ 1
+#include <stdio.h>
+#else
+#error "__STDC_LIB_EXT1__ not defined"
+#endif
+
 #include <cstdlib>
 #include <boost/filesystem.hpp>
 #include <log4cxx/helpers/transcoder.h>
