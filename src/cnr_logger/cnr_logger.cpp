@@ -84,7 +84,7 @@ std::string time_stamp(const std::time_t& timer, const std::string& fmt = "%F %T
   auto bt = localtime_xp(timer);
   std::array<char, 128> buf;
   size_t error = std::strftime(buf.data(), sizeof(buf), fmt.c_str(), &bt);
-  if(error==0)
+  if(!error)
   {
     std::cerr << __PRETTY_FUNCTION__ << ":" << __LINE__ << ": The buffer memory is not enough ..." << std::endl;
   }
@@ -125,13 +125,9 @@ bool exists_test (const std::string& name, const bool is_a_file = true)
 {
   boost::filesystem::path p(name);
 
-  if(boost::filesystem::exists(p)) 
-  {
-    return (is_a_file ? boost::filesystem::is_regular_file(p) 
+  return boost::filesystem::exists(p) 
+          && (is_a_file ? boost::filesystem::is_regular_file(p) 
               : boost::filesystem::is_directory(p));
-  }
-
-  return false;
 }
 
 
