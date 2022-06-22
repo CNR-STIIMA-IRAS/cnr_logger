@@ -469,9 +469,6 @@ void extractAppendersAndLevels(const std::string* path,
   appenders.clear();
   levels.clear();
 
-
-
-
   std::vector<std::string> empty;
   if(!extractVector(appenders, path, "appenders", empty))
   {
@@ -513,6 +510,87 @@ void extractAppendersAndLevels(const std::string* path,
   }
 }
 
+void setLoggers(const std::string logger_id, 
+                  const std::vector<std::string>& appenders_data,
+                    const std::vector<std::string>& levels_data,
+                      std::map<TraceLogger::AppenderType, log4cxx::LoggerPtr>& loggers,
+                        std::map<TraceLogger::AppenderType, TraceLogger::Level>& levels, 
+                          TraceLogger::Level& max_level)
+{
+  auto it_file     = std::find(appenders_data.begin(), appenders_data.end(), "file");
+  auto it_screen   = std::find(appenders_data.begin(), appenders_data.end(), "screen");
+  int  idx_file    = (it_file   != appenders_data.end()) ? std::distance(appenders_data.begin(), it_file) : -1;
+  int  idx_screen  = (it_screen != appenders_data.end()) ? std::distance(appenders_data.begin(), it_screen) : -1;
+
+  if(((idx_file >= 0) && (idx_screen >= 0)) && (levels_data.at(idx_file) == levels_data.at(idx_screen)))   // 1 logger and 2 appenders
+  {
+    loggers  [ TraceLogger::SYNC_FILE_AND_CONSOLE ] = log4cxx::Logger::getLogger(logger_id);
+    levels   [ TraceLogger::SYNC_FILE_AND_CONSOLE ] = string2level(levels_data[idx_file]);
+  }
+  else
+  {
+    if(idx_file >= 0)
+    {
+      loggers[TraceLogger::FILE_STREAM] = log4cxx::Logger::getLogger(logger_id + "_f");
+      levels [TraceLogger::FILE_STREAM] = string2level(levels_data[idx_file]);
+    }
+    if(idx_screen >= 0)
+    {
+      loggers[TraceLogger::CONSOLE_STREAM] = log4cxx::Logger::getLogger(logger_id);
+      levels [TraceLogger::CONSOLE_STREAM] = string2level(levels_data.at(idx_screen));
+    }
+  }
+
+  max_level = TraceLogger::FATAL;
+  for(auto const & level : levels)
+  {
+    switch(level.second)
+    {
+      case TraceLogger::FATAL: loggers[level.first]->setLevel(log4cxx::Level::getFatal()); break;
+      case TraceLogger::ERROR: loggers[level.first]->setLevel(log4cxx::Level::getError()); break;
+      case TraceLogger::WARN : loggers[level.first]->setLevel(log4cxx::Level::getWarn() ); break;
+      case TraceLogger::INFO : loggers[level.first]->setLevel(log4cxx::Level::getInfo() ); break;
+      case TraceLogger::DEBUG: loggers[level.first]->setLevel(log4cxx::Level::getDebug()); break;
+      case TraceLogger::TRACE: loggers[level.first]->setLevel(log4cxx::Level::getTrace()); break;
+    }
+    max_level = level.second >= max_level ? level.second : max_level;
+  }
+}
+
+#if defined(ROS_NOT_AVAILABLE)
+  #if !defined(_WIN32) && !defined(_WIN64)
+    log4cxx::ColorPatternLayoutPtr extractLayout(const YAML::Node* path, std::vector<std::string>& warnings)
+  #else
+    log4cxx::PatternLayoutPtr extractLayout(const YAML::Node* path, std::vector<std::string>& warnings)
+  #endif
+#else
+  #if !defined(_WIN32) && !defined(_WIN64)
+    log4cxx::ColorPatternLayoutPtr extractLayout(const std::string* path, std::vector<std::string>& warnings)
+  #else
+    log4cxx::PatternLayoutPtr extractLayout(const std::string* path, std::vector<std::string>& warnings)
+  #endif
+#endif
+{
+  std::string pattern_layout;
+  log4cxx::LogString _pattern_layout;
+
+  std::string default_pattern_layout = "[%5p][%d{HH:mm:ss,SSS}][%M:%L][%c] %m%n";
+  if(!extract(pattern_layout, path, "pattern_layout", default_pattern_layout))
+  {
+    warnings.push_back("Paremeter missing key='pattern_layout'");
+  }
+  log4cxx::helpers::Transcoder::decode(pattern_layout, _pattern_layout);
+  
+
+#if !defined(_WIN32) && !defined(_WIN64)
+  log4cxx::ColorPatternLayoutPtr ret = new log4cxx::ColorPatternLayout();
+#else
+  log4cxx::PatternLayoutPtr ret = new log4cxx::PatternLayout(_pattern_layout);
+#endif
+
+  return ret;
+}
+
 
 bool TraceLogger::init(const std::string& logger_id, const std::string& path,
                           const bool star_header, const bool default_values, std::string* what)
@@ -538,8 +616,8 @@ bool TraceLogger::init(const std::string& logger_id, const std::string& path,
   // Extract the info to constructs the logger
   //
   // =======================================================================================
-  std::vector<std::string> appenders;
-  std::vector<std::string> levels;
+  std::vector<std::string> appenders_data;
+  std::vector<std::string> levels_data;
   std::vector<std::string> warnings;
 
   
@@ -560,69 +638,19 @@ bool TraceLogger::init(const std::string& logger_id, const std::string& path,
   #endif
 #endif
 
-  extractAppendersAndLevels(_path, appenders,levels, warnings);
-
-  auto it_file     = std::find(appenders.begin(), appenders.end(), "file");
-  auto it_screen   = std::find(appenders.begin(), appenders.end(), "screen");
-  int  idx_file    = (it_file   != appenders.end()) ? std::distance(appenders.begin(), it_file) : -1;
-  int  idx_screen  = (it_screen != appenders.end()) ? std::distance(appenders.begin(), it_screen) : -1;
-
-  if(((idx_file >= 0) && (idx_screen >= 0)) && (levels[idx_file] == levels[idx_screen]))   // 1 logger and 2 appenders
-  {
-    loggers_  [ SYNC_FILE_AND_CONSOLE ] = log4cxx::Logger::getLogger(logger_id_);
-    levels_   [ SYNC_FILE_AND_CONSOLE ] = string2level(levels[idx_file]);
-  }
-  else
-  {
-    if(idx_file >= 0)
-    {
-      loggers_[FILE_STREAM] = log4cxx::Logger::getLogger(logger_id_ + "_f");
-      levels_ [FILE_STREAM] = string2level(levels[idx_file]);
-    }
-    if(idx_screen >= 0)
-    {
-      loggers_[CONSOLE_STREAM] = log4cxx::Logger::getLogger(logger_id_);
-      levels_ [CONSOLE_STREAM] = string2level(levels[idx_screen]);
-    }
-  }
-
-  max_level_ = FATAL;
-  for(auto const & level : levels_)
-  {
-    switch(level.second)
-    {
-      case FATAL: loggers_[level.first]->setLevel(log4cxx::Level::getFatal()); break;
-      case ERROR: loggers_[level.first]->setLevel(log4cxx::Level::getError()); break;
-      case WARN : loggers_[level.first]->setLevel(log4cxx::Level::getWarn() ); break;
-      case INFO : loggers_[level.first]->setLevel(log4cxx::Level::getInfo() ); break;
-      case DEBUG: loggers_[level.first]->setLevel(log4cxx::Level::getDebug()); break;
-      case TRACE: loggers_[level.first]->setLevel(log4cxx::Level::getTrace()); break;
-    }
-    max_level_ = level.second >= max_level_ ? level.second : max_level_;
-  }
   // =======================================================================================
+  extractAppendersAndLevels(_path, appenders_data,levels_data, warnings);
 
+  // =======================================================================================
+  setLoggers( logger_id_, appenders_data, levels_data, loggers_, levels_, max_level_);
+  
 
 
   // =======================================================================================
   // Layout
   //
   // =======================================================================================
-  std::string pattern_layout;
-  std::string default_pattern_layout = "[%5p][%d{HH:mm:ss,SSS}][%M:%L][%c] %m%n";
-  if(!extract(pattern_layout, _path, "pattern_layout", default_pattern_layout))
-  {
-    warnings.push_back("Paremeter missing: path='"+path+"', key='pattern_layout'");
-  }
-  log4cxx::LogString _pattern_layout;
-  log4cxx::helpers::Transcoder::decode( pattern_layout, _pattern_layout);
-  
-
-#if !defined(_WIN32) && !defined(_WIN64)
-  log4cxx::ColorPatternLayoutPtr layout = new log4cxx::ColorPatternLayout(_pattern_layout);
-#else
-  log4cxx::PatternLayoutPtr layout = new log4cxx::PatternLayout(_pattern_layout);
-#endif
+  auto layout = extractLayout(_path, warnings);
   // =======================================================================================
 
 
