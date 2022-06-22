@@ -59,12 +59,56 @@
 #include <boost/filesystem.hpp>
 #include <log4cxx/helpers/transcoder.h>
 
+
+//========================================================
+std::tm localtime_xp(const std::time_t& timer)
+{
+    std::tm bt {};
+#if defined(__unix__)
+    localtime_r(&timer, &bt);
+#elif defined(_MSC_VER)
+    localtime_s(&bt, &timer);
+#else
+    static std::mutex mtx;
+    std::lock_guard<std::mutex> lock(mtx);
+    bt = *std::localtime(&timer);
+#endif
+    return bt;
+}
+
+// default = "YYYY-MM-DD HH:MM:SS"
+std::string time_stamp(const std::time_t& timer, const std::string& fmt = "%F %T")
+{
+  std::string ret;
+  auto bt = localtime_xp(std::time(0));
+  char buf[128];
+  std::strftime(buf, sizeof(buf), fmt.c_str(), &bt);
+  ret = buf;
+  return ret;
+}
+
+std::string get_env(const char *name)
+{
+  size_t size;
+  char result[1024];
+  errno_t err;
+
+  err = getenv_s(&size, NULL, 0, name);
+  if (err || (size == 0)) 
+    return NULL;
+  
+  err = getenv_s(&size, result, size, name);
+  
+  return std::string(result);
+}
+
+
 std::string get_homedir(void)
 {
     std::string homedir;
 
 #if defined(_WIN32) || defined(_WIN64)
-    homedir = std::string(std::getenv("HOMEDRIVE")) + std::string(getenv("HOMEPATH"));
+    homedir = std::string(get_env("HOMEDRIVE")) + std::string(get_env("HOMEPATH"));
 #else
     homedir = std::getenv("HOME");
 #endif
@@ -108,6 +152,7 @@ bool mkLogDir(std::string& dir)
  
   return true;
 }
+//========================================================
 
 
 #if !defined(_WIN32) && !defined(_WIN64)
@@ -197,7 +242,6 @@ IMPLEMENT_LOG4CXX_OBJECT(ColorPatternLayout);
 
 namespace cnr_logger
 {
-
 /**
  * @brief Utility to print nicely the time.
  * @param now Time to translate in string.
@@ -210,9 +254,7 @@ std::string to_string(const ros::Time& now)
 {
   std::string ret;
 #if defined(ROS_NOT_AVAILABLE) || !defined(FORCE_ROS_TIME_USE)
-  char date_time[1024] = {0};
-  ctime_r(&now, date_time);
-  ret = std::string(date_time);
+  ret = time_stamp(now);
 #else
 
 #if ROS_VERSION_MINIMUM(1, 14, 1)
