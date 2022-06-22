@@ -89,17 +89,18 @@ std::string time_stamp(const std::time_t& timer, const std::string& fmt = "%F %T
 
 std::string get_env(const char *name)
 {
-  size_t size;
-  char result[1024];
-  errno_t err;
+  std::string ret;
+  #if defined(_MSC_VER)
+    size_t size = 0;
+    char result[1024];
+    errno_t err = getenv_s(&size, result, size, name);
+    ret = result;
+  #else
+    const char* result = std::getenv("PATH");
+    ret = result;
+  #endif
 
-  err = getenv_s(&size, NULL, 0, name);
-  if (err || (size == 0)) 
-    return NULL;
-  
-  err = getenv_s(&size, result, size, name);
-  
-  return std::string(result);
+  return ret;
 }
 
 
