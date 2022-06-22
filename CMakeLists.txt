@@ -100,8 +100,7 @@ endif(USE_ROS)
 include_directories   (include ${CNR_LOGGER_TARGET_INCLUDE_DIRS} )
 add_library           (${PROJECT_NAME} SHARED src/${PROJECT_NAME}/cnr_logger.cpp )
 target_link_libraries (${PROJECT_NAME} ${CNR_LOGGER_TARGET_LINK_LIBRARIES})
-
-#cnr_target_compile_options(${PROJECT_NAME})
+cnr_target_compile_options(${PROJECT_NAME})
 
 if(${CMAKE_VERSION} VERSION_GREATER  "3.16.0")
   target_precompile_headers(${PROJECT_NAME} PUBLIC
@@ -128,7 +127,7 @@ endif()
 ##########################
 if(ENABLE_TESTING)
   if(USE_ROS)
-    MESSAGE(STATUS "??????????????????????????????")
+
     # Test using ROS TIME
     add_rostest_gtest(${PROJECT_NAME}_test test/test.launch test/test_cnr_logger.cpp)
     target_link_libraries(${PROJECT_NAME}_test ${PROJECT_NAME} ${CNR_LOGGER_TARGET_LINK_LIBRARIES} ${rostest_LIBRARIES} )
