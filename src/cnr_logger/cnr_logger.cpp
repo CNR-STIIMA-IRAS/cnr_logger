@@ -66,14 +66,10 @@
 std::tm localtime_xp(const std::time_t& timer)
 {
     std::tm bt {};
-#if defined(__unix__)
-    localtime_r(&timer, &bt);
-#elif defined(_MSC_VER)
+#if defined(_MSC_VER)
     localtime_s(&bt, &timer);
 #else
-    static std::mutex mtx;
-    std::lock_guard<std::mutex> lock(mtx);
-    bt = *std::localtime(&timer);
+  localtime_r(&timer, &bt);
 #endif
     return bt;
 }
@@ -883,12 +879,59 @@ const double& TraceLogger::defaultThrottleTime() const
   return default_throttle_time_;
 }
 
-bool TraceLogger::logFatal() const {return FATAL<=max_level_;};
-bool TraceLogger::logError() const {return ERROR<=max_level_;};
-bool TraceLogger::logWarn()  const {return WARN <=max_level_;};
-bool TraceLogger::logInfo()  const {return INFO <=max_level_;};
-bool TraceLogger::logDebug() const {return DEBUG<=max_level_;};
-bool TraceLogger::logTrace() const {return TRACE<=max_level_;};
+bool TraceLogger::logFatal() const
+{
+  return FATAL<=max_level_;
+}
+
+bool TraceLogger::logError() const
+{
+  return ERROR<=max_level_;
+}
+
+bool TraceLogger::logWarn()  const
+{
+  return WARN <=max_level_;
+}
+
+bool TraceLogger::logInfo()  const
+{
+  return INFO <=max_level_;
+}
+
+bool TraceLogger::logDebug() const
+{
+  return DEBUG<=max_level_;
+}
+
+bool TraceLogger::logTrace() const
+{
+  return TRACE<=max_level_;
+}
+
+log4cxx::LoggerPtr TraceLogger::syncFileAndScreenLogger( )
+{
+  if(logSyncFileAndScreen())
+    return loggers_[::cnr_logger::TraceLogger::SYNC_FILE_AND_CONSOLE];
+  else
+    return nullptr;
+}
+
+log4cxx::LoggerPtr TraceLogger::fileLogger( )
+{
+  if(logFile())
+    return loggers_[::cnr_logger::TraceLogger::FILE_STREAM];
+  else
+    return nullptr;
+}
+
+log4cxx::LoggerPtr TraceLogger::consoleLogger( )
+{
+  if(logFile())
+    return loggers_[::cnr_logger::TraceLogger::CONSOLE_STREAM];
+  else
+    return nullptr;
+}
 
 
 std::string to_string(const TraceLogger& logger)

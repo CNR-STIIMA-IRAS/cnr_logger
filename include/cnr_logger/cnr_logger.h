@@ -125,6 +125,24 @@ public:
   TraceLogger const & operator=(TraceLogger &&) = delete; 
 
   /**
+   * @brief SyncFileAndScreen logger getter.
+   * @return the logger if exist the SyncFileAndScreen Appender level of logginge
+   */
+  log4cxx::LoggerPtr syncFileAndScreenLogger( );
+
+  /**
+   * @brief File logger getter.
+   * @return the logger if exist the File Appender level of logginge
+   */
+  log4cxx::LoggerPtr fileLogger( );
+
+  /**
+   * @brief Console logger getter.
+   * @return the logger if exist the Console Appender level of logginge
+   */
+  log4cxx::LoggerPtr consoleLogger( );
+
+  /**
    * @brief Configuration getter.
    * @return True if the logger has an appender linked to a file, false otherwise
    */
@@ -141,11 +159,6 @@ public:
    */
   bool logSyncFileAndScreen();
 
-  std::map<AppenderType, log4cxx::LoggerPtr> loggers_;
-  std::map<AppenderType, Level> levels_;
-  std::string logger_id_ ="";
-  std::string path_ = "";
-  bool default_values_ = false;
   const double& defaultThrottleTime() const;
 
   bool logFatal() const;
@@ -160,9 +173,17 @@ public:
 
 private:
   bool check(const std::string& path) const;
+
   bool initialized_ = false;
-  double default_throttle_time_;
-  Level max_level_;
+  double default_throttle_time_ = 0.0;
+  Level max_level_ = TraceLogger::INFO;
+  std::string logger_id_ ="";
+  std::string path_ = "";
+  bool default_values_ = false;
+
+  std::map<AppenderType, log4cxx::LoggerPtr> loggers_;
+  std::map<AppenderType, Level> levels_;
+
 };
 
 using  TraceLoggerPtr = std::shared_ptr< TraceLogger >;
