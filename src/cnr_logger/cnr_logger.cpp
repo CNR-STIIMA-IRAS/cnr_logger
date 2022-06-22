@@ -342,6 +342,21 @@ bool extractVector(std::vector<std::string>& val,
   return ret;
 }
 
+void if_error_fill(std::string* what, const std::string& msg, const bool append = false)
+{
+  if(what)
+  {
+    if(append)
+    {
+      *what += msg;
+    }
+    else
+    {
+      *what = msg;
+    }
+  }
+}
+
 TraceLogger::TraceLogger(const std::string& logger_id, const std::string& path,
                          const bool star_header, const bool default_values, std::string* what)
   : logger_id_(""), path_(""), default_values_(false), initialized_(false) // TraceLogger() Enrico 03/12/2021 the compiler can't find the TraceLogger() constructor
@@ -413,8 +428,7 @@ bool TraceLogger::init(const std::string& logger_id, const std::string& path,
 {
   if(initialized_)
   {
-    if(what)
-      *what = "Logger ID: " + logger_id_ + ", Logger already initialized.";
+    if_error_fill(what, "Logger ID: " + logger_id_ + ", Logger already initialized.");
     return false;
   }
 
@@ -424,11 +438,8 @@ bool TraceLogger::init(const std::string& logger_id, const std::string& path,
 
   if((!default_values) && (!check(path)))
   {
-    if(what)
-    {
-      *what =  "Logger ID:" + logger_id +  ", Error in initialization. "
-              +  "  [IN: default_values=" + std::to_string(default_values) + ", path=" + path + " ]";
-    }
+    if_error_fill(what, "Logger ID:" + logger_id +  ", Error in initialization. "
+              +  "  [IN: default_values=" + std::to_string(default_values) + ", path=" + path + " ]");
     return false;
   }
 
@@ -586,8 +597,7 @@ bool TraceLogger::init(const std::string& logger_id, const std::string& path,
   std::string root_path; 
   if(!mkLogDir(root_path))
   {
-    if(what)
-      *what = "Logger ID: " + logger_id_ + ", Impossible to create/access the log directory";
+    if_error_fill(what, "Logger ID: " + logger_id_ + ", Impossible to create/access the log directory");
     return false;
   }
   std::string default_log_file_name = log_file_name = root_path + "/" + logger_id_;
@@ -670,13 +680,10 @@ bool TraceLogger::init(const std::string& logger_id, const std::string& path,
     warnings.push_back("Paremeter missing: path='" + path + "', key='default_throttle_time'");
     warnings.push_back("Parameter superimposed: default throttle time= '" + std::to_string(default_throttle_time_) +"'");
   }
-  if(what)
+  if_error_fill(what, "Logger Creation has active warnings [Logger ID: " + logger_id_ + "]\n");
+  for(size_t i=0;i<warnings.size();i++)
   {
-    *what = "Logger Creation has active warnings [Logger ID: " + logger_id_ + "]\n";
-    for(size_t i=0;i<warnings.size();i++)
-    {
-      *what += std::to_string(i+1) + "#1 " + warnings.at(i) + "\n";
-    }
+    if_error_fill(what, std::to_string(i+1) + "#1 " + warnings.at(i) + "\n", true);
   }
 
   initialized_ = true;
