@@ -1,5 +1,8 @@
 <launch>
 
+<arg name="valgrind" default="false" />
+<arg name="debug" default="false" />
+
 <group ns="/file_and_screen_different_appenders" >
 <rosparam>
   appenders: [file, screen]
@@ -32,9 +35,21 @@
 </group>
 
 
-<test test-name="cnr_logger_test" pkg="cnr_logger" type="cnr_logger_test" >
+<group if="$(arg valgrind)">
+  <arg unless="$(arg debug)" name="launch_prefix" value="" />
+  <arg     if="$(arg debug)" name="launch_prefix"
+      value="valgrind -v --track-origins=yes --tool=memcheck --leak-check=full --show-reachable=yes  --num-callers=20 --track-fds=yes  --log-file=/home/feymann/a.txt" />
+      <test launch-prefix="$(arg launch_prefix)" test-name="cnr_logger_test" pkg="cnr_logger" type="cnr_logger_test">
+      </test>
+</group>
 
+<group unless="$(arg valgrind)">
+  <arg unless="$(arg debug)" name="launch_prefix" value="" />
+  <arg     if="$(arg debug)" name="launch_prefix" value="gdb --ex run --args" />
+
+<test launch-prefix="$(arg launch_prefix)" test-name="cnr_logger_test" pkg="cnr_logger" type="cnr_logger_test">
 </test>
 
+</group>
 
 </launch>

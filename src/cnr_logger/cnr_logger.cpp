@@ -230,9 +230,9 @@ IMPLEMENT_LOG4CXX_OBJECT(ColorPatternLayout);
 #endif
 
 #if defined(ROS_NOT_AVAILABLE)
-  typedef YAML::Node path_t;
+  using path_t = YAML::Node;
 #else
-  typedef std::string path_t;
+  using path_t = std::string;
 #endif
 
 
@@ -345,9 +345,9 @@ std::string appender2string(const TraceLogger::AppenderType& t)
   std::string ret ="";
   switch(t)
   {
-    case TraceLogger::AppenderType::FILE_STREAM: ret = "AppenderType::FILE_STREAM"; break;
-    case TraceLogger::AppenderType::CONSOLE_STREAM: ret = "AppenderType::CONSOLE_STREAM"; break;
-    case TraceLogger::AppenderType::SYNC_FILE_AND_CONSOLE: ret = "AppenderType::SYNC_FILE_AND_CONSOLE"; break;
+    case TraceLogger::AppenderType::FILE_STREAM: ret = "FILE_STREAM"; break;
+    case TraceLogger::AppenderType::CONSOLE_STREAM: ret = "CONSOLE_STREAM"; break;
+    case TraceLogger::AppenderType::SYNC_FILE_AND_CONSOLE: ret = "SYNC_FILE_AND_CONSOLE"; break;
   }
   return ret;
 }
@@ -449,7 +449,11 @@ void setLoggers(const std::string& logger_id,
 
 void extractLayout(const path_t* path, log4cxx::PatternLayoutPtr& layout, std::vector<std::string>& warnings)
 {
-  const std::string default_pattern_layout = "[%5p][%d{HH:mm:ss,SSS}][%M:%L][%c] %m%n";
+  #if defined(__clang__)
+    const std::string default_pattern_layout = "[%5p][%d{HH:mm:ss,SSS}][%F:%L][%c] %m%n";
+  #else
+    const std::string default_pattern_layout = "[%5p][%d{HH:mm:ss,SSS}][%M:%L][%c] %m%n";
+  #endif
   
   std::string pattern_layout;
   if(!extract(pattern_layout, path, "pattern_layout", default_pattern_layout))
@@ -920,7 +924,7 @@ bool TraceLogger::logTrace() const
 
 log4cxx::LoggerPtr TraceLogger::syncFileAndScreenLogger( )
 {
-  if(logSyncFileAndScreen())
+  if(this->logSyncFileAndScreen())
     return loggers_[::cnr_logger::TraceLogger::AppenderType::SYNC_FILE_AND_CONSOLE];
   else
     return nullptr;
@@ -928,7 +932,7 @@ log4cxx::LoggerPtr TraceLogger::syncFileAndScreenLogger( )
 
 log4cxx::LoggerPtr TraceLogger::fileLogger( )
 {
-  if(logFile())
+  if(this->logFile())
     return loggers_[::cnr_logger::TraceLogger::AppenderType::FILE_STREAM];
   else
     return nullptr;
@@ -936,7 +940,7 @@ log4cxx::LoggerPtr TraceLogger::fileLogger( )
 
 log4cxx::LoggerPtr TraceLogger::consoleLogger( )
 {
-  if(logFile())
+  if(this->logScreen())
     return loggers_[::cnr_logger::TraceLogger::AppenderType::CONSOLE_STREAM];
   else
     return nullptr;

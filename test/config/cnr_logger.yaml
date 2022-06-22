@@ -1,3 +1,0 @@
-appenders: ["file", "screen"]
-levels: ["debug", "info"]
-file_name: "prova"

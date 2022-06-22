@@ -1,3 +1,0 @@
-appenders: [file, screen]
-levels: [trace, info]
-file_name: "ciao"

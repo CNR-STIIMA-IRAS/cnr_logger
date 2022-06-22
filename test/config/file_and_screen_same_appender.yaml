@@ -1,3 +1,0 @@
-appenders: [file, screen]
-levels: [info, info] # They must to be equal if you wnat only one streamer
-file_name: "ciao"
