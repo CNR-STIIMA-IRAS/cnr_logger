@@ -97,7 +97,7 @@ std::string get_env(const char *name)
     errno_t err = getenv_s(&size, result, size, name);
     ret = result;
   #else
-    const char* result = std::getenv("PATH");
+    const char* result = std::getenv(name);
     ret = result;
   #endif
 
