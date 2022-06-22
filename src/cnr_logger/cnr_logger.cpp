@@ -357,6 +357,36 @@ void if_error_fill(std::string* what, const std::string& msg, const bool append 
   }
 }
 
+TraceLogger::Level string2level(const std::string& what)
+{
+  TraceLogger::Level ret;
+  if(what == "FATAL") 
+  {
+    ret = TraceLogger::FATAL;
+  }
+  else if(what == "ERROR")
+  {
+    ret = TraceLogger::ERROR;
+  }
+  else if(what == "WARN")
+  {
+    ret = TraceLogger::WARN;
+  }
+  else if(what == "INFO")
+  {
+    ret = TraceLogger::INFO;
+  }
+  else if(what == "DEBUG")
+  {
+    ret = TraceLogger::DEBUG;
+  }
+  else
+  {
+    ret = TraceLogger::TRACE;
+  }
+  return ret;
+}
+
 TraceLogger::TraceLogger(const std::string& logger_id, const std::string& path,
                          const bool star_header, const bool default_values, std::string* what)
   : logger_id_(""), path_(""), default_values_(false), initialized_(false) // TraceLogger() Enrico 03/12/2021 the compiler can't find the TraceLogger() constructor
@@ -517,34 +547,19 @@ bool TraceLogger::init(const std::string& logger_id, const std::string& path,
   if(((idx_file >= 0) && (idx_screen >= 0)) && (levels[idx_file] == levels[idx_screen]))   // 1 logger and 2 appenders
   {
     loggers_  [ SYNC_FILE_AND_CONSOLE ] = log4cxx::Logger::getLogger(logger_id_);
-    levels_   [ SYNC_FILE_AND_CONSOLE ] = levels[idx_file] == "FATAL"     ? FATAL
-                                        : levels[idx_file] == "ERROR"     ? ERROR
-                                        : levels[idx_file] == "WARN"      ? WARN
-                                        : levels[idx_file] == "INFO"      ? INFO
-                                        : levels[idx_file] == "DEBUG"     ? DEBUG
-                                        : TRACE;
+    levels_   [ SYNC_FILE_AND_CONSOLE ] = string2level(levels[idx_file]);
   }
   else
   {
     if(idx_file >= 0)
     {
       loggers_[FILE_STREAM] = log4cxx::Logger::getLogger(logger_id_ + "_f");
-      levels_ [FILE_STREAM] = levels[idx_file] == "FATAL"     ? FATAL
-                            : levels[idx_file] == "ERROR"     ? ERROR
-                            : levels[idx_file] == "WARN"      ? WARN
-                            : levels[idx_file] == "INFO"      ? INFO
-                            : levels[idx_file] == "DEBUG"     ? DEBUG
-                            : TRACE;
+      levels_ [FILE_STREAM] = string2level(levels[idx_file]);
     }
     if(idx_screen >= 0)
     {
       loggers_[CONSOLE_STREAM] = log4cxx::Logger::getLogger(logger_id_);
-      levels_ [CONSOLE_STREAM] = levels[idx_screen] == "FATAL"     ? FATAL
-                               : levels[idx_screen] == "ERROR"     ? ERROR
-                               : levels[idx_screen] == "WARN"      ? WARN
-                               : levels[idx_screen] == "INFO"      ? INFO
-                               : levels[idx_screen] == "DEBUG"     ? DEBUG
-                               : TRACE;
+      levels_ [CONSOLE_STREAM] = string2level(levels[idx_screen]);
     }
   }
 
@@ -653,7 +668,7 @@ bool TraceLogger::init(const std::string& logger_id, const std::string& path,
     loggers_str += std::to_string(l.first) + "|";
   }
 
-  loggers_str += (levels_.size() > 0u ?  " l: " : "");
+  loggers_str += (levels_.empty() ?  "" : " l: ");
   for(auto const & l : levels_)
   {
     loggers_str += std::to_string(l.first) + "|";
