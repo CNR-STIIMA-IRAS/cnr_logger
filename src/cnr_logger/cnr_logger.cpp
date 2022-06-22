@@ -522,11 +522,11 @@ bool TraceLogger::init(const std::string& logger_id, const std::string& path,
   {
     std::for_each(appenders[i].begin(), appenders[i].end(), [](char & c)
     {
-      c = std::tolower(c);
+      c = static_cast<char>(std::tolower(static_cast<int>(c)));
     });
     std::for_each(levels   [i].begin(), levels   [i].end(), [](char & c)
     {
-      c = std::toupper(c);
+      c = static_cast<char>(std::toupper(static_cast<int>(c)));
     });
     if(appenders[i] == "file")
     {
