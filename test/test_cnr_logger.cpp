@@ -226,12 +226,11 @@ TEST(TestSuite, wrongConstructor)
   EXPECT_NO_FATAL_FAILURE(logger.reset());
 }
 
-// Declare another test
-TEST(TestSuite, flushFileAndScreen)
+
+void printTest(const std::string& path)
 {
-  std::string path1 = path("file_and_screen_same_appender");
   std::string what;
-  EXPECT_NO_FATAL_FAILURE(logger.reset(new cnr_logger::TraceLogger("log1", path1, true, true, &what)));
+  EXPECT_NO_FATAL_FAILURE(logger.reset(new cnr_logger::TraceLogger("log1", path, true, true, &what)));
   if(what.length()>0u)
   {
     std::cout << what << std::endl;
@@ -283,88 +282,23 @@ TEST(TestSuite, flushFileAndScreen)
 }
 
 // Declare another test
+TEST(TestSuite, flushFileAndScreen)
+{
+  printTest("file_and_screen_same_appender");
+}
+
+
+// Declare another test
 TEST(TestSuite, flushOnlyFile)
 {
-  std::string path1 = path("only_file_streamer");
-
-  EXPECT_NO_FATAL_FAILURE(logger.reset(new cnr_logger::TraceLogger("log1", path1, true)));
-
-  for (size_t i = 0u; i < 5u; i++)
-  {
-    CNR_INFO(*logger, "Log info");
-    CNR_WARN(*logger, "Log warn");
-    CNR_DEBUG(*logger, "Log debug");
-    CNR_FATAL(*logger, "Log fatal");
-    CNR_TRACE(*logger, "Log trace");
-
-    CNR_INFO_THROTTLE(*logger,  1.0, "Log info");
-    CNR_WARN_THROTTLE(*logger, 1.0, "Log warn");
-    CNR_DEBUG_THROTTLE(*logger, 1.0, "Log debug");
-    CNR_FATAL_THROTTLE(*logger, 1.0, "Log fatal");
-    CNR_TRACE_THROTTLE(*logger, 1.0, "Log trace");
-
-    CNR_INFO_COND(*logger, true, "Log info");
-    CNR_WARN_COND(*logger, true, "Log warn");
-    CNR_DEBUG_COND(*logger, false, "Log debug");
-    CNR_FATAL_COND(*logger, true, "Log fatal");
-    CNR_TRACE_COND(*logger, false, "Log trace");
-
-    CNR_INFO_COND_THROTTLE(*logger, true, 1.0, "THROTTLE Log info");
-    CNR_WARN_COND_THROTTLE(*logger, true, 1.0, "THROTTLE Log warn");
-    CNR_DEBUG_COND_THROTTLE(*logger, false, 1.0, "THROTTLE Log debug");
-    CNR_FATAL_COND_THROTTLE(*logger, true, 1.0, "THROTTLE Log fatal");
-    CNR_TRACE_COND_THROTTLE(*logger, false, 1.0, "THROTTLE Log trace");
-
-#if defined(ROS_NOT_AVAILABLE)
-    sleep(0.1);
-#else
-    ros::Duration(0.1).sleep();
-#endif
-  }
-  EXPECT_NO_FATAL_FAILURE(logger.reset());
+  printTest("only_file_streamer");
 }
 
 
 // Declare another test
 TEST(TestSuite, flushOnlsyScreen)
 {
-  std::string path1=path("only_screen_streamer");
-
-  EXPECT_NO_FATAL_FAILURE(logger.reset(new cnr_logger::TraceLogger("log1", path1, true)));
-
-  for (size_t i = 0u; i < 5u; i++)
-  {
-    CNR_INFO(*logger, "Log info");
-    CNR_WARN(*logger, "Log warn");
-    CNR_DEBUG(*logger, "Log debug");
-    CNR_FATAL(*logger, "Log fatal");
-    CNR_TRACE(*logger, "Log trace");
-
-    CNR_INFO_THROTTLE(*logger,  1.0, "Log info");
-    CNR_WARN_THROTTLE(*logger, 1.0, "Log warn");
-    CNR_DEBUG_THROTTLE(*logger, 1.0, "Log debug");
-    CNR_FATAL_THROTTLE(*logger, 1.0, "Log fatal");
-    CNR_TRACE_THROTTLE(*logger, 1.0, "Log trace");
-
-    CNR_INFO_COND(*logger, true, "Log info");
-    CNR_WARN_COND(*logger, true, "Log warn");
-    CNR_DEBUG_COND(*logger, false, "Log debug");
-    CNR_FATAL_COND(*logger, true, "Log fatal");
-    CNR_TRACE_COND(*logger, false, "Log trace");
-
-    CNR_INFO_COND_THROTTLE(*logger, true, 1.0, "THROTTLE Log info");
-    CNR_WARN_COND_THROTTLE(*logger, true, 1.0, "THROTTLE Log warn");
-    CNR_DEBUG_COND_THROTTLE(*logger, false, 1.0, "THROTTLE Log debug");
-    CNR_FATAL_COND_THROTTLE(*logger, true, 1.0, "THROTTLE Log fatal");
-    CNR_TRACE_COND_THROTTLE(*logger, false, 1.0, "THROTTLE Log trace");
-
-#if defined(ROS_NOT_AVAILABLE)
-    sleep(0.1);
-#else
-    ros::Duration(0.1).sleep();
-#endif
-  }
-  EXPECT_NO_FATAL_FAILURE(logger.reset());
+  printTest("only_screen_streamer");  
 }
 
 TEST(TestSuite, testMacros)

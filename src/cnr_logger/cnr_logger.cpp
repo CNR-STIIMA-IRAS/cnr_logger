@@ -83,7 +83,11 @@ std::string time_stamp(const std::time_t& timer, const std::string& fmt = "%F %T
 {
   auto bt = localtime_xp(timer);
   std::array<char, 128> buf;
-  std::strftime(buf.data(), sizeof(buf), fmt.c_str(), &bt);
+  size_t error = std::strftime(buf.data(), sizeof(buf), fmt.c_str(), &bt);
+  if(error==0)
+  {
+    std::cerr << __PRETTY_FUNCTION__ << ":" << __LINE__ << ": The buffer memory is not enough ..." << std::endl;
+  }
   return buf.data();
 }
 
@@ -120,22 +124,14 @@ std::string get_homedir(void)
 bool exists_test (const std::string& name, const bool is_a_file = true) 
 {
   boost::filesystem::path p(name);
-  if(!boost::filesystem::exists(p)) // does path p actually exist?
+
+  if(boost::filesystem::exists(p)) 
   {
-    return false;
-  }
-  
-  if(is_a_file && !boost::filesystem::is_regular_file(p))  // is path p a regular file?
-  {
-      return false;
+    return (is_a_file ? boost::filesystem::is_regular_file(p) 
+              : boost::filesystem::is_directory(p));
   }
 
-  if(!is_a_file && !boost::filesystem::is_directory(p))  // is path p a directory file?
-  {
-      return false;
-  }
-
-  return true;
+  return false;
 }
 
 
@@ -350,6 +346,33 @@ void if_error_fill(std::string* what, const std::string& msg, const bool append 
       *what = msg;
     }
   }
+}
+
+std::string appender2string(const TraceLogger::AppenderType& t)
+{
+  std::string ret ="";
+  switch(t)
+  {
+    case TraceLogger::FILE_STREAM: ret = "FILE_STREAM"; break;
+    case TraceLogger::CONSOLE_STREAM: ret = "CONSOLE_STREAM"; break;
+    case TraceLogger::SYNC_FILE_AND_CONSOLE: ret = "SYNC_FILE_AND_CONSOLE"; break;
+  }
+  return ret;
+}
+
+std::string level2string(const TraceLogger::Level& t)
+{
+  std::string ret ="";
+  switch(t)
+  {
+    case TraceLogger::FATAL: ret = "FATAL"; break;
+    case TraceLogger::ERROR: ret = "ERROR"; break;
+    case TraceLogger::WARN: ret = "WARN"; break;
+    case TraceLogger::INFO: ret = "INFO"; break;
+    case TraceLogger::DEBUG: ret = "DEBUG"; break;
+    case TraceLogger::TRACE: ret = "TRACE"; break;
+  }
+  return ret;
 }
 
 TraceLogger::Level string2level(const std::string& what)
@@ -882,15 +905,11 @@ std::string to_string(const TraceLogger& logger)
   ret +="\nTHROTTLE TIME: " + std::to_string(logger.default_throttle_time_);
   ret +="\nLEVELS: [ ";
   for(const auto & l: logger.levels_)
-    ret+= (l.first == TraceLogger::FILE_STREAM          ) ? "FILE_STREAM "
-        : (l.first == TraceLogger::CONSOLE_STREAM       ) ? "CONSOLE_STREAM "
-        : "SYNC_FILE_AND_CONSOLE ";
+    ret+= level2string(l.second);
   ret += "]";
-  ret +="\nLOGGERS: [ ";
-  for(const auto & l: logger.levels_)
-    ret+= (l.first == TraceLogger::FILE_STREAM          ) ? "FILE_STREAM "
-        : (l.first == TraceLogger::CONSOLE_STREAM       ) ? "CONSOLE_STREAM "
-        : "SYNC_FILE_AND_CONSOLE ";
+  ret +="\nAPPENDER TYPES: [ ";
+  for(const auto & a: logger.loggers_)
+    ret+= appender2string(a.first);
   ret += "]";
   return ret;
 }
