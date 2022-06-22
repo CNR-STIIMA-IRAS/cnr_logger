@@ -176,8 +176,6 @@ void printTest(std::shared_ptr<cnr_logger::TraceLogger> l)
     CNR_FATAL_COND_THROTTLE(*l, true, 1.0, "THROTTLE Log fatal");
     CNR_TRACE_COND_THROTTLE(*l, false, 1.0, "THROTTLE Log trace");
 
-
-
 #if defined(ROS_NOT_AVAILABLE)
     sleep(0.1);
 #else

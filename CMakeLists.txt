@@ -133,13 +133,13 @@ if(ENABLE_TESTING)
     add_rostest_gtest(${PROJECT_NAME}_test test/test.launch test/test_cnr_logger.cpp)
     target_link_libraries(${PROJECT_NAME}_test ${PROJECT_NAME} ${CNR_LOGGER_TARGET_LINK_LIBRARIES} ${rostest_LIBRARIES} )
     target_compile_definitions(${PROJECT_NAME}_test PUBLIC FORCE_ROS_TIME_USE=1)
-    #cnr_target_compile_options(${PROJECT_NAME}_test)
+    cnr_target_compile_options(${PROJECT_NAME}_test)
 
     # Test using STD TIME
     add_rostest_gtest(${PROJECT_NAME}_test_std_time test/test_std_time.launch test/test_cnr_logger.cpp)
     target_link_libraries(${PROJECT_NAME}_test_std_time ${PROJECT_NAME} ${CNR_LOGGER_TARGET_LINK_LIBRARIES} ${rostest_LIBRARIES} )
     target_compile_definitions(${PROJECT_NAME}_test_std_time PUBLIC FORCE_ROS_TIME_USE=0)
-    #cnr_target_compile_options(${PROJECT_NAME}_test_std_time)
+    cnr_target_compile_options(${PROJECT_NAME}_test_std_time)
 
   else()
 
