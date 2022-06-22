@@ -37,6 +37,7 @@
 #include <vector>
 #include <iostream>
 #include <cctype>
+#include <array>
 
 //
 #include <cnr_logger/cnr_logger.h>
@@ -80,12 +81,10 @@ std::tm localtime_xp(const std::time_t& timer)
 // default = "YYYY-MM-DD HH:MM:SS"
 std::string time_stamp(const std::time_t& timer, const std::string& fmt = "%F %T")
 {
-  std::string ret;
   auto bt = localtime_xp(timer);
-  char buf[128];
-  std::strftime(buf, sizeof(buf), fmt.c_str(), &bt);
-  ret = buf;
-  return ret;
+  std::array<char,128> buf;
+  std::strftime(buf.data(), sizeof(buf), fmt.c_str(), &bt);
+  return buf.data();
 }
 
 std::string get_env(const char *name)
