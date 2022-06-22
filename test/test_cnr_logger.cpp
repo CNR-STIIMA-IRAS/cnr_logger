@@ -182,6 +182,7 @@ void printTest(std::shared_ptr<cnr_logger::TraceLogger> l)
     ros::Duration(0.1).sleep();
 #endif
   }
+  
 }
 
 
