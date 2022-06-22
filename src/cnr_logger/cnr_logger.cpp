@@ -158,7 +158,7 @@ bool mkLogDir(std::string& dir)
 //========================================================
 
 
-#if !defined(_WIN32) && !defined(_WIN64)
+//#if !defined(_WIN32) && !defined(_WIN64)
 
 namespace log4cxx
 {
@@ -241,7 +241,7 @@ LOG4CXX_PTR_DEF(ColorPatternLayout);
 using log4cxx::ColorPatternLayout;
 IMPLEMENT_LOG4CXX_OBJECT(ColorPatternLayout);
 
-#endif
+//#endif
 
 #if defined(ROS_NOT_AVAILABLE)
   using path_t = YAML::Node;
