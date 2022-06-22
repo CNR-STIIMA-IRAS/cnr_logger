@@ -82,7 +82,7 @@ std::tm localtime_xp(const std::time_t& timer)
 std::string time_stamp(const std::time_t& timer, const std::string& fmt = "%F %T")
 {
   auto bt = localtime_xp(timer);
-  std::array<char,128> buf;
+  std::array<char, 128> buf;
   std::strftime(buf.data(), sizeof(buf), fmt.c_str(), &bt);
   return buf.data();
 }
