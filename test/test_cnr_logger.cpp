@@ -403,20 +403,32 @@ return ret;
 // Declare a test
 TEST(TestSuite, fullConstructor1)
 {
+  std::cout << __LINE__ << std::endl;
   std::string path1 = path("file_and_screen_different_appenders");
 
+  std::cout << __LINE__ << std::endl;
   std::shared_ptr<cnr_logger::TraceLogger> logger;
-  EXPECT_FALSE(does_not_throw([&logger,&path1]
+  
+  std::cout << __LINE__ << std::endl;
+  EXPECT_TRUE(does_not_throw([&logger,&path1]
     {logger.reset(new cnr_logger::TraceLogger("log1",path1 )); }));
   
+  std::cout << __LINE__ << std::endl;
   std::string what;
+
+  std::cout << __LINE__ << std::endl;
   EXPECT_FALSE(logger->init("log1", path1, false, false, &what));  // Already initialized
 
-
+  std::cout << __LINE__ << std::endl;
   EXPECT_TRUE(logger->logFile());
+  
+  std::cout << __LINE__ << std::endl;
   EXPECT_TRUE(logger->logScreen());
+
+  std::cout << __LINE__ << std::endl;
   EXPECT_FALSE(logger->logSyncFileAndScreen());
 
+  std::cout << __LINE__ << std::endl;
   EXPECT_TRUE(logger->logFatal() );
   EXPECT_TRUE(logger->logError() );
   EXPECT_TRUE(logger->logWarn()  );

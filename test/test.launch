@@ -8,6 +8,7 @@
   appenders: [file, screen]
   levels: [trace, info]
   file_name: "ciao"
+  pattern_layout: "[%5p][%d{HH:mm:ss,SSS}][%M:%L][%c] %m%n"
 </rosparam>
 </group>
 

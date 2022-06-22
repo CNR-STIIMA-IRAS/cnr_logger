@@ -89,11 +89,21 @@ std::string time_stamp(const std::time_t& timer, const std::string& fmt = "%F %T
 
 std::string get_env(const char *name)
 {
+  std::cout << __LINE__ << std::endl;
   std::string ret;
   #if defined(_MSC_VER)
     size_t size = 0;
     char result[1024];
+    std::cout << __LINE__ << std::endl;
+    getenv_s( &size, NULL, 0, name);
+   if (size == 0)
+   {
+      printf("%s doesn't exist!\n",name);
+      return "";
+   }
+   // Get the value of the LIB environment variable.
     errno_t err = getenv_s(&size, result, size, name);
+    std::cout << __LINE__ << std::endl;
     ret = result;
   #else
     const char* result = std::getenv(name);
@@ -109,6 +119,7 @@ std::string get_homedir(void)
     std::string homedir;
 
 #if defined(_WIN32) || defined(_WIN64)
+    std::cout << __LINE__ << std::endl;
     homedir = std::string(get_env("HOMEDRIVE")) + std::string(get_env("HOMEPATH"));
 #else
     homedir = std::getenv("HOME");
@@ -129,9 +140,12 @@ bool exists_test (const std::string& name, const bool is_a_file = true)
 
 bool mkLogDir(std::string& dir)
 {
+  std::cout << __LINE__ << std::endl;
   dir = get_homedir() + "/.ros/log";
+  std::cout << __LINE__ << std::endl;
   if(!exists_test (dir, false))
   {
+    std::cout << __LINE__ << std::endl;
     boost::filesystem::path p(dir);
 	  if(!boost::filesystem::create_directories(p)) 
     {
@@ -449,7 +463,7 @@ void setLoggers(const std::string& logger_id,
 
 void extractLayout(const path_t* path, log4cxx::PatternLayoutPtr& layout, std::vector<std::string>& warnings)
 {
-  #if defined(__clang__)
+  #if defined(__clang__) || defined(_MSC_VER)
     const std::string default_pattern_layout = "[%5p][%d{HH:mm:ss,SSS}][%F:%L][%c] %m%n";
   #else
     const std::string default_pattern_layout = "[%5p][%d{HH:mm:ss,SSS}][%M:%L][%c] %m%n";
@@ -478,6 +492,7 @@ bool getFileName(const path_t* path,
                         bool& append_to_file, 
                           std::vector<std::string>& warnings)
 {
+  std::cout << __LINE__ << std::endl;
   std::string root_path; 
   if(!mkLogDir(root_path))
   {
@@ -486,12 +501,14 @@ bool getFileName(const path_t* path,
   }
   std::string default_log_file_name = log_file_name = root_path + "/" + logger_id;
 
+  std::cout << __LINE__ << std::endl;
   if(!extract(log_file_name, path, "file_name", default_log_file_name))
   {
     warnings.emplace_back("Paremeter missing: key='file_name'");
     warnings.emplace_back("Parameter superimposed: log file name= '" + default_log_file_name +"'");
   }
 
+  std::cout << __LINE__ << std::endl;
   bool append_date_to_file_name = false;
   bool default_append_date_to_file_name = false;
   if(!extract(append_date_to_file_name, path, "append_date_to_file_name", default_append_date_to_file_name))
@@ -500,6 +517,7 @@ bool getFileName(const path_t* path,
     warnings.emplace_back("Parameter superimposed: append date to file= '" + std::to_string(append_date_to_file_name) +"'");
   }
 
+  std::cout << __LINE__ << std::endl;
   #if defined(ROS_NOT_AVAILABLE) || !defined(FORCE_ROS_TIME_USE)
     auto now = std::time(nullptr); 
   #else
@@ -508,6 +526,7 @@ bool getFileName(const path_t* path,
 
   log_file_name +=  append_date_to_file_name  ? ("." + to_string(now) + ".log") : ".log";
 
+  std::cout << __LINE__ << std::endl;
   bool default_append_to_file = true;
   if(!extract(append_to_file, path, "append_to_file", default_append_to_file))
   {
@@ -619,6 +638,7 @@ TraceLogger::TraceLogger(const std::string& logger_id, const std::string& path,
                          const bool star_header, const bool default_values, std::string* what)
   // : logger_id_(""), path_(""), default_values_(false), initialized_(false) // TraceLogger() Enrico 03/12/2021 the compiler can't find the TraceLogger() constructor
 {
+  std::cout << __LINE__ << std::endl;
   std::string err = "[" + logger_id + "] Error in creating the TraceLogger.\n"
       +  std::string("INPUT logger_id      : ") + logger_id + "\n"
       +  std::string("INPUT path           : ") + path + "\n"
@@ -627,8 +647,10 @@ TraceLogger::TraceLogger(const std::string& logger_id, const std::string& path,
 
   try
   {
+    std::cout << __LINE__ << std::endl;
     if(init(logger_id, path, star_header, default_values, what))
     {
+      std::cout << __LINE__ << std::endl;
       return;
     }
   }
@@ -743,16 +765,19 @@ void extractAppendersAndLevels(const std::string* path,
 bool TraceLogger::init(const std::string& logger_id, const std::string& path,
                           const bool star_header, const bool default_values, std::string* what)
 {
+  std::cout << __LINE__ << std::endl;
   if(initialized_)
   {
     if_error_fill(what, "Logger ID: " + logger_id_ + ", Logger already initialized.");
     return false;
   }
 
+  std::cout << __LINE__ << std::endl;
   logger_id_ = logger_id;
   path_ = path;
   default_values_ = default_values;
 
+  std::cout << __LINE__ << std::endl;
   if((!default_values) && (!check(path)))
   {
     if_error_fill(what, "Logger ID:" + logger_id +  ", Error in initialization. "
@@ -760,6 +785,7 @@ bool TraceLogger::init(const std::string& logger_id, const std::string& path,
     return false;
   }
 
+  std::cout << __LINE__ << std::endl;
   // =======================================================================================
   // Extract the info to constructs the logger
   //
@@ -780,14 +806,16 @@ bool TraceLogger::init(const std::string& logger_id, const std::string& path,
   const std::string* _path = &path;
 #endif
 
+  std::cout << __LINE__ << std::endl;
   // =======================================================================================
   extractAppendersAndLevels(_path, appenders_data,levels_data, warnings);
 
+  std::cout << __LINE__ << std::endl;
   // =======================================================================================
   setLoggers( logger_id_, appenders_data, levels_data, loggers_, levels_, max_level_);
   
 
-
+  std::cout << __LINE__ << std::endl;
   // =======================================================================================
   // Layout
   //
@@ -796,12 +824,14 @@ bool TraceLogger::init(const std::string& logger_id, const std::string& path,
   extractLayout(_path, layout, warnings);
   // =======================================================================================
 
+  std::cout << __LINE__ << std::endl;
   // =======================================================================================
   // Default Throttle Time
   //
   // =======================================================================================
   getThrottletime(_path, default_throttle_time_, warnings);
 
+  std::cout << __LINE__ << std::endl;
   // =======================================================================================
   // Configure appenders and loggers
   //
@@ -827,6 +857,7 @@ bool TraceLogger::init(const std::string& logger_id, const std::string& path,
     }
   }
 
+  
   for(size_t i=0;i<warnings.size();i++)
   {
     if_error_fill(what, std::to_string(i+1) + "#1 " + warnings.at(i) + "\n", true);
