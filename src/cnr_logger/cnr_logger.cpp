@@ -207,7 +207,7 @@ public:
         default:
           break;
         }
-        if(color.length()>0)
+        if(color.length()>0u)
         {
           log4cxx::LogString _color;
           log4cxx::helpers::Transcoder::decode( color, _color);
@@ -330,7 +330,7 @@ bool extractVector(std::vector<std::string>& val,
   {
     for(YAML::const_iterator it=(*path)[leaf].begin();it!=(*path)[leaf].end();++it)
     {
-      val.push_back(it->as<std::string>());
+      val.emplace_back(it->as<std::string>());
     }
    }
 #endif
@@ -439,7 +439,7 @@ void extractLayout(const path_t* path, log4cxx::PatternLayoutPtr& layout, std::v
   std::string pattern_layout;
   if(!extract(pattern_layout, path, "pattern_layout", default_pattern_layout))
   {
-    warnings.push_back("Paremeter missing key='pattern_layout'");
+    warnings.emplace_back("Paremeter missing key='pattern_layout'");
   }
 
   log4cxx::LogString _pattern_layout;
@@ -526,13 +526,12 @@ std::string getLoggerStartString(const std::string& logger_id,
 }
 
 
-bool configureLoggers(const path_t* path,
-                        const std::string& logger_id,
-                          const std::string& log_file_name, 
-                            const bool& append_to_file,
-                              const log4cxx::PatternLayoutPtr& layout, 
-                                std::map<TraceLogger::AppenderType, log4cxx::LoggerPtr>& loggers,
-                                  std::vector<std::string>& warnings)
+bool configureLoggers(const std::string& logger_id,
+                        const std::string& log_file_name, 
+                          const bool& append_to_file,
+                            const log4cxx::PatternLayoutPtr& layout, 
+                              std::map<TraceLogger::AppenderType, log4cxx::LoggerPtr>& loggers,
+                                std::vector<std::string>& warnings)
 {
   std::string root_path; 
   if(!mkLogDir(root_path))
@@ -548,7 +547,7 @@ bool configureLoggers(const path_t* path,
     log4cxx::LogString _log_file_name;
     log4cxx::helpers::Transcoder::decode(log_file_name,_log_file_name);
     log4cxx::RollingFileAppenderPtr appender = new log4cxx::RollingFileAppender(layout, _log_file_name, append_to_file);
-    if( (loggers.find(TraceLogger::FILE_STREAM) != loggers.end()) )
+    if(loggers.find(TraceLogger::FILE_STREAM) != loggers.end())
     {
       loggers[ TraceLogger::FILE_STREAM ]->addAppender(appender);
     }
@@ -591,8 +590,8 @@ void getThrottletime(const path_t* path,
   // =======================================================================================
   if(!extract(default_throttle_time, path, "default_throttle_time", -1.0))
   {
-    warnings.push_back("Paremeter missing: key='default_throttle_time'");
-    warnings.push_back("Parameter superimposed: default throttle time= '" + std::to_string(default_throttle_time) +"'");
+    warnings.emplace_back("Paremeter missing: key='default_throttle_time'");
+    warnings.emplace_back("Parameter superimposed: default throttle time= '" + std::to_string(default_throttle_time) +"'");
   }
 }
 
@@ -793,7 +792,7 @@ bool TraceLogger::init(const std::string& logger_id, const std::string& path,
   bool ok = getFileName(_path, logger_id,log_file_name, append_to_file, warnings);
   if(ok)
   {
-    ok = configureLoggers(_path, logger_id_, log_file_name, append_to_file, layout, loggers_, warnings);
+    ok = configureLoggers(logger_id_, log_file_name, append_to_file, layout, loggers_, warnings);
     if(ok)
     {
       std::string log_start =  getLoggerStartString(logger_id, log_file_name,loggers_,levels_);
