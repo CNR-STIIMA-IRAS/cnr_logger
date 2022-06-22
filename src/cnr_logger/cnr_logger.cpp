@@ -292,9 +292,9 @@ bool extract(T& val,
 {
   bool ret = false;
 #if defined(ROS_NOT_AVAILABLE)
-  ret = path != nullptr ? (*path)[leaf] : false;
+  ret = (path != nullptr) ? (*path)[leaf] : false;
 #else
-  ret = path != nullptr ? ros::param::get(*path + "/" + leaf, val) : false;
+  ret = (path != nullptr) ? ros::param::get(*path + "/" + leaf, val) : false;
 #endif
   if(!ret)
   {
@@ -392,8 +392,8 @@ void setLoggers(const std::string& logger_id,
 {
   auto it_file     = std::find(appenders_data.begin(), appenders_data.end(), "file");
   auto it_screen   = std::find(appenders_data.begin(), appenders_data.end(), "screen");
-  int  idx_file    = (it_file   != appenders_data.end()) ? std::distance(appenders_data.begin(), it_file) : -1;
-  int  idx_screen  = (it_screen != appenders_data.end()) ? std::distance(appenders_data.begin(), it_screen) : -1;
+  int  idx_file    = (it_file   != appenders_data.end()) ? (int)std::distance(appenders_data.begin(), it_file) : -1;
+  int  idx_screen  = (it_screen != appenders_data.end()) ? (int)std::distance(appenders_data.begin(), it_screen) : -1;
 
   if(((idx_file >= 0) && (idx_screen >= 0)) && (levels_data.at(idx_file) == levels_data.at(idx_screen)))   // 1 logger and 2 appenders
   {
@@ -426,7 +426,7 @@ void setLoggers(const std::string& logger_id,
       case TraceLogger::DEBUG: loggers[level.first]->setLevel(log4cxx::Level::getDebug()); break;
       case TraceLogger::TRACE: loggers[level.first]->setLevel(log4cxx::Level::getTrace()); break;
     }
-    max_level = level.second >= max_level ? level.second : max_level;
+    max_level = (level.second >= max_level) ? level.second : max_level;
   }
 }
 
@@ -522,7 +522,7 @@ std::string getLoggerStartString(const std::string& logger_id,
   #endif
 
   return "LOG START: " + logger_id  + ", " + to_string(now) + ", " + loggers_str
-            + (log_file_name.size() > 0u ?  ", fn: " + log_file_name : "");
+            + ( (log_file_name.size() > 0u) ?  ", fn: " + log_file_name : "");
 }
 
 
