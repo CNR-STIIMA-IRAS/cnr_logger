@@ -283,7 +283,7 @@ TEST(TestSuite, flushFileAndScreen)
 {
   createLogger("file_and_screen_same_appender");
   printTest();
-  EXPECT_FALSE(logger->logFile());
+  EXPECT_TRUE(logger->logFile());
   EXPECT_TRUE(logger->logScreen());
   EXPECT_TRUE(logger->logSyncFileAndScreen());
   EXPECT_NO_FATAL_FAILURE(logger.reset());
