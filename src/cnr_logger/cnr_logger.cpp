@@ -241,6 +241,16 @@ IMPLEMENT_LOG4CXX_OBJECT(ColorPatternLayout);
 
 #endif
 
+#if defined(ROS_NOT_AVAILABLE)
+  typedef YAML::Node path_t;
+#else
+  typedef std::string path_t;
+#endif
+
+
+
+
+
 namespace cnr_logger
 {
 /**
@@ -275,17 +285,10 @@ std::string to_string(const ros::Time& now)
 
 
 template<typename T>
-#if defined(ROS_NOT_AVAILABLE)
 bool extract(T& val,
-              const YAML::Node* path,
+              const path_t* path,
                 const std::string& leaf,
                     const T& default_val)
-#else
-bool extract(T& val,
-              const std::string* path,
-                const std::string& leaf,
-                  const T& default_val)
-#endif
 {
   bool ret = false;
 #if defined(ROS_NOT_AVAILABLE)
@@ -306,17 +309,10 @@ bool extract(T& val,
   return ret;
 }
 
-#if defined(ROS_NOT_AVAILABLE)
 bool extractVector(std::vector<std::string>& val,
-              const YAML::Node* path,
-                const std::string& leaf,
-                    const std::vector<std::string>& default_val)
-#else
-bool extractVector(std::vector<std::string>& val,
-                      const std::string* path,
+                      const path_t* path,
                         const std::string& leaf,
                           const std::vector<std::string>& default_val)
-#endif
 {
   bool ret = false;
 #if defined(ROS_NOT_AVAILABLE)
@@ -385,6 +381,221 @@ TraceLogger::Level string2level(const std::string& what)
   }
   return ret;
 }
+
+
+void setLoggers(const std::string& logger_id, 
+                  const std::vector<std::string>& appenders_data,
+                    const std::vector<std::string>& levels_data,
+                      std::map<TraceLogger::AppenderType, log4cxx::LoggerPtr>& loggers,
+                        std::map<TraceLogger::AppenderType, TraceLogger::Level>& levels, 
+                          TraceLogger::Level& max_level)
+{
+  auto it_file     = std::find(appenders_data.begin(), appenders_data.end(), "file");
+  auto it_screen   = std::find(appenders_data.begin(), appenders_data.end(), "screen");
+  int  idx_file    = (it_file   != appenders_data.end()) ? std::distance(appenders_data.begin(), it_file) : -1;
+  int  idx_screen  = (it_screen != appenders_data.end()) ? std::distance(appenders_data.begin(), it_screen) : -1;
+
+  if(((idx_file >= 0) && (idx_screen >= 0)) && (levels_data.at(idx_file) == levels_data.at(idx_screen)))   // 1 logger and 2 appenders
+  {
+    loggers  [ TraceLogger::SYNC_FILE_AND_CONSOLE ] = log4cxx::Logger::getLogger(logger_id);
+    levels   [ TraceLogger::SYNC_FILE_AND_CONSOLE ] = string2level(levels_data[idx_file]);
+  }
+  else
+  {
+    if(idx_file >= 0)
+    {
+      loggers[TraceLogger::FILE_STREAM] = log4cxx::Logger::getLogger(logger_id + "_f");
+      levels [TraceLogger::FILE_STREAM] = string2level(levels_data[idx_file]);
+    }
+    if(idx_screen >= 0)
+    {
+      loggers[TraceLogger::CONSOLE_STREAM] = log4cxx::Logger::getLogger(logger_id);
+      levels [TraceLogger::CONSOLE_STREAM] = string2level(levels_data.at(idx_screen));
+    }
+  }
+
+  max_level = TraceLogger::FATAL;
+  for(auto const & level : levels)
+  {
+    switch(level.second)
+    {
+      case TraceLogger::FATAL: loggers[level.first]->setLevel(log4cxx::Level::getFatal()); break;
+      case TraceLogger::ERROR: loggers[level.first]->setLevel(log4cxx::Level::getError()); break;
+      case TraceLogger::WARN : loggers[level.first]->setLevel(log4cxx::Level::getWarn() ); break;
+      case TraceLogger::INFO : loggers[level.first]->setLevel(log4cxx::Level::getInfo() ); break;
+      case TraceLogger::DEBUG: loggers[level.first]->setLevel(log4cxx::Level::getDebug()); break;
+      case TraceLogger::TRACE: loggers[level.first]->setLevel(log4cxx::Level::getTrace()); break;
+    }
+    max_level = level.second >= max_level ? level.second : max_level;
+  }
+}
+
+
+
+void extractLayout(const path_t* path, log4cxx::PatternLayoutPtr& layout, std::vector<std::string>& warnings)
+{
+  const std::string default_pattern_layout = "[%5p][%d{HH:mm:ss,SSS}][%M:%L][%c] %m%n";
+  
+  std::string pattern_layout;
+  if(!extract(pattern_layout, path, "pattern_layout", default_pattern_layout))
+  {
+    warnings.push_back("Paremeter missing key='pattern_layout'");
+  }
+
+  log4cxx::LogString _pattern_layout;
+  log4cxx::helpers::Transcoder::decode(pattern_layout, _pattern_layout);
+  
+#if !defined(_WIN32) && !defined(_WIN64)
+  layout = new log4cxx::ColorPatternLayout(_pattern_layout);
+#else
+  layout = new log4cxx::PatternLayout(_pattern_layout);
+#endif
+}
+
+
+bool getFileName(const path_t* path,
+                    const std::string& logger_id,
+                      std::string& log_file_name, 
+                        bool& append_to_file, 
+                          std::vector<std::string>& warnings)
+{
+  std::string root_path; 
+  if(!mkLogDir(root_path))
+  {
+    warnings.emplace_back("Logger ID: " + logger_id + ", Impossible to create/access the log directory");
+    return false;
+  }
+  std::string default_log_file_name = log_file_name = root_path + "/" + logger_id;
+
+  if(!extract(log_file_name, path, "file_name", default_log_file_name))
+  {
+    warnings.emplace_back("Paremeter missing: key='file_name'");
+    warnings.emplace_back("Parameter superimposed: log file name= '" + default_log_file_name +"'");
+  }
+
+  bool append_date_to_file_name = false;
+  bool default_append_date_to_file_name = false;
+  if(!extract(append_date_to_file_name, path, "append_date_to_file_name", default_append_date_to_file_name))
+  {
+    warnings.emplace_back("Paremeter missing: key='append_date_to_file_name'");
+    warnings.emplace_back("Parameter superimposed: append date to file= '" + std::to_string(append_date_to_file_name) +"'");
+  }
+
+  #if defined(ROS_NOT_AVAILABLE) || !defined(FORCE_ROS_TIME_USE)
+    auto now = std::time(nullptr); 
+  #else
+      auto now = ros::Time::now();
+  #endif
+
+  log_file_name +=  append_date_to_file_name  ? ("." + to_string(now) + ".log") : ".log";
+
+  bool default_append_to_file = true;
+  if(!extract(append_to_file, path, "append_to_file", default_append_to_file))
+  {
+    warnings.emplace_back("Paremeter missing: key='append_to_file'");
+    warnings.emplace_back("Parameter superimposed: append data to file= '" + std::to_string(default_append_to_file) +"'");
+  }
+  return true;
+}
+
+std::string getLoggerStartString(const std::string& logger_id, 
+                                  const std::string& log_file_name,
+                                    const std::map<TraceLogger::AppenderType, log4cxx::LoggerPtr>& loggers,
+                                      const std::map<TraceLogger::AppenderType, TraceLogger::Level>& levels)
+{
+  std::string loggers_str = "n. app.: " + std::to_string(static_cast<int>(loggers.size())) + " ";
+  for(auto const & l : loggers)
+  {
+    loggers_str += std::to_string(l.first) + "|";
+  }
+
+  loggers_str += (levels.empty() ?  "" : " l: ");
+  for(auto const & l : levels)
+  {
+    loggers_str += std::to_string(l.first) + "|";
+  }
+
+  #if defined(ROS_NOT_AVAILABLE) || !defined(FORCE_ROS_TIME_USE)
+    auto now = std::time(nullptr); 
+  #else
+      auto now = ros::Time::now();
+  #endif
+
+  return "LOG START: " + logger_id  + ", " + to_string(now) + ", " + loggers_str
+            + (log_file_name.size() > 0u ?  ", fn: " + log_file_name : "");
+}
+
+
+bool configureLoggers(const path_t* path,
+                        const std::string& logger_id,
+                          const std::string& log_file_name, 
+                            const bool& append_to_file,
+                              const log4cxx::PatternLayoutPtr& layout, 
+                                std::map<TraceLogger::AppenderType, log4cxx::LoggerPtr>& loggers,
+                                  std::vector<std::string>& warnings)
+{
+  std::string root_path; 
+  if(!mkLogDir(root_path))
+  {
+    warnings.emplace_back("Logger ID: " + logger_id + ", Impossible to create/access the log directory");
+    return false;
+  }
+
+  if(loggers.find(TraceLogger::FILE_STREAM) != loggers.end()
+   || (loggers.find(TraceLogger::SYNC_FILE_AND_CONSOLE) != loggers.end()) )
+  {
+
+    log4cxx::LogString _log_file_name;
+    log4cxx::helpers::Transcoder::decode(log_file_name,_log_file_name);
+    log4cxx::RollingFileAppenderPtr appender = new log4cxx::RollingFileAppender(layout, _log_file_name, append_to_file);
+    if( (loggers.find(TraceLogger::FILE_STREAM) != loggers.end()) )
+    {
+      loggers[ TraceLogger::FILE_STREAM ]->addAppender(appender);
+    }
+    else
+    {
+      loggers[ TraceLogger::SYNC_FILE_AND_CONSOLE ]->addAppender(appender);
+    }
+
+    appender->setMaximumFileSize(100 * 1024 * 1024);
+    appender->setMaxBackupIndex(10);
+    log4cxx::helpers::Pool pool;
+    appender->activateOptions(pool);
+  }
+
+  if((loggers.find(TraceLogger::CONSOLE_STREAM) != loggers.end())
+  || (loggers.find(TraceLogger::SYNC_FILE_AND_CONSOLE) != loggers.end()) )
+  {
+    log4cxx::LogString _logger_id_;
+    log4cxx::helpers::Transcoder::decode(logger_id,_logger_id_);
+    log4cxx::ConsoleAppenderPtr appender = new log4cxx::ConsoleAppender(layout, _logger_id_);
+    if(loggers.find(TraceLogger::CONSOLE_STREAM) != loggers.end())
+    {
+      loggers[TraceLogger::CONSOLE_STREAM]->addAppender(appender);
+    }
+    else
+    {
+      loggers[TraceLogger::SYNC_FILE_AND_CONSOLE]->addAppender(appender);
+    }
+  }
+  return true;
+}
+
+void getThrottletime(const path_t* path,
+                        double& default_throttle_time, 
+                          std::vector<std::string>& warnings)
+{
+  // =======================================================================================
+  // Default Throttle Time
+  //
+  // =======================================================================================
+  if(!extract(default_throttle_time, path, "default_throttle_time", -1.0))
+  {
+    warnings.push_back("Paremeter missing: key='default_throttle_time'");
+    warnings.push_back("Parameter superimposed: default throttle time= '" + std::to_string(default_throttle_time) +"'");
+  }
+}
+
 
 TraceLogger::TraceLogger(const std::string& logger_id, const std::string& path,
                          const bool star_header, const bool default_values, std::string* what)
@@ -510,272 +721,6 @@ void extractAppendersAndLevels(const std::string* path,
   }
 }
 
-void setLoggers(const std::string& logger_id, 
-                  const std::vector<std::string>& appenders_data,
-                    const std::vector<std::string>& levels_data,
-                      std::map<TraceLogger::AppenderType, log4cxx::LoggerPtr>& loggers,
-                        std::map<TraceLogger::AppenderType, TraceLogger::Level>& levels, 
-                          TraceLogger::Level& max_level)
-{
-  auto it_file     = std::find(appenders_data.begin(), appenders_data.end(), "file");
-  auto it_screen   = std::find(appenders_data.begin(), appenders_data.end(), "screen");
-  int  idx_file    = (it_file   != appenders_data.end()) ? std::distance(appenders_data.begin(), it_file) : -1;
-  int  idx_screen  = (it_screen != appenders_data.end()) ? std::distance(appenders_data.begin(), it_screen) : -1;
-
-  std::cout << __LINE__ << ":" << logger_id << std::endl;
-
-  if(((idx_file >= 0) && (idx_screen >= 0)) && (levels_data.at(idx_file) == levels_data.at(idx_screen)))   // 1 logger and 2 appenders
-  {
-    loggers  [ TraceLogger::SYNC_FILE_AND_CONSOLE ] = log4cxx::Logger::getLogger(logger_id);
-    levels   [ TraceLogger::SYNC_FILE_AND_CONSOLE ] = string2level(levels_data[idx_file]);
-  }
-  else
-  {
-    if(idx_file >= 0)
-    {
-      loggers[TraceLogger::FILE_STREAM] = log4cxx::Logger::getLogger(logger_id + "_f");
-      levels [TraceLogger::FILE_STREAM] = string2level(levels_data[idx_file]);
-    }
-    if(idx_screen >= 0)
-    {
-      loggers[TraceLogger::CONSOLE_STREAM] = log4cxx::Logger::getLogger(logger_id);
-      levels [TraceLogger::CONSOLE_STREAM] = string2level(levels_data.at(idx_screen));
-    }
-  }
-
-  max_level = TraceLogger::FATAL;
-  for(auto const & level : levels)
-  {
-    switch(level.second)
-    {
-      case TraceLogger::FATAL: loggers[level.first]->setLevel(log4cxx::Level::getFatal()); break;
-      case TraceLogger::ERROR: loggers[level.first]->setLevel(log4cxx::Level::getError()); break;
-      case TraceLogger::WARN : loggers[level.first]->setLevel(log4cxx::Level::getWarn() ); break;
-      case TraceLogger::INFO : loggers[level.first]->setLevel(log4cxx::Level::getInfo() ); break;
-      case TraceLogger::DEBUG: loggers[level.first]->setLevel(log4cxx::Level::getDebug()); break;
-      case TraceLogger::TRACE: loggers[level.first]->setLevel(log4cxx::Level::getTrace()); break;
-    }
-    max_level = level.second >= max_level ? level.second : max_level;
-  }
-}
-
-#if defined(ROS_NOT_AVAILABLE)
-  #if !defined(_WIN32) && !defined(_WIN64)
-    log4cxx::ColorPatternLayoutPtr extractLayout(const YAML::Node* path, std::vector<std::string>& warnings)
-  #else
-    log4cxx::PatternLayoutPtr extractLayout(const YAML::Node* path, std::vector<std::string>& warnings)
-  #endif
-#else
-  #if !defined(_WIN32) && !defined(_WIN64)
-    log4cxx::ColorPatternLayoutPtr extractLayout(const std::string* path, std::vector<std::string>& warnings)
-  #else
-    log4cxx::PatternLayoutPtr extractLayout(const std::string* path, std::vector<std::string>& warnings)
-  #endif
-#endif
-{
-  std::string pattern_layout;
-  log4cxx::LogString _pattern_layout;
-
-  std::string default_pattern_layout = "[%5p][%d{HH:mm:ss,SSS}][%M:%L][%c] %m%n";
-  if(!extract(pattern_layout, path, "pattern_layout", default_pattern_layout))
-  {
-    warnings.push_back("Paremeter missing key='pattern_layout'");
-  }
-  log4cxx::helpers::Transcoder::decode(pattern_layout, _pattern_layout);
-  
-
-#if !defined(_WIN32) && !defined(_WIN64)
-  log4cxx::ColorPatternLayoutPtr ret = new log4cxx::ColorPatternLayout();
-#else
-  log4cxx::PatternLayoutPtr ret = new log4cxx::PatternLayout(_pattern_layout);
-#endif
-
-  return ret;
-}
-
-
-#if defined(ROS_NOT_AVAILABLE)
-    bool getFileName(const YAML::Node* path,
-                        const std::string& logger_id,
-                          std::string& log_file_name, 
-                            bool& append_to_file, 
-                              std::vector<std::string>& warnings)
-#else
-  bool getFileName(const std::string* path,
-                        const std::string& logger_id,
-                          std::string& log_file_name, 
-                            bool& append_to_file,
-                              std::vector<std::string>& warnings)
-#endif
-{
-  std::string root_path; 
-  if(!mkLogDir(root_path))
-  {
-    warnings.emplace_back("Logger ID: " + logger_id + ", Impossible to create/access the log directory");
-    return false;
-  }
-  std::string default_log_file_name = log_file_name = root_path + "/" + logger_id;
-
-  if(!extract(log_file_name, path, "file_name", default_log_file_name))
-  {
-    warnings.emplace_back("Paremeter missing: key='file_name'");
-    warnings.emplace_back("Parameter superimposed: log file name= '" + default_log_file_name +"'");
-  }
-
-  bool append_date_to_file_name = false;
-  bool default_append_date_to_file_name = false;
-  if(!extract(append_date_to_file_name, path, "append_date_to_file_name", default_append_date_to_file_name))
-  {
-    warnings.emplace_back("Paremeter missing: key='append_date_to_file_name'");
-    warnings.emplace_back("Parameter superimposed: append date to file= '" + std::to_string(append_date_to_file_name) +"'");
-  }
-
-  #if defined(ROS_NOT_AVAILABLE) || !defined(FORCE_ROS_TIME_USE)
-    auto now = std::time(nullptr); 
-  #else
-      auto now = ros::Time::now();
-  #endif
-
-  log_file_name +=  append_date_to_file_name  ? ("." + to_string(now) + ".log") : ".log";
-
-  bool default_append_to_file = true;
-  if(!extract(append_to_file, path, "append_to_file", default_append_to_file))
-  {
-    warnings.emplace_back("Paremeter missing: key='append_to_file'");
-    warnings.emplace_back("Parameter superimposed: append data to file= '" + std::to_string(default_append_to_file) +"'");
-  }
-  return true;
-}
-
-std::string getLoggerStartString(const std::string& logger_id, 
-                                  const std::string& log_file_name,
-                                    const std::map<TraceLogger::AppenderType, log4cxx::LoggerPtr>& loggers,
-                                      const std::map<TraceLogger::AppenderType, TraceLogger::Level>& levels)
-{
-  std::string loggers_str = "n. app.: " + std::to_string(static_cast<int>(loggers.size())) + " ";
-  for(auto const & l : loggers)
-  {
-    loggers_str += std::to_string(l.first) + "|";
-  }
-
-  loggers_str += (levels.empty() ?  "" : " l: ");
-  for(auto const & l : levels)
-  {
-    loggers_str += std::to_string(l.first) + "|";
-  }
-
-  #if defined(ROS_NOT_AVAILABLE) || !defined(FORCE_ROS_TIME_USE)
-    auto now = std::time(nullptr); 
-  #else
-      auto now = ros::Time::now();
-  #endif
-
-  return "LOG START: " + logger_id  + ", " + to_string(now) + ", " + loggers_str
-            + (log_file_name.size() > 0u ?  ", fn: " + log_file_name : "");
-}
-
-#if defined(ROS_NOT_AVAILABLE)
-  #if !defined(_WIN32) && !defined(_WIN64)
-    bool configureLoggers(const YAML::Node* path,
-                            const std::string& logger_id,
-                              const std::string& log_file_name, 
-                                const bool& append_to_file,
-                                  const log4cxx::PatternLayoutPtr& layout, 
-                                    std::map<TraceLogger::AppenderType, log4cxx::LoggerPtr>& loggers,
-                                      std::vector<std::string>& warnings)
-  #else
-    bool configureLoggers(const YAML::Node* path,
-                            const std::string& logger_id,
-                              const std::string& log_file_name, 
-                                const bool& append_to_file,
-                                  const log4cxx::PatternLayoutPtr& layout, 
-                                    std::map<TraceLogger::AppenderType, log4cxx::LoggerPtr>& loggers,
-                                      std::vector<std::string>& warnings)
-  #endif
-#else
-  #if !defined(_WIN32) && !defined(_WIN64)
-    bool configureLoggers(const std::string* path,
-                            const std::string& logger_id,
-                              const std::string& log_file_name, 
-                                const bool& append_to_file,
-                                  const log4cxx::PatternLayoutPtr& layout, 
-                                    std::map<TraceLogger::AppenderType, log4cxx::LoggerPtr>& loggers,
-                                      std::vector<std::string>& warnings)
-  #else
-    bool configureLoggers(const std::string* path,
-                            const std::string& logger_id,
-                              const std::string& log_file_name, 
-                                const bool& append_to_file,
-                                  const log4cxx::PatternLayoutPtr& layout, 
-                                    std::map<TraceLogger::AppenderType, log4cxx::LoggerPtr>& loggers,
-                                      std::vector<std::string>& warnings)
-  #endif
-#endif
-{
-  std::string root_path; 
-  if(!mkLogDir(root_path))
-  {
-    warnings.emplace_back("Logger ID: " + logger_id + ", Impossible to create/access the log directory");
-    return false;
-  }
-
-  if(loggers.find(TraceLogger::FILE_STREAM) != loggers.end()
-   || (loggers.find(TraceLogger::SYNC_FILE_AND_CONSOLE) != loggers.end()) )
-  {
-
-    log4cxx::LogString _log_file_name;
-    log4cxx::helpers::Transcoder::decode(log_file_name,_log_file_name);
-    log4cxx::RollingFileAppenderPtr appender = new log4cxx::RollingFileAppender(layout, _log_file_name, append_to_file);
-    if( (loggers.find(TraceLogger::FILE_STREAM) != loggers.end()) )
-      loggers[ TraceLogger::FILE_STREAM ]->addAppender(appender);
-    else
-      loggers[ TraceLogger::SYNC_FILE_AND_CONSOLE ]->addAppender(appender);
-
-    appender->setMaximumFileSize(100 * 1024 * 1024);
-    appender->setMaxBackupIndex(10);
-    log4cxx::helpers::Pool pool;
-    appender->activateOptions(pool);
-  }
-
-  if((loggers.find(TraceLogger::CONSOLE_STREAM) != loggers.end())
-  || (loggers.find(TraceLogger::SYNC_FILE_AND_CONSOLE) != loggers.end()) )
-  {
-    log4cxx::LogString _logger_id_;
-    log4cxx::helpers::Transcoder::decode(logger_id,_logger_id_);
-    log4cxx::ConsoleAppenderPtr appender = new log4cxx::ConsoleAppender(layout, _logger_id_);
-    if(loggers.find(TraceLogger::CONSOLE_STREAM) != loggers.end())
-    {
-      loggers[TraceLogger::CONSOLE_STREAM]->addAppender(appender);
-    }
-    else
-    {
-      loggers[TraceLogger::SYNC_FILE_AND_CONSOLE]->addAppender(appender);
-    }
-  }
-  return true;
-}
-
-#if defined(ROS_NOT_AVAILABLE)
-  void getThrottletime(const YAML::Node* path,
-                        double& default_throttle_time, 
-                          std::vector<std::string>& warnings)
-#else
-  void getThrottletime(const std::string* path,
-                        double& default_throttle_time, 
-                          std::vector<std::string>& warnings)
-#endif
-{
-  // =======================================================================================
-  // Default Throttle Time
-  //
-  // =======================================================================================
-  if(!extract(default_throttle_time, path, "default_throttle_time", -1.0))
-  {
-    warnings.push_back("Paremeter missing: key='default_throttle_time'");
-    warnings.push_back("Parameter superimposed: default throttle time= '" + std::to_string(default_throttle_time) +"'");
-  }
-}
-
 
 bool TraceLogger::init(const std::string& logger_id, const std::string& path,
                           const bool star_header, const bool default_values, std::string* what)
@@ -829,7 +774,8 @@ bool TraceLogger::init(const std::string& logger_id, const std::string& path,
   // Layout
   //
   // =======================================================================================
-  auto layout = extractLayout(_path, warnings);
+  log4cxx::PatternLayoutPtr layout;
+  extractLayout(_path, layout, warnings);
   // =======================================================================================
 
   // =======================================================================================
