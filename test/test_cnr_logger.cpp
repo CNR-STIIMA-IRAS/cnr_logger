@@ -226,8 +226,7 @@ TEST(TestSuite, wrongConstructor)
   EXPECT_NO_FATAL_FAILURE(logger.reset());
 }
 
-
-void printTest(const std::string& path)
+void createLogger(const std::string& path)
 {
   std::string what;
   EXPECT_NO_FATAL_FAILURE(logger.reset(new cnr_logger::TraceLogger("log1", path, true, true, &what)));
@@ -237,11 +236,10 @@ void printTest(const std::string& path)
   }
 
   std::cout << *logger << std::endl;
+}
 
-  EXPECT_FALSE(logger->logFile());
-  EXPECT_FALSE(logger->logScreen());
-  EXPECT_TRUE(logger->logSyncFileAndScreen());
-
+void printTest()
+{
   for (size_t i = 0u; i < 5u; i++)
   {
     CNR_INFO(*logger, "Log info");
@@ -278,27 +276,41 @@ void printTest(const std::string& path)
     ros::Duration(0.1).sleep();
 #endif
   }
-  EXPECT_NO_FATAL_FAILURE(logger.reset());
 }
 
 // Declare another test
 TEST(TestSuite, flushFileAndScreen)
 {
-  printTest("file_and_screen_same_appender");
+  createLogger("file_and_screen_same_appender");
+  printTest();
+  EXPECT_FALSE(logger->logFile());
+  EXPECT_TRUE(logger->logScreen());
+  EXPECT_TRUE(logger->logSyncFileAndScreen());
+  EXPECT_NO_FATAL_FAILURE(logger.reset());
 }
 
 
 // Declare another test
 TEST(TestSuite, flushOnlyFile)
 {
-  printTest("only_file_streamer");
+  createLogger("only_file_streamer");
+  printTest();
+  EXPECT_TRUE(logger->logFile());
+  EXPECT_FALSE(logger->logScreen());
+  EXPECT_FALSE(logger->logSyncFileAndScreen());
+  EXPECT_NO_FATAL_FAILURE(logger.reset());
 }
 
 
 // Declare another test
 TEST(TestSuite, flushOnlsyScreen)
 {
-  printTest("only_screen_streamer");  
+  createLogger("only_screen_streamer");
+  printTest();  
+  EXPECT_FALSE(logger->logFile());
+  EXPECT_TRUE(logger->logScreen());
+  EXPECT_FALSE(logger->logSyncFileAndScreen());
+  EXPECT_NO_FATAL_FAILURE(logger.reset());
 }
 
 TEST(TestSuite, testMacros)

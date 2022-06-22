@@ -76,8 +76,8 @@ namespace cnr_logger
 class TraceLogger
 {
 public:
-  enum AppenderType : int {FILE_STREAM=0, CONSOLE_STREAM=1, SYNC_FILE_AND_CONSOLE=2};
-  enum Level : int {FATAL=0, ERROR=1, WARN=2, INFO=3, DEBUG=4, TRACE=5};
+  enum class AppenderType : int {FILE_STREAM=0, CONSOLE_STREAM=1, SYNC_FILE_AND_CONSOLE=2};
+  enum class Level : int {FATAL=0, ERROR=1, WARN=2, INFO=3, DEBUG=4, TRACE=5};
 
   /**
    * @brief TraceLogger. The constructor does not initilize the class. The function init() must be called afterwards.
@@ -153,6 +153,17 @@ public:
    */
   bool logScreen();
 
+   /**
+   * @brief Configuration getter.
+   * @return True if the logger has an appender linked only to a file, false otherwise
+   */
+  bool logOnlyFile();
+  /**
+   * @brief Configuration getter.
+   * @return True if the logger has an appender linked only to a the console, false otherwise
+   */
+  bool logOnlyScreen();
+
   /**
    * @brief Configuration getter.
    * @return True if the logger has an appender linked to both the console and the file, false otherwise
@@ -176,7 +187,7 @@ private:
 
   bool initialized_ = false;
   double default_throttle_time_ = 0.0;
-  Level max_level_ = TraceLogger::INFO;
+  Level max_level_ = TraceLogger::Level::INFO;
   std::string logger_id_ ="";
   std::string path_ = "";
   bool default_values_ = false;

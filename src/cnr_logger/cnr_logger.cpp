@@ -345,9 +345,9 @@ std::string appender2string(const TraceLogger::AppenderType& t)
   std::string ret ="";
   switch(t)
   {
-    case TraceLogger::FILE_STREAM: ret = "FILE_STREAM"; break;
-    case TraceLogger::CONSOLE_STREAM: ret = "CONSOLE_STREAM"; break;
-    case TraceLogger::SYNC_FILE_AND_CONSOLE: ret = "SYNC_FILE_AND_CONSOLE"; break;
+    case TraceLogger::AppenderType::FILE_STREAM: ret = "AppenderType::FILE_STREAM"; break;
+    case TraceLogger::AppenderType::CONSOLE_STREAM: ret = "AppenderType::CONSOLE_STREAM"; break;
+    case TraceLogger::AppenderType::SYNC_FILE_AND_CONSOLE: ret = "AppenderType::SYNC_FILE_AND_CONSOLE"; break;
   }
   return ret;
 }
@@ -357,12 +357,12 @@ std::string level2string(const TraceLogger::Level& t)
   std::string ret ="";
   switch(t)
   {
-    case TraceLogger::FATAL: ret = "FATAL"; break;
-    case TraceLogger::ERROR: ret = "ERROR"; break;
-    case TraceLogger::WARN: ret = "WARN"; break;
-    case TraceLogger::INFO: ret = "INFO"; break;
-    case TraceLogger::DEBUG: ret = "DEBUG"; break;
-    case TraceLogger::TRACE: ret = "TRACE"; break;
+    case TraceLogger::Level::FATAL: ret = "FATAL"; break;
+    case TraceLogger::Level::ERROR: ret = "ERROR"; break;
+    case TraceLogger::Level::WARN: ret = "WARN"; break;
+    case TraceLogger::Level::INFO: ret = "INFO"; break;
+    case TraceLogger::Level::DEBUG: ret = "DEBUG"; break;
+    case TraceLogger::Level::TRACE: ret = "TRACE"; break;
   }
   return ret;
 }
@@ -372,27 +372,27 @@ TraceLogger::Level string2level(const std::string& what)
   TraceLogger::Level ret;
   if(what == "FATAL") 
   {
-    ret = TraceLogger::FATAL;
+    ret = TraceLogger::Level::FATAL;
   }
   else if(what == "ERROR")
   {
-    ret = TraceLogger::ERROR;
+    ret = TraceLogger::Level::ERROR;
   }
   else if(what == "WARN")
   {
-    ret = TraceLogger::WARN;
+    ret = TraceLogger::Level::WARN;
   }
   else if(what == "INFO")
   {
-    ret = TraceLogger::INFO;
+    ret = TraceLogger::Level::INFO;
   }
   else if(what == "DEBUG")
   {
-    ret = TraceLogger::DEBUG;
+    ret = TraceLogger::Level::DEBUG;
   }
   else
   {
-    ret = TraceLogger::TRACE;
+    ret = TraceLogger::Level::TRACE;
   }
   return ret;
 }
@@ -412,34 +412,34 @@ void setLoggers(const std::string& logger_id,
 
   if(((idx_file >= 0) && (idx_screen >= 0)) && (levels_data.at(idx_file) == levels_data.at(idx_screen)))   // 1 logger and 2 appenders
   {
-    loggers  [ TraceLogger::SYNC_FILE_AND_CONSOLE ] = log4cxx::Logger::getLogger(logger_id);
-    levels   [ TraceLogger::SYNC_FILE_AND_CONSOLE ] = string2level(levels_data[idx_file]);
+    loggers  [ TraceLogger::AppenderType::SYNC_FILE_AND_CONSOLE ] = log4cxx::Logger::getLogger(logger_id);
+    levels   [ TraceLogger::AppenderType::SYNC_FILE_AND_CONSOLE ] = string2level(levels_data[idx_file]);
   }
   else
   {
     if(idx_file >= 0)
     {
-      loggers[TraceLogger::FILE_STREAM] = log4cxx::Logger::getLogger(logger_id + "_f");
-      levels [TraceLogger::FILE_STREAM] = string2level(levels_data[idx_file]);
+      loggers[TraceLogger::AppenderType::FILE_STREAM] = log4cxx::Logger::getLogger(logger_id + "_f");
+      levels [TraceLogger::AppenderType::FILE_STREAM] = string2level(levels_data[idx_file]);
     }
     if(idx_screen >= 0)
     {
-      loggers[TraceLogger::CONSOLE_STREAM] = log4cxx::Logger::getLogger(logger_id);
-      levels [TraceLogger::CONSOLE_STREAM] = string2level(levels_data.at(idx_screen));
+      loggers[TraceLogger::AppenderType::CONSOLE_STREAM] = log4cxx::Logger::getLogger(logger_id);
+      levels [TraceLogger::AppenderType::CONSOLE_STREAM] = string2level(levels_data.at(idx_screen));
     }
   }
 
-  max_level = TraceLogger::FATAL;
+  max_level = TraceLogger::Level::FATAL;
   for(auto const & level : levels)
   {
     switch(level.second)
     {
-      case TraceLogger::FATAL: loggers[level.first]->setLevel(log4cxx::Level::getFatal()); break;
-      case TraceLogger::ERROR: loggers[level.first]->setLevel(log4cxx::Level::getError()); break;
-      case TraceLogger::WARN : loggers[level.first]->setLevel(log4cxx::Level::getWarn() ); break;
-      case TraceLogger::INFO : loggers[level.first]->setLevel(log4cxx::Level::getInfo() ); break;
-      case TraceLogger::DEBUG: loggers[level.first]->setLevel(log4cxx::Level::getDebug()); break;
-      case TraceLogger::TRACE: loggers[level.first]->setLevel(log4cxx::Level::getTrace()); break;
+      case TraceLogger::Level::FATAL: loggers[level.first]->setLevel(log4cxx::Level::getFatal()); break;
+      case TraceLogger::Level::ERROR: loggers[level.first]->setLevel(log4cxx::Level::getError()); break;
+      case TraceLogger::Level::WARN : loggers[level.first]->setLevel(log4cxx::Level::getWarn() ); break;
+      case TraceLogger::Level::INFO : loggers[level.first]->setLevel(log4cxx::Level::getInfo() ); break;
+      case TraceLogger::Level::DEBUG: loggers[level.first]->setLevel(log4cxx::Level::getDebug()); break;
+      case TraceLogger::Level::TRACE: loggers[level.first]->setLevel(log4cxx::Level::getTrace()); break;
     }
     max_level = (level.second >= max_level) ? level.second : max_level;
   }
@@ -521,13 +521,13 @@ std::string getLoggerStartString(const std::string& logger_id,
   std::string loggers_str = "n. app.: " + std::to_string(static_cast<int>(loggers.size())) + " ";
   for(auto const & l : loggers)
   {
-    loggers_str += std::to_string(l.first) + "|";
+    loggers_str += appender2string(l.first) + "|";
   }
 
   loggers_str += (levels.empty() ?  "" : " l: ");
   for(auto const & l : levels)
   {
-    loggers_str += std::to_string(l.first) + "|";
+    loggers_str += level2string(l.second) + "|";
   }
 
   #if defined(ROS_NOT_AVAILABLE) || !defined(FORCE_ROS_TIME_USE)
@@ -555,20 +555,20 @@ bool configureLoggers(const std::string& logger_id,
     return false;
   }
 
-  if(loggers.find(TraceLogger::FILE_STREAM) != loggers.end()
-   || (loggers.find(TraceLogger::SYNC_FILE_AND_CONSOLE) != loggers.end()) )
+  if(loggers.find(TraceLogger::AppenderType::FILE_STREAM) != loggers.end()
+   || (loggers.find(TraceLogger::AppenderType::SYNC_FILE_AND_CONSOLE) != loggers.end()) )
   {
 
     log4cxx::LogString _log_file_name;
     log4cxx::helpers::Transcoder::decode(log_file_name,_log_file_name);
     log4cxx::RollingFileAppenderPtr appender = new log4cxx::RollingFileAppender(layout, _log_file_name, append_to_file);
-    if(loggers.find(TraceLogger::FILE_STREAM) != loggers.end())
+    if(loggers.find(TraceLogger::AppenderType::FILE_STREAM) != loggers.end())
     {
-      loggers[ TraceLogger::FILE_STREAM ]->addAppender(appender);
+      loggers[ TraceLogger::AppenderType::FILE_STREAM ]->addAppender(appender);
     }
     else
     {
-      loggers[ TraceLogger::SYNC_FILE_AND_CONSOLE ]->addAppender(appender);
+      loggers[ TraceLogger::AppenderType::SYNC_FILE_AND_CONSOLE ]->addAppender(appender);
     }
 
     appender->setMaximumFileSize(100 * 1024 * 1024);
@@ -577,19 +577,19 @@ bool configureLoggers(const std::string& logger_id,
     appender->activateOptions(pool);
   }
 
-  if((loggers.find(TraceLogger::CONSOLE_STREAM) != loggers.end())
-  || (loggers.find(TraceLogger::SYNC_FILE_AND_CONSOLE) != loggers.end()) )
+  if((loggers.find(TraceLogger::AppenderType::CONSOLE_STREAM) != loggers.end())
+  || (loggers.find(TraceLogger::AppenderType::SYNC_FILE_AND_CONSOLE) != loggers.end()) )
   {
     log4cxx::LogString _logger_id_;
     log4cxx::helpers::Transcoder::decode(logger_id,_logger_id_);
     log4cxx::ConsoleAppenderPtr appender = new log4cxx::ConsoleAppender(layout, _logger_id_);
-    if(loggers.find(TraceLogger::CONSOLE_STREAM) != loggers.end())
+    if(loggers.find(TraceLogger::AppenderType::CONSOLE_STREAM) != loggers.end())
     {
-      loggers[TraceLogger::CONSOLE_STREAM]->addAppender(appender);
+      loggers[TraceLogger::AppenderType::CONSOLE_STREAM]->addAppender(appender);
     }
     else
     {
-      loggers[TraceLogger::SYNC_FILE_AND_CONSOLE]->addAppender(appender);
+      loggers[TraceLogger::AppenderType::SYNC_FILE_AND_CONSOLE]->addAppender(appender);
     }
   }
   return true;
@@ -854,15 +854,24 @@ TraceLogger::~TraceLogger()
 
 bool TraceLogger::logFile()
 {
-  return (loggers_.find(FILE_STREAM) != loggers_.end());
+  return (loggers_.find(AppenderType::FILE_STREAM) != loggers_.end()) 
+    || (loggers_.find(AppenderType::SYNC_FILE_AND_CONSOLE) != loggers_.end());
 }
-/**
- * @brief Configuration getter.
- * @return True if the logger has an appender linked to a the console, false otherwise
- */
+
 bool TraceLogger::logScreen()
 {
-  return (loggers_.find(CONSOLE_STREAM) != loggers_.end());
+  return (loggers_.find(AppenderType::CONSOLE_STREAM) != loggers_.end())
+    || (loggers_.find(AppenderType::SYNC_FILE_AND_CONSOLE) != loggers_.end());
+}
+
+bool TraceLogger::logOnlyFile()
+{
+  return (loggers_.find(AppenderType::FILE_STREAM) != loggers_.end()) ;
+}
+
+bool TraceLogger::logOnlyScreen()
+{
+  return (loggers_.find(AppenderType::CONSOLE_STREAM) != loggers_.end());
 }
 
 /**
@@ -871,7 +880,7 @@ bool TraceLogger::logScreen()
  */
 bool TraceLogger::logSyncFileAndScreen()
 {
-  return (loggers_.find(SYNC_FILE_AND_CONSOLE) != loggers_.end());
+  return (loggers_.find(AppenderType::SYNC_FILE_AND_CONSOLE) != loggers_.end());
 }
 
 const double& TraceLogger::defaultThrottleTime() const
@@ -881,38 +890,38 @@ const double& TraceLogger::defaultThrottleTime() const
 
 bool TraceLogger::logFatal() const
 {
-  return FATAL<=max_level_;
+  return Level::FATAL<=max_level_;
 }
 
 bool TraceLogger::logError() const
 {
-  return ERROR<=max_level_;
+  return Level::ERROR<=max_level_;
 }
 
 bool TraceLogger::logWarn()  const
 {
-  return WARN <=max_level_;
+  return Level::WARN <=max_level_;
 }
 
 bool TraceLogger::logInfo()  const
 {
-  return INFO <=max_level_;
+  return Level::INFO <=max_level_;
 }
 
 bool TraceLogger::logDebug() const
 {
-  return DEBUG<=max_level_;
+  return Level::DEBUG<=max_level_;
 }
 
 bool TraceLogger::logTrace() const
 {
-  return TRACE<=max_level_;
+  return Level::TRACE<=max_level_;
 }
 
 log4cxx::LoggerPtr TraceLogger::syncFileAndScreenLogger( )
 {
   if(logSyncFileAndScreen())
-    return loggers_[::cnr_logger::TraceLogger::SYNC_FILE_AND_CONSOLE];
+    return loggers_[::cnr_logger::TraceLogger::AppenderType::SYNC_FILE_AND_CONSOLE];
   else
     return nullptr;
 }
@@ -920,7 +929,7 @@ log4cxx::LoggerPtr TraceLogger::syncFileAndScreenLogger( )
 log4cxx::LoggerPtr TraceLogger::fileLogger( )
 {
   if(logFile())
-    return loggers_[::cnr_logger::TraceLogger::FILE_STREAM];
+    return loggers_[::cnr_logger::TraceLogger::AppenderType::FILE_STREAM];
   else
     return nullptr;
 }
@@ -928,7 +937,7 @@ log4cxx::LoggerPtr TraceLogger::fileLogger( )
 log4cxx::LoggerPtr TraceLogger::consoleLogger( )
 {
   if(logFile())
-    return loggers_[::cnr_logger::TraceLogger::CONSOLE_STREAM];
+    return loggers_[::cnr_logger::TraceLogger::AppenderType::CONSOLE_STREAM];
   else
     return nullptr;
 }
