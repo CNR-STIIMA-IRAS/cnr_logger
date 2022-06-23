@@ -148,19 +148,15 @@ bool exists_test (const std::string& name, const bool is_a_file = true)
 
 bool mkLogDir(std::string& dir)
 {
-  
-  dir = get_homedir() + "/.ros/log";
-  
+  dir = get_homedir() + "/.ros/log"; 
   if(!exists_test (dir, false))
   {
-    
     boost::filesystem::path p(dir);
-	  if(!boost::filesystem::create_directories(p)) 
+    if(!boost::filesystem::create_directories(p)) 
     {
-		  return false;
-	  }
-  }
- 
+      return false;
+    }
+  } 
   return true;
 }
 //========================================================
