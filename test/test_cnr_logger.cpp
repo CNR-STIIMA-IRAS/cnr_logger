@@ -41,7 +41,7 @@
 #include <cnr_logger/cnr_logger.h>
 #include <gtest/gtest.h>
 
-std::string path_to_src = "";
+std::string path_to_src = "../test/config";
 
 namespace detail
 {
