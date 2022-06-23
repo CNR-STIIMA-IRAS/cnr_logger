@@ -1,0 +1,2 @@
+appenders: [screen]
+levels: [trace]
