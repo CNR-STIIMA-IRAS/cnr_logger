@@ -101,12 +101,23 @@ template<class F>
   }
 }
 
+std::string full_path(const std::string& what)
+{
+  std::string ret;
+#if defined(ROS_NOT_AVAILABLE)
+  ret = path_to_src + "/" + what + ".yaml";
+#else
+  ret = "/" + what ;
+#endif
+return ret;
+}
 
-std::shared_ptr<cnr_logger::TraceLogger> createLogger(const std::string& path)
+
+std::shared_ptr<cnr_logger::TraceLogger> createLogger(const std::string& p)
 {
   std::shared_ptr<cnr_logger::TraceLogger> ret;
   std::string what;
-  EXPECT_NO_FATAL_FAILURE(ret.reset(new cnr_logger::TraceLogger("log1", path, true, true, &what)));
+  EXPECT_NO_FATAL_FAILURE(ret.reset(new cnr_logger::TraceLogger("log1", full_path(p), true, true, &what)));
   if(what.length()>0u)
   {
     std::cout << what << std::endl;
@@ -388,22 +399,10 @@ TEST(TestSuite, colorTest)
   std::cout << cnr_logger::RST() << std::endl;
 }
 
-std::string path(const std::string& what)
-{
-  std::string ret;
-#if defined(ROS_NOT_AVAILABLE)
-  ret = path_to_src + "/" + what + ".yaml";
-#else
-  ret = "/" + what ;
-#endif
-return ret;
-}
-
-
 // Declare a test
 TEST(TestSuite, fullConstructor1)
 {
-  std::string path1 = path("file_and_screen_different_appenders");
+  std::string path1 = full_path("file_and_screen_different_appenders");
 
   std::shared_ptr<cnr_logger::TraceLogger> logger;
   
@@ -436,7 +435,7 @@ TEST(TestSuite, fullConstructor1)
 // Declare a test
 TEST(TestSuite, fullConstructor2)
 {
-  std::string path2 = path("file_and_screen_same_appender");
+  std::string path2 = full_path("file_and_screen_same_appender");
   std::shared_ptr<cnr_logger::TraceLogger> logger2;
   EXPECT_NO_FATAL_FAILURE(logger2.reset(new cnr_logger::TraceLogger("log2", path2)));
   EXPECT_TRUE(logger2->logFile());
@@ -456,7 +455,7 @@ TEST(TestSuite, fullConstructor2)
 }
 TEST(TestSuite, partialConstructor)
 {
-  std::string path1 = path("file_and_screen_different_appenders");
+  std::string path1 = full_path("file_and_screen_different_appenders");
   std::string what;
   std::shared_ptr<cnr_logger::TraceLogger> logger;
   EXPECT_NO_FATAL_FAILURE(logger.reset(new cnr_logger::TraceLogger()));
