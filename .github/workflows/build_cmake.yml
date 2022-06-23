@@ -138,6 +138,8 @@ jobs:
           message(FATAL_ERROR "Bad exit status")
         endif()
 
+    - name: Check Path
+      shell: pwd; ls; tree
 
     - name: Run tests
       shell: cmake -P {0}
