@@ -99,7 +99,7 @@ template<class F>
   {
      return ::testing::AssertionFailure() << unwrap(std::current_exception());
   }
-};
+}
 
 
 std::shared_ptr<cnr_logger::TraceLogger> createLogger(const std::string& path)
