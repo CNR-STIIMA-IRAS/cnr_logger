@@ -712,12 +712,12 @@ void extractAppendersAndLevels(const std::string& ns,
   std::vector<std::string> empty;
   if(!extractVector(appenders, res, "appenders", empty))
   {
-    warnings.emplace_back("Parameter missing '" + ns +"'/appenders'");
+    warnings.emplace_back("Parameter missing '" + ns +"/appenders'");
   }
   
   if(!extractVector(levels, res, "levels", empty))
   {
-    warnings.emplace_back("Parameter missing'" +ns +"'/levels'");
+    warnings.emplace_back("Parameter missing'" +ns +"/levels'");
   }
 
   if(appenders.size() != levels.size())
@@ -978,11 +978,11 @@ std::string to_string(const TraceLogger& logger)
   ret +="\nTHROTTLE TIME: " + std::to_string(logger.default_throttle_time_);
   ret +="\nLEVELS: [ ";
   for(const auto & l: logger.levels_)
-    ret+= level2string(l.second);
+    ret+= level2string(l.second) +" ";
   ret += "]";
   ret +="\nAPPENDER TYPES: [ ";
   for(const auto & a: logger.loggers_)
-    ret+= appender2string(a.first);
+    ret+= appender2string(a.first) +" ";
   ret += "]";
   return ret;
 }
