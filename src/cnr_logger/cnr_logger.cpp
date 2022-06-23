@@ -171,7 +171,7 @@ bool mkLogDir(std::string& dir)
 namespace log4cxx
 {
 
-class LOG4CXX_EXPORT ColorPatternLayout : public log4cxx::PatternLayout
+class ColorPatternLayout : public log4cxx::PatternLayout
 {
 public:
     DECLARE_LOG4CXX_OBJECT(ColorPatternLayout)
@@ -198,30 +198,38 @@ void ColorPatternLayout::format(LogString &output, const spi::LoggingEventPtr &e
     log4cxx::LogString tmp;
     log4cxx::PatternLayout::format(tmp,event,pool);
     log4cxx::LevelPtr lvl = event->getLevel();
-    switch (lvl->toInt()){
+    log4cxx::LogString _color;
+    switch (lvl->toInt())
+    {
     case log4cxx::Level::FATAL_INT:
-        output.append("\u001b[0;41m"); //red BG
+        log4cxx::helpers::Transcoder::decode("\u001b[0;41m", _color);
         break;
     case log4cxx::Level::ERROR_INT:
-        output.append("\u001b[0;31m"); // red FG
+        log4cxx::helpers::Transcoder::decode("\u001b[0;31m", _color);
         break;
     case log4cxx::Level::WARN_INT:
-        output.append("\u001b[0;33m"); //Yellow FG
+        log4cxx::helpers::Transcoder::decode("\u001b[0;33m", _color);
         break;
     case log4cxx::Level::INFO_INT:
-        output.append("\u001b[1m"); // Bright
+        log4cxx::helpers::Transcoder::decode("\u001b[1m", _color);
         break;
     case log4cxx::Level::DEBUG_INT:
-        output.append("\u001b[2;32m"); // Green FG
+        log4cxx::helpers::Transcoder::decode("\u001b[2;32m", _color);
         break;
     case log4cxx::Level::TRACE_INT:
-        output.append("\u001b[0;30m"); // Black FG
+        log4cxx::helpers::Transcoder::decode("\u001b[0;30m", _color);
         break;
     default:
         break;
     }
+    if(_color.size()>0)
+    {
+      output.append(_color); 
+    }
     output.append(tmp);
-    output.append("\u001b[m");
+
+    log4cxx::helpers::Transcoder::decode("\u001b[m", _color);
+    output.append(_color);
 }
 
 #if defined(ROS_NOT_AVAILABLE)

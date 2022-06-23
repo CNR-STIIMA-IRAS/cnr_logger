@@ -120,6 +120,13 @@ if(COMPILE_EXAMPLE)
   add_executable        (${PROJECT_NAME}_example src/cnr_logger_example.cpp )
   target_link_libraries (${PROJECT_NAME}_example ${PROJECT_NAME} ${CNR_LOGGER_TARGET_LINK_LIBRARIES})
   cnr_target_compile_options(${PROJECT_NAME}_example)
+
+  install(TARGETS ${PROJECT_NAME}_example
+  ARCHIVE DESTINATION lib
+  LIBRARY DESTINATION lib
+  RUNTIME DESTINATION lib
+)
+
 endif()
 
 ##########################
