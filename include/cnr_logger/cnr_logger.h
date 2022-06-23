@@ -53,14 +53,8 @@
 #include <iostream>
 #include <memory>
 
-#include <log4cxx/logger.h>
-#include <log4cxx/basicconfigurator.h>
-#include <log4cxx/propertyconfigurator.h>
-#include <log4cxx/helpers/exception.h>
-#include <log4cxx/rollingfileappender.h>
-#include <log4cxx/consoleappender.h>
-#include <log4cxx/patternlayout.h>
 
+#include <log4cxx/logger.h>
 
 /**
  * @brief cnr_logger main namespace for the package

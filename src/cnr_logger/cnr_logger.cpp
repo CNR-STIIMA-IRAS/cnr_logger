@@ -39,6 +39,14 @@
 #include <cctype>
 #include <array>
 
+#include <log4cxx/spi/location/locationinfo.h>
+#include <log4cxx/helpers/exception.h>
+#include <log4cxx/helpers/transcoder.h>
+
+#include <log4cxx/rollingfileappender.h>
+#include <log4cxx/consoleappender.h>
+#include <log4cxx/patternlayout.h>
+
 //
 #include <cnr_logger/cnr_logger.h>
 
@@ -59,7 +67,7 @@
 
 #include <cstdlib>
 #include <boost/filesystem.hpp>
-#include <log4cxx/helpers/transcoder.h>
+
 
 
 //========================================================
@@ -89,12 +97,12 @@ std::string time_stamp(const std::time_t& timer, const std::string& fmt = "%F %T
 
 std::string get_env(const char *name)
 {
-  std::cout << __LINE__ << std::endl;
+  
   std::string ret;
   #if defined(_MSC_VER)
     size_t size = 0;
     char result[1024];
-    std::cout << __LINE__ << std::endl;
+    
     getenv_s( &size, NULL, 0, name);
    if (size == 0)
    {
@@ -103,7 +111,7 @@ std::string get_env(const char *name)
    }
    // Get the value of the LIB environment variable.
     errno_t err = getenv_s(&size, result, size, name);
-    std::cout << __LINE__ << std::endl;
+    
     ret = result;
   #else
     const char* result = std::getenv(name);
@@ -119,7 +127,7 @@ std::string get_homedir(void)
     std::string homedir;
 
 #if defined(_WIN32) || defined(_WIN64)
-    std::cout << __LINE__ << std::endl;
+    
     homedir = std::string(get_env("HOMEDRIVE")) + std::string(get_env("HOMEPATH"));
 #else
     homedir = std::getenv("HOME");
@@ -140,12 +148,12 @@ bool exists_test (const std::string& name, const bool is_a_file = true)
 
 bool mkLogDir(std::string& dir)
 {
-  std::cout << __LINE__ << std::endl;
+  
   dir = get_homedir() + "/.ros/log";
-  std::cout << __LINE__ << std::endl;
+  
   if(!exists_test (dir, false))
   {
-    std::cout << __LINE__ << std::endl;
+    
     boost::filesystem::path p(dir);
 	  if(!boost::filesystem::create_directories(p)) 
     {
@@ -158,95 +166,68 @@ bool mkLogDir(std::string& dir)
 //========================================================
 
 
-//#if !defined(_WIN32) && !defined(_WIN64)
+
 
 namespace log4cxx
 {
 
-
 class LOG4CXX_EXPORT ColorPatternLayout : public log4cxx::PatternLayout
 {
 public:
-  DECLARE_LOG4CXX_OBJECT(ColorPatternLayout)
-  BEGIN_LOG4CXX_CAST_MAP()
-  LOG4CXX_CAST_ENTRY(ColorPatternLayout)
-  LOG4CXX_CAST_ENTRY_CHAIN(Layout)
-  END_LOG4CXX_CAST_MAP()
+    DECLARE_LOG4CXX_OBJECT(ColorPatternLayout)
+    BEGIN_LOG4CXX_CAST_MAP()
+        LOG4CXX_CAST_ENTRY(ColorPatternLayout)
+        LOG4CXX_CAST_ENTRY_CHAIN(Layout)
+    END_LOG4CXX_CAST_MAP()
 
-  using log4cxx::PatternLayout::PatternLayout;
-  void format(log4cxx::LogString &output,
-                const log4cxx::spi::LoggingEventPtr &event,
-                  log4cxx::helpers::Pool &pool) const override
-  {
-    try
-    {
-      log4cxx::LogString tmp;
-      if (event)
-      {
-        log4cxx::PatternLayout::format(tmp, event, pool);
-        log4cxx::LevelPtr lvl = event->getLevel();
-        std::string color ="";
-        switch (lvl->toInt())
-        {
-        case log4cxx::Level::FATAL_INT:
-          color = "\u001b[0;41m";
-          break;
-        case log4cxx::Level::ERROR_INT:
-          color = "\u001b[0;31m";  // red FG
-          break;
-        case log4cxx::Level::WARN_INT:
-          color = "\u001b[0;33m";  // Yellow FG
-          break;
-        case log4cxx::Level::INFO_INT:
-          color = "\u001b[1m";     // Bright
-          break;
-        case log4cxx::Level::DEBUG_INT:
-          color = "\u001b[1;32m";  // Green FG
-          break;
-        case log4cxx::Level::TRACE_INT:
-          color = "\u001b[0;34m";  // Black FG
-          break;
-        default:
-          break;
-        }
-        if(color.length()>0u)
-        {
-          log4cxx::LogString _color;
-          log4cxx::helpers::Transcoder::decode( color, _color);
-          output.append(_color);  // red BG
-        }
-      }
-      output.append(tmp);
-      
-      std::string color = "\u001b[m"; 
-      log4cxx::LogString _color;
-      log4cxx::helpers::Transcoder::decode( color, _color);
-      output.append(_color);
-    }
-    catch (const std::exception& e)
-    {
-      std::cerr << __PRETTY_FUNCTION__<<":" << __LINE__<<": Exception: "<< e.what() << std::endl;
-    }
-    catch (...)
-    {
-      std::cerr << __PRETTY_FUNCTION__<<":" << __LINE__<<": Unhandled Exception" << std::endl;
-    }
-  }
+    ColorPatternLayout();
+    ColorPatternLayout(const log4cxx::LogString &s);
+    virtual void format(log4cxx::LogString &output, const log4cxx::spi::LoggingEventPtr &event, log4cxx::helpers::Pool &pool) const override;
 };
-
 LOG4CXX_PTR_DEF(ColorPatternLayout);
+}
 
-}  // namespace log4cxx
-
-using log4cxx::ColorPatternLayout;
+using namespace log4cxx;
 IMPLEMENT_LOG4CXX_OBJECT(ColorPatternLayout);
+ColorPatternLayout::ColorPatternLayout() : log4cxx::PatternLayout(){}
 
-//#endif
+ColorPatternLayout::ColorPatternLayout(const LogString &s): log4cxx::PatternLayout(s){}
+
+void ColorPatternLayout::format(LogString &output, const spi::LoggingEventPtr &event, helpers::Pool &pool) const
+{
+    log4cxx::LogString tmp;
+    log4cxx::PatternLayout::format(tmp,event,pool);
+    log4cxx::LevelPtr lvl = event->getLevel();
+    switch (lvl->toInt()){
+    case log4cxx::Level::FATAL_INT:
+        output.append("\u001b[0;41m"); //red BG
+        break;
+    case log4cxx::Level::ERROR_INT:
+        output.append("\u001b[0;31m"); // red FG
+        break;
+    case log4cxx::Level::WARN_INT:
+        output.append("\u001b[0;33m"); //Yellow FG
+        break;
+    case log4cxx::Level::INFO_INT:
+        output.append("\u001b[1m"); // Bright
+        break;
+    case log4cxx::Level::DEBUG_INT:
+        output.append("\u001b[2;32m"); // Green FG
+        break;
+    case log4cxx::Level::TRACE_INT:
+        output.append("\u001b[0;30m"); // Black FG
+        break;
+    default:
+        break;
+    }
+    output.append(tmp);
+    output.append("\u001b[m");
+}
 
 #if defined(ROS_NOT_AVAILABLE)
-  using path_t = YAML::Node;
+  using resource_t = YAML::Node;
 #else
-  using path_t = std::string;
+  using resource_t = std::string;
 #endif
 
 
@@ -288,15 +269,15 @@ std::string to_string(const ros::Time& now)
 
 template<typename T>
 bool extract(T& val,
-              const path_t* path,
+              const resource_t* res,
                 const std::string& leaf,
                     const T& default_val)
 {
   bool ret = false;
 #if defined(ROS_NOT_AVAILABLE)
-  ret = (path != nullptr) ? (*path)[leaf] : false;
+  ret = (res != nullptr) ? (*res)[leaf] : false;
 #else
-  ret = (path != nullptr) ? ros::param::get(*path + "/" + leaf, val) : false;
+  ret = (res != nullptr) ? ros::param::get(*res + "/" + leaf, val) : false;
 #endif
   if(!ret)
   {
@@ -305,22 +286,22 @@ bool extract(T& val,
 #if defined(ROS_NOT_AVAILABLE)
   else
   {
-    val = (*path)[leaf].as<T>();
+    val = (*res)[leaf].as<T>();
   }
 #endif
   return ret;
 }
 
 bool extractVector(std::vector<std::string>& val,
-                      const path_t* path,
+                      const resource_t* res,
                         const std::string& leaf,
                           const std::vector<std::string>& default_val)
 {
   bool ret = false;
 #if defined(ROS_NOT_AVAILABLE)
-  ret = (path != nullptr) ? (*path)[leaf] : false;
+  ret = (res != nullptr) ? (*res)[leaf] : false;
 #else
-  ret = (path != nullptr) ? ros::param::get(*path + "/" + leaf, val) : false;
+  ret = (res != nullptr) ? ros::param::get(*res + "/" + leaf, val) : false;
 #endif
   if(!ret && default_val.size())
   {
@@ -330,7 +311,7 @@ bool extractVector(std::vector<std::string>& val,
 #if defined(ROS_NOT_AVAILABLE)
   else if(ret)
   {
-    for(YAML::const_iterator it=(*path)[leaf].begin();it!=(*path)[leaf].end();++it)
+    for(YAML::const_iterator it=(*res)[leaf].begin();it!=(*res)[leaf].end();++it)
     {
       val.emplace_back(it->as<std::string>());
     }
@@ -461,18 +442,21 @@ void setLoggers(const std::string& logger_id,
 
 
 
-void extractLayout(const path_t* path, log4cxx::PatternLayoutPtr& layout, std::vector<std::string>& warnings)
+void extractLayout(const std::string& ns, 
+                    const resource_t* res,
+                      log4cxx::PatternLayoutPtr& layout,
+                        std::vector<std::string>& warnings)
 {
   #if defined(__clang__) || defined(_MSC_VER)
-    const std::string default_pattern_layout = "[%5p][%d{HH:mm:ss,SSS}][%F:%L][%c] %m%n";
+    const std::string default_pattern_layout = "[%5p][%d{HH:mm:ss,SSS}][%F:%L][%c] %m%n"; 
   #else
     const std::string default_pattern_layout = "[%5p][%d{HH:mm:ss,SSS}][%M:%L][%c] %m%n";
   #endif
   
   std::string pattern_layout;
-  if(!extract(pattern_layout, path, "pattern_layout", default_pattern_layout))
+  if(!extract(pattern_layout, res, "pattern_layout", default_pattern_layout))
   {
-    warnings.emplace_back("Paremeter missing key='pattern_layout'");
+    warnings.emplace_back("Parameter missing '"+ns+"/pattern_layout'");
   }
 
   log4cxx::LogString _pattern_layout;
@@ -486,13 +470,14 @@ void extractLayout(const path_t* path, log4cxx::PatternLayoutPtr& layout, std::v
 }
 
 
-bool getFileName(const path_t* path,
-                    const std::string& logger_id,
-                      std::string& log_file_name, 
-                        bool& append_to_file, 
-                          std::vector<std::string>& warnings)
+bool getFileName(const std::string& ns, 
+                    const resource_t* res,
+                      const std::string& logger_id,
+                        std::string& log_file_name, 
+                          bool& append_to_file, 
+                            std::vector<std::string>& warnings)
 {
-  std::cout << __LINE__ << std::endl;
+  
   std::string root_path; 
   if(!mkLogDir(root_path))
   {
@@ -501,23 +486,23 @@ bool getFileName(const path_t* path,
   }
   std::string default_log_file_name = log_file_name = root_path + "/" + logger_id;
 
-  std::cout << __LINE__ << std::endl;
-  if(!extract(log_file_name, path, "file_name", default_log_file_name))
+  
+  if(!extract(log_file_name, res, "file_name", default_log_file_name))
   {
-    warnings.emplace_back("Paremeter missing: key='file_name'");
-    warnings.emplace_back("Parameter superimposed: log file name= '" + default_log_file_name +"'");
+    warnings.emplace_back("Parameter missing '"+ns+"/file_name'");
+    warnings.emplace_back("Parameter superimposed '"+ns+"/file_name= '" + default_log_file_name +"'");
   }
 
-  std::cout << __LINE__ << std::endl;
+  
   bool append_date_to_file_name = false;
   bool default_append_date_to_file_name = false;
-  if(!extract(append_date_to_file_name, path, "append_date_to_file_name", default_append_date_to_file_name))
+  if(!extract(append_date_to_file_name, res, "append_date_to_file_name", default_append_date_to_file_name))
   {
-    warnings.emplace_back("Paremeter missing: key='append_date_to_file_name'");
-    warnings.emplace_back("Parameter superimposed: append date to file= '" + std::to_string(append_date_to_file_name) +"'");
+    warnings.emplace_back("Parameter missing '"+ns+"/append_date_to_file_name'");
+    warnings.emplace_back("Parameter superimposed '"+ns+"/append_date_to_file_name= '" + std::to_string(append_date_to_file_name) +"'");
   }
 
-  std::cout << __LINE__ << std::endl;
+  
   #if defined(ROS_NOT_AVAILABLE) || !defined(FORCE_ROS_TIME_USE)
     auto now = std::time(nullptr); 
   #else
@@ -526,12 +511,12 @@ bool getFileName(const path_t* path,
 
   log_file_name +=  append_date_to_file_name  ? ("." + to_string(now) + ".log") : ".log";
 
-  std::cout << __LINE__ << std::endl;
+  
   bool default_append_to_file = true;
-  if(!extract(append_to_file, path, "append_to_file", default_append_to_file))
+  if(!extract(append_to_file, res, "append_to_file", default_append_to_file))
   {
-    warnings.emplace_back("Paremeter missing: key='append_to_file'");
-    warnings.emplace_back("Parameter superimposed: append data to file= '" + std::to_string(default_append_to_file) +"'");
+    warnings.emplace_back("Parameter missing '"+ns+"/append_to_file'");
+    warnings.emplace_back("Parameter superimposed '"+ns+"/append_to_file= '" + std::to_string(default_append_to_file) +"'");
   }
   return true;
 }
@@ -618,7 +603,8 @@ bool configureLoggers(const std::string& logger_id,
   return true;
 }
 
-void getThrottletime(const path_t* path,
+void getThrottletime(const std::string& ns, 
+                      const resource_t* res,
                         double& default_throttle_time, 
                           std::vector<std::string>& warnings)
 {
@@ -626,10 +612,10 @@ void getThrottletime(const path_t* path,
   // Default Throttle Time
   //
   // =======================================================================================
-  if(!extract(default_throttle_time, path, "default_throttle_time", -1.0))
+  if(!extract(default_throttle_time, res, "default_throttle_time", -1.0))
   {
-    warnings.emplace_back("Paremeter missing: key='default_throttle_time'");
-    warnings.emplace_back("Parameter superimposed: default throttle time= '" + std::to_string(default_throttle_time) +"'");
+    warnings.emplace_back("Parameter missing '"+ns+"/default_throttle_time'");
+    warnings.emplace_back("Parameter superimposed ''"+ns+"/default throttle time= '" + std::to_string(default_throttle_time) +"'");
   }
 }
 
@@ -638,7 +624,7 @@ TraceLogger::TraceLogger(const std::string& logger_id, const std::string& path,
                          const bool star_header, const bool default_values, std::string* what)
   // : logger_id_(""), path_(""), default_values_(false), initialized_(false) // TraceLogger() Enrico 03/12/2021 the compiler can't find the TraceLogger() constructor
 {
-  std::cout << __LINE__ << std::endl;
+  
   std::string err = "[" + logger_id + "] Error in creating the TraceLogger.\n"
       +  std::string("INPUT logger_id      : ") + logger_id + "\n"
       +  std::string("INPUT path           : ") + path + "\n"
@@ -647,10 +633,10 @@ TraceLogger::TraceLogger(const std::string& logger_id, const std::string& path,
 
   try
   {
-    std::cout << __LINE__ << std::endl;
+    
     if(init(logger_id, path, star_header, default_values, what))
     {
-      std::cout << __LINE__ << std::endl;
+      
       return;
     }
   }
@@ -704,36 +690,30 @@ bool TraceLogger::init_logger(const std::string& logger_id, const std::string& p
 }
 
 
-#if defined(ROS_NOT_AVAILABLE)
-void extractAppendersAndLevels(const YAML::Node* path,
-                                std::vector<std::string>& appenders,
-                                  std::vector<std::string>& levels,
-                                    std::vector<std::string>& warnings)
-#else
-void extractAppendersAndLevels(const std::string* path,
-                                std::vector<std::string>& appenders,
-                                  std::vector<std::string>& levels,
-                                    std::vector<std::string>& warnings)
-#endif
-
+void extractAppendersAndLevels(const std::string& ns,
+                                const resource_t* res,
+                                  std::vector<std::string>& appenders,
+                                    std::vector<std::string>& levels,
+                                      std::vector<std::string>& warnings)
 {
   appenders.clear();
   levels.clear();
 
   std::vector<std::string> empty;
-  if(!extractVector(appenders, path, "appenders", empty))
+  if(!extractVector(appenders, res, "appenders", empty))
   {
-    warnings.emplace_back("Paremeter missing: key='appenders'");
+    warnings.emplace_back("Parameter missing '" + ns +"'/appenders'");
   }
   
-  if(!extractVector(levels, path, "levels", empty))
+  if(!extractVector(levels, res, "levels", empty))
   {
-    warnings.emplace_back("Paremeter missing: key='levels'");
+    warnings.emplace_back("Parameter missing'" +ns +"'/levels'");
   }
 
   if(appenders.size() != levels.size())
   {
-    warnings.emplace_back("Size of appenders and levels mismatch! Default DEBUG level for all the appenders");
+    warnings.emplace_back("'" + ns + 
+      "': Size of appenders and levels mismatch! Default DEBUG level for all the appenders");
     levels.clear();
     levels.resize(appenders.size(), "DEBUG");
   }
@@ -765,19 +745,19 @@ void extractAppendersAndLevels(const std::string* path,
 bool TraceLogger::init(const std::string& logger_id, const std::string& path,
                           const bool star_header, const bool default_values, std::string* what)
 {
-  std::cout << __LINE__ << std::endl;
+  
   if(initialized_)
   {
     if_error_fill(what, "Logger ID: " + logger_id_ + ", Logger already initialized.");
     return false;
   }
 
-  std::cout << __LINE__ << std::endl;
-  logger_id_ = logger_id;
-  path_ = path;
+  
+  logger_id_      = logger_id;
+  path_           = path;
   default_values_ = default_values;
 
-  std::cout << __LINE__ << std::endl;
+  
   if((!default_values) && (!check(path)))
   {
     if_error_fill(what, "Logger ID:" + logger_id +  ", Error in initialization. "
@@ -785,7 +765,7 @@ bool TraceLogger::init(const std::string& logger_id, const std::string& path,
     return false;
   }
 
-  std::cout << __LINE__ << std::endl;
+  
   // =======================================================================================
   // Extract the info to constructs the logger
   //
@@ -796,49 +776,49 @@ bool TraceLogger::init(const std::string& logger_id, const std::string& path,
 
   
 #if defined(ROS_NOT_AVAILABLE)
-  YAML::Node* _path = nullptr;
+  YAML::Node* resource = nullptr;
   if(exists_test(path))
   {
-     _path = new YAML::Node();
-    *_path = YAML::LoadFile(path);
+     resource = new YAML::Node();
+    *resource = YAML::LoadFile(path);
   } 
 #else
-  const std::string* _path = &path;
+  const std::string* resource = &path;
 #endif
 
-  std::cout << __LINE__ << std::endl;
+  
   // =======================================================================================
-  extractAppendersAndLevels(_path, appenders_data,levels_data, warnings);
+  extractAppendersAndLevels(path, resource, appenders_data,levels_data, warnings);
 
-  std::cout << __LINE__ << std::endl;
+  
   // =======================================================================================
-  setLoggers( logger_id_, appenders_data, levels_data, loggers_, levels_, max_level_);
+  setLoggers(logger_id_,  appenders_data, levels_data, loggers_, levels_, max_level_);
   
 
-  std::cout << __LINE__ << std::endl;
+  
   // =======================================================================================
   // Layout
   //
   // =======================================================================================
   log4cxx::PatternLayoutPtr layout;
-  extractLayout(_path, layout, warnings);
+  extractLayout(path, resource, layout, warnings);
   // =======================================================================================
 
-  std::cout << __LINE__ << std::endl;
+  
   // =======================================================================================
   // Default Throttle Time
   //
   // =======================================================================================
-  getThrottletime(_path, default_throttle_time_, warnings);
+  getThrottletime(path, resource, default_throttle_time_, warnings);
 
-  std::cout << __LINE__ << std::endl;
+  
   // =======================================================================================
   // Configure appenders and loggers
   //
   // =======================================================================================
   bool append_to_file;
   std::string log_file_name;
-  bool ok = getFileName(_path, logger_id,log_file_name, append_to_file, warnings);
+  bool ok = getFileName(path, resource, logger_id,log_file_name, append_to_file, warnings);
   if(ok)
   {
     ok = configureLoggers(logger_id_, log_file_name, append_to_file, layout, loggers_, warnings);

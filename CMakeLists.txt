@@ -100,7 +100,7 @@ endif(USE_ROS)
 include_directories   (include ${CNR_LOGGER_TARGET_INCLUDE_DIRS} )
 add_library           (${PROJECT_NAME} SHARED src/${PROJECT_NAME}/cnr_logger.cpp )
 target_link_libraries (${PROJECT_NAME} ${CNR_LOGGER_TARGET_LINK_LIBRARIES})
-cnr_target_compile_options(${PROJECT_NAME})
+#cnr_target_compile_options(${PROJECT_NAME})
 
 if(${CMAKE_VERSION} VERSION_GREATER  "3.16.0")
   target_precompile_headers(${PROJECT_NAME} PUBLIC
@@ -132,7 +132,7 @@ if(ENABLE_TESTING)
     add_rostest_gtest(${PROJECT_NAME}_test test/test.launch test/test_cnr_logger.cpp)
     target_link_libraries(${PROJECT_NAME}_test ${PROJECT_NAME} ${CNR_LOGGER_TARGET_LINK_LIBRARIES} ${rostest_LIBRARIES} )
     target_compile_definitions(${PROJECT_NAME}_test PUBLIC FORCE_ROS_TIME_USE=1)
-    cnr_target_compile_options(${PROJECT_NAME}_test)
+    #cnr_target_compile_options(${PROJECT_NAME}_test)
 
     # Test using STD TIME
     add_rostest_gtest(${PROJECT_NAME}_test_std_time test/test_std_time.launch test/test_cnr_logger.cpp)
@@ -155,7 +155,7 @@ if(ENABLE_TESTING)
       endif()
     endif()
     target_compile_definitions(${PROJECT_NAME}_test PRIVATE TEST_DIR="${CMAKE_CURRENT_LIST_DIR}/test")
-    #cnr_target_compile_options(${PROJECT_NAME}_test)
+    cnr_target_compile_options(${PROJECT_NAME}_test)
 
     gtest_add_tests(${PROJECT_NAME}_test "${CMAKE_SOURCE_DIR}/test/config/" AUTO)
 

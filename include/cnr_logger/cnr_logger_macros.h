@@ -42,21 +42,16 @@
  * The macro have been designed to follow the basic log4cxx structure (and ROS).
  * The further macro CNR_TRACE_START and CNR_RETURN_xxx are used to trace the input and the output values of the functions
  */
-
-#pragma once // qtcreator, workaround
-
 #ifndef CNR_LOGGER_CNR_LOGGER_MACROS_H
 #define CNR_LOGGER_CNR_LOGGER_MACROS_H
 
-#include <tuple>
 #include <string>
-#include <log4cxx/logger.h>
-#include <log4cxx/basicconfigurator.h>
-#include <log4cxx/propertyconfigurator.h>
-#include <log4cxx/helpers/exception.h>
-#include <log4cxx/rollingfileappender.h>
-#include <log4cxx/consoleappender.h>
-#include <log4cxx/patternlayout.h>
+
+#if defined(_MSC_VER)
+  #define __PRETTY_FUNCTION__ __FUNCDNAME__
+#endif
+
+
 #include <cnr_logger/cnr_logger.h>
 
 // user can force the use of ROS time by adding "-DFORCE_ROS_TIME_USE"
@@ -85,16 +80,6 @@
   #define TIME_NOW()\
    std::time(0)
 #endif
-
-#ifdef _MSC_VER
-#ifndef __PRETTY_FUNCTION__
-#define __PRETTY_FUNCTION__ __FUNCDNAME__
-#endif
-#endif
-
-// #ifndef __PRETTY_FUNCTION__
-// #define __PRETTY_FUNCTION__ __func__
-// #endif
 
 
 /**

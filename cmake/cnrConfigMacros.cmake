@@ -38,10 +38,10 @@ endmacro()
 ####
 macro(cnr_target_compile_options TARGET_NAME)
 
-if (CMAKE_CXX_COMPILER_ID MATCHES "AppleClang|GNU")
+if (CMAKE_CXX_COMPILER_ID MATCHES "GNU")
 
   target_compile_options(${TARGET_NAME} 
-    PRIVATE -Wall -Wextra -Wunreachable-code -Wpedantic -Wno-gnu-zero-variadic-macro-arguments
+    PRIVATE -Wall -Wextra -Wunreachable-code -Wpedantic
     PUBLIC $<$<CONFIG:Release>:-Ofast -funroll-loops -ffast-math >)
 
 elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
