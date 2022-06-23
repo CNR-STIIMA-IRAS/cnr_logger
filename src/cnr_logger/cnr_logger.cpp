@@ -869,9 +869,9 @@ TraceLogger& TraceLogger::operator=(const TraceLogger& rhs)
 
 TraceLogger::~TraceLogger()
 {
-  for(auto & l : loggers_)
+  for(auto l = loggers_.begin(); l != loggers_.end(); l++)
   {
-    l.second->removeAllAppenders();
+    l->second->removeAllAppenders();
   }
 }
 
