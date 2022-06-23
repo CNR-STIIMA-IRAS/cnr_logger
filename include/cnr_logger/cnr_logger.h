@@ -81,7 +81,7 @@ public:
   TraceLogger(const TraceLogger&) = delete;
   TraceLogger(TraceLogger&&) noexcept = delete;
 
-  ~TraceLogger();
+  virtual ~TraceLogger();
 
   /**
    * @brief TraceLogger: The constructor fully initilize the class.

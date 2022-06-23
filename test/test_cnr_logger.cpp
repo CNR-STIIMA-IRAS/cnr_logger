@@ -41,7 +41,7 @@
 #include <cnr_logger/cnr_logger.h>
 #include <gtest/gtest.h>
 
-std::string path_to_src = "";
+std::string path_to_src = "../test/config";
 
 namespace detail
 {
@@ -99,7 +99,7 @@ template<class F>
   {
      return ::testing::AssertionFailure() << unwrap(std::current_exception());
   }
-};
+}
 
 
 std::shared_ptr<cnr_logger::TraceLogger> createLogger(const std::string& path)
