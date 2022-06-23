@@ -53,6 +53,7 @@ if(USE_ROS)
   set(CNR_LOGGER_TARGET_INCLUDE_DIRS    ${catkin_INCLUDE_DIRS} )
   set(CNR_LOGGER_INSTALL_INCLUDE_DIR    ${CATKIN_PACKAGE_INCLUDE_DESTINATION})
   set(CNR_LOGGER_INSTALL_LIB_DIR        ${CATKIN_PACKAGE_LIB_DESTINATION})
+  set(CNR_LOGGER_INSTALL_BIN_DIR        ${CATKIN_GLOBAL_BIN_DESTINATION})
 
   set(ROSLINT_CPP_OPTS
   "--filter=-whitespace/braces,--filter=-runtime/references,-runtime/int,--max-line-length=180")
@@ -139,7 +140,7 @@ if(ENABLE_TESTING)
     add_rostest_gtest(${PROJECT_NAME}_test test/test.launch test/test_cnr_logger.cpp)
     target_link_libraries(${PROJECT_NAME}_test ${PROJECT_NAME} ${CNR_LOGGER_TARGET_LINK_LIBRARIES} ${rostest_LIBRARIES} )
     target_compile_definitions(${PROJECT_NAME}_test PUBLIC FORCE_ROS_TIME_USE=1)
-    #cnr_target_compile_options(${PROJECT_NAME}_test)
+    cnr_target_compile_options(${PROJECT_NAME}_test)
 
     # Test using STD TIME
     add_rostest_gtest(${PROJECT_NAME}_test_std_time test/test_std_time.launch test/test_cnr_logger.cpp)
@@ -148,10 +149,13 @@ if(ENABLE_TESTING)
     cnr_target_compile_options(${PROJECT_NAME}_test_std_time)
 
     install(TARGETS ${PROJECT_NAME}_test ${PROJECT_NAME}_test_std_time
-    ARCHIVE DESTINATION ${CMAKE_INSTALL_PREFIX}
-    LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}
-    RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}
+            ARCHIVE DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+            LIBRARY DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+            RUNTIME DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
 
+    install(DIRECTORY test/
+            DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch
+            PATTERN ".svn" EXCLUDE)
   else()
 
     include_directories(${GTEST_INCLUDE_DIRS})
@@ -173,10 +177,7 @@ if(ENABLE_TESTING)
 
   endif(USE_ROS)
 
-  install(DIRECTORY test/
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch
-  PATTERN ".svn" EXCLUDE)
-)
+
 
 
 endif(ENABLE_TESTING)
@@ -213,7 +214,7 @@ endif()
 install(TARGETS ${PROJECT_NAME}
   ARCHIVE DESTINATION ${CNR_LOGGER_INSTALL_LIB_DIR}
   LIBRARY DESTINATION ${CNR_LOGGER_INSTALL_LIB_DIR}
-  RUNTIME DESTINATION ${CNR_LOGGER_INSTALL_LIB_DIR}
+  RUNTIME DESTINATION ${CNR_LOGGER_INSTALL_BIN_DIR}
 )
 
 
