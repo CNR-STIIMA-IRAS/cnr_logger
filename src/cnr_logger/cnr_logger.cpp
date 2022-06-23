@@ -871,10 +871,10 @@ TraceLogger& TraceLogger::operator=(const TraceLogger& rhs)
 
 TraceLogger::~TraceLogger()
 {
-  for(auto l = loggers_.begin(); l != loggers_.end(); l++)
+  std::for_each(loggers_.begin(), loggers_.end(), [](auto& l)
   {
-    l->second->removeAllAppenders();
-  }
+    l.second->removeAllAppenders();
+  });
 }
 
 bool TraceLogger::logFile()
