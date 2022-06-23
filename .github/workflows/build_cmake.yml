@@ -139,7 +139,7 @@ jobs:
         endif()
 
     - name: Check Path
-      shell: pwd; ls; tree
+      run: pwd && ls && tree
 
     - name: Run tests
       shell: cmake -P {0}
