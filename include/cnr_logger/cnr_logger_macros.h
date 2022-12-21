@@ -266,6 +266,7 @@ namespace cl = cnr_logger;
 
 
 
+
 // ================= STANDARD
 #define CNR_FATAL(logger, args)\
 do \
@@ -581,7 +582,6 @@ struct VariadicParser
   template <class First, class... Rest>
   void pp_get(First first, Rest... rest)
   {
-    std::cout << __FUNCTION__ << ":" << __LINE__ << " First: " << typeid(First).name() << std::endl;
     pp_get(first, rest...);
   }
   template <class... Rest>
@@ -807,9 +807,7 @@ return(var);
 do\
 {\
   VariadicParser e(__VA_ARGS__);\
-  std::cout << __LINE__ << ": " << e.period_ << std::endl;\
   e.default_period();\
-  std::cout << __LINE__ << ": " << e.period_ << std::endl;\
   CNR_INFO_COND_THROTTLE(e.logger_, e.msg_.length() > 0, e.period_, e.msg_); \
   CNR_TRACE_COND_THROTTLE(e.logger_, e.period_>0, e.period_, "[ START] " << __FUNCTION__);\
 } while (false)

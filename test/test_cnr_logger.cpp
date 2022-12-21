@@ -38,6 +38,7 @@
   #include <ros/ros.h>
 #endif
 
+#include <numeric>
 #include <cnr_logger/cnr_logger.h>
 #include <gtest/gtest.h>
 
@@ -100,6 +101,43 @@ template<class F>
      return ::testing::AssertionFailure() << unwrap(std::current_exception());
   }
 }
+
+std::map<std::string, std::map<std::string, std::vector<double>> > statistics;
+
+#define EXECUTION_TIME( id1, id2, ... )\
+{\
+  struct timespec start, end;\
+  clock_gettime(CLOCK_MONOTONIC, &start);\
+  __VA_ARGS__;\
+  clock_gettime(CLOCK_MONOTONIC, &end);\
+  double time_taken;\
+  time_taken = double(end.tv_sec - start.tv_sec) * 1e9;\
+  time_taken = double(time_taken + (end.tv_nsec - start.tv_nsec)) * 1e-9;\
+  statistics[id1][id2].push_back(time_taken * 1.0e3);\
+}
+
+void printStatistics()
+{
+  for(const auto & p : statistics)
+  {
+    std::cout<< std::endl 
+            << "-------------------------------------" << std::endl
+            <<"Flush Type: " << p.first << " " << std::endl
+            << "-------------------------------------" << std::endl;
+    for(const auto & k : p.second)
+    {
+      if(k.second.size() > 0 )
+      {
+        auto max = std::max_element(std::begin(k.second), std::end(k.second));
+        auto min = std::min_element(std::begin(k.second), std::end(k.second));
+        double mean = std::accumulate(std::begin(k.second), std::end(k.second), 0.0);
+        mean = mean / double(k.second.size());
+        printf("%36s [%5u]: %3.3fms, %3.3fms, %3.3fms\n", k.first.c_str(), k.second.size(), *min, mean, * max);
+      }
+    }
+  }
+}
+  
 
 std::string full_path(const std::string& what)
 {
@@ -243,11 +281,11 @@ void macroTest(std::shared_ptr<cnr_logger::TraceLogger>& l)
   EXPECT_NO_FATAL_FAILURE( CNR_TRACE_END(l));
   EXPECT_NO_FATAL_FAILURE( CNR_TRACE_END(l,"TEST"));
 
-  //EXPECT_NO_FATAL_FAILURE( CNR_TRACE_START_THROTTLE(l, 1.0));
-  //EXPECT_NO_FATAL_FAILURE( CNR_TRACE_START_THROTTLE(l, 1.0, "TEST"));
+  EXPECT_NO_FATAL_FAILURE( CNR_TRACE_START_THROTTLE(l, 1.0));
+  EXPECT_NO_FATAL_FAILURE( CNR_TRACE_START_THROTTLE(l, 1.0, "TEST"));
 
-  //EXPECT_NO_FATAL_FAILURE( CNR_TRACE_START_THROTTLE_DEFAULT(l));
-  //EXPECT_NO_FATAL_FAILURE( CNR_TRACE_START_THROTTLE_DEFAULT(l, "TEST"));
+  EXPECT_NO_FATAL_FAILURE( CNR_TRACE_START_THROTTLE_DEFAULT(l));
+  EXPECT_NO_FATAL_FAILURE( CNR_TRACE_START_THROTTLE_DEFAULT(l, "TEST"));
 
   auto f0 = [&l](){CNR_RETURN_BOOL(l, 1, "");};  
   std::cout << "QUI AT " << __LINE__ << std::endl;
@@ -378,6 +416,187 @@ void macroTest(std::shared_ptr<cnr_logger::TraceLogger>& l)
   EXPECT_NO_FATAL_FAILURE( f41() );
 }
 
+
+
+void timeTest(std::string id, std::shared_ptr<cnr_logger::TraceLogger>& l)
+{
+  EXECUTION_TIME( id, "CNR_FATAL",          CNR_FATAL(l, "TEST"));
+  EXECUTION_TIME( id, "CNR_ERROR",          CNR_ERROR(l, "TEST"));
+  EXECUTION_TIME( id, "CNR_WARN",           CNR_WARN(l, "TEST"));
+  EXECUTION_TIME( id, "CNR_INFO",           CNR_INFO(l, "TEST"));
+  EXECUTION_TIME( id, "CNR_INFO_ONLY_FILE", CNR_INFO_ONLY_FILE(l, "TEST"));
+  EXECUTION_TIME( id, "CNR_DEBUG",          CNR_DEBUG(l, "TEST"));
+  EXECUTION_TIME( id, "CNR_TRACE",          CNR_TRACE(l, "TEST"));
+  EXECUTION_TIME( id, "CNR_FATAL_THROTTLE", CNR_FATAL_THROTTLE(l, 1.0, "TEST"));
+  EXECUTION_TIME( id, "CNR_ERROR_THROTTLE", CNR_ERROR_THROTTLE(l, 1.0, "TEST"));
+  EXECUTION_TIME( id, "CNR_WARN_THROTTLE",  CNR_WARN_THROTTLE(l, 1.0, "TEST"));
+  EXECUTION_TIME( id, "CNR_INFO_THROTTLE",  CNR_INFO_THROTTLE(l, 1.0, "TEST"));
+  EXECUTION_TIME( id, "CNR_DEBUG_THROTTLE", CNR_DEBUG_THROTTLE(l, 1.0, "TEST"));
+  EXECUTION_TIME( id, "CNR_TRACE_THROTTLE", CNR_TRACE_THROTTLE(l, 1.0, "TEST"));
+  EXECUTION_TIME( id, "CNR_FATAL_COND",     CNR_FATAL_COND(l, 1, "TEST"));
+  EXECUTION_TIME( id, "CNR_FATAL_COND",     CNR_FATAL_COND(l, 0, "TEST"));
+  EXECUTION_TIME( id, "CNR_ERROR_COND",     CNR_ERROR_COND(l, 1, "TEST"));
+  EXECUTION_TIME( id, "CNR_ERROR_COND",     CNR_ERROR_COND(l, 0, "TEST"));
+  EXECUTION_TIME( id, "CNR_WARN_COND",      CNR_WARN_COND(l, 1, "TEST"));
+  EXECUTION_TIME( id, "CNR_WARN_COND",      CNR_WARN_COND(l, 0, "TEST"));
+  EXECUTION_TIME( id, "CNR_INFO_COND",      CNR_INFO_COND(l, 1, "TEST"));
+  EXECUTION_TIME( id, "CNR_INFO_COND",      CNR_INFO_COND(l, 0, "TEST"));
+  EXECUTION_TIME( id, "CNR_DEBUG_COND",     CNR_DEBUG_COND(l, 1, "TEST"));
+  EXECUTION_TIME( id, "CNR_DEBUG_COND",     CNR_DEBUG_COND(l, 0, "TEST"));
+  EXECUTION_TIME( id, "CNR_TRACE_COND",     CNR_TRACE_COND(l, 1, "TEST"));
+  EXECUTION_TIME( id, "CNR_TRACE_COND",     CNR_TRACE_COND(l, 0, "TEST"));
+
+  EXECUTION_TIME( id, "CNR_FATAL_COND_THROTTLE", CNR_FATAL_COND_THROTTLE(l, 1, 1.0, "TEST"));
+  EXECUTION_TIME( id, "CNR_FATAL_COND_THROTTLE", CNR_FATAL_COND_THROTTLE(l, 0, 1.0, "TEST"));
+  EXECUTION_TIME( id, "CNR_ERROR_COND_THROTTLE", CNR_ERROR_COND_THROTTLE(l, 1, 1.0, "TEST"));
+  EXECUTION_TIME( id, "CNR_ERROR_COND_THROTTLE", CNR_ERROR_COND_THROTTLE(l, 0, 1.0, "TEST"));
+  EXECUTION_TIME( id, "CNR_WARN_COND_THROTTLE",  CNR_WARN_COND_THROTTLE(l, 1,  1.0, "TEST"));
+  EXECUTION_TIME( id, "CNR_WARN_COND_THROTTLE",  CNR_WARN_COND_THROTTLE(l, 0,  1.0, "TEST"));
+  EXECUTION_TIME( id, "CNR_INFO_COND_THROTTLE",  CNR_INFO_COND_THROTTLE(l, 1,  1.0, "TEST"));
+  EXECUTION_TIME( id, "CNR_INFO_COND_THROTTLE",  CNR_INFO_COND_THROTTLE(l, 0,  1.0, "TEST"));
+  EXECUTION_TIME( id, "CNR_DEBUG_COND_THROTTLE", CNR_DEBUG_COND_THROTTLE(l, 1, 1.0, "TEST"));
+  EXECUTION_TIME( id, "CNR_DEBUG_COND_THROTTLE", CNR_DEBUG_COND_THROTTLE(l, 0, 1.0, "TEST"));
+  EXECUTION_TIME( id, "CNR_TRACE_COND_THROTTLE", CNR_TRACE_COND_THROTTLE(l, 1, 1.0, "TEST"));
+  EXECUTION_TIME( id, "CNR_TRACE_COND_THROTTLE", CNR_TRACE_COND_THROTTLE(l, 0, 1.0, "TEST"));
+
+  EXECUTION_TIME( id, "CNR_TRACE_START", CNR_TRACE_START(l));
+  EXECUTION_TIME( id, "CNR_TRACE_START", CNR_TRACE_START(l,"TEST"));
+  EXECUTION_TIME( id, "CNR_TRACE_END",   CNR_TRACE_END(l));
+  EXECUTION_TIME( id, "CNR_TRACE_END",   CNR_TRACE_END(l,"TEST"));
+
+  EXECUTION_TIME( id, "CNR_TRACE_START_THROTTLE", CNR_TRACE_START_THROTTLE(l, 1.0));
+  EXECUTION_TIME( id, "CNR_TRACE_START_THROTTLE", CNR_TRACE_START_THROTTLE(l, 1.0, "TEST"));
+
+  EXECUTION_TIME( id, "CNR_TRACE_START_THROTTLE_DEFAULT", CNR_TRACE_START_THROTTLE_DEFAULT(l));
+  EXECUTION_TIME( id, "CNR_TRACE_START_THROTTLE_DEFAULT", CNR_TRACE_START_THROTTLE_DEFAULT(l, "TEST"));
+
+  auto f0 = [&l](){CNR_RETURN_BOOL(l, 1, "");};  
+  EXECUTION_TIME( id, "CNR_RETURN_BOOL", f0() );
+
+  auto f1 = [&l](){CNR_RETURN_BOOL(l, 0, "");};
+  EXECUTION_TIME( id, "CNR_RETURN_BOOL", f1() );
+
+  auto f2 = [&l](){CNR_RETURN_BOOL(l, 1,"TEST");};
+  EXECUTION_TIME( id, "CNR_RETURN_BOOL", f2() );
+
+  auto f3 = [&l](){CNR_RETURN_BOOL(l, 0,"TEST");};
+  EXECUTION_TIME( id, "CNR_RETURN_BOOL",f3() );
+
+  auto f4 = [&l](){CNR_RETURN_TRUE(l);};
+  EXECUTION_TIME( id, "CNR_RETURN_TRUE",f4() );
+
+  auto f5 = [&l](){CNR_RETURN_FALSE(l);};
+  EXECUTION_TIME( id, "CNR_RETURN_FALSE",f5() );
+
+  auto f6 = [&l](){CNR_RETURN_TRUE(l,"TEST");};
+  EXECUTION_TIME( id, "CNR_RETURN_TRUE",f6() );
+
+  auto f7 = [&l](){CNR_RETURN_FALSE(l,"TEST");};
+  EXECUTION_TIME( id, "CNR_RETURN_FALSE",f7() );
+
+  auto f8 = [&l](){CNR_RETURN_FATAL(l);};
+  EXECUTION_TIME( id, "CNR_RETURN_FATAL",f8() );
+
+  auto f9 = [&l](){CNR_RETURN_FATAL(l,"TEST");};
+  EXECUTION_TIME( id, "CNR_RETURN_FATAL",f9() );
+
+  auto f10 = [&l](){CNR_RETURN_OK(l, void(),"");};
+  EXECUTION_TIME( id, "CNR_RETURN_OK",f10() );
+
+  auto f11 = [&l](){CNR_RETURN_OK(l,void(), "TEST");};
+  EXECUTION_TIME( id, "CNR_RETURN_OK",f11() );
+
+  auto f12 = [&l](){CNR_RETURN_NOTOK(l, void(),"");};
+  EXECUTION_TIME( id, "CNR_RETURN_NOTOK",f12() );
+
+  auto f13 = [&l](){CNR_RETURN_NOTOK(l,void(), "TEST");};
+  EXECUTION_TIME( id, "CNR_RETURN_NOTOK",f13() );
+
+  auto f14 = [&l](){CNR_EXIT_EX(l, 0);};
+  EXECUTION_TIME( id, "CNR_EXIT_EX",does_not_throw([&]{ f14(); }));
+
+  auto f15 = [&l](){CNR_EXIT_EX(l, 1);};
+  EXECUTION_TIME( id, "CNR_EXIT_EX",f15() );
+
+  auto f16 = [&l](){CNR_EXIT_EX(l,0, "TEST");};
+  EXECUTION_TIME( id, "CNR_EXIT_EX",does_not_throw([&]{ f16(); }));
+
+  auto f17 = [&l](){CNR_EXIT_EX(l,1, "TEST");};
+  EXECUTION_TIME( id, "CNR_EXIT_EX",f17() );
+
+  auto f18 = [&l](){CNR_RETURN_BOOL_THROTTLE(l, 1, 1.0);};
+  EXECUTION_TIME( id, "CNR_RETURN_BOOL_THROTTLE",f18() );
+
+  auto f19 = [&l](){CNR_RETURN_BOOL_THROTTLE(l, 0, 1.0);};
+  EXECUTION_TIME( id, "CNR_RETURN_BOOL_THROTTLE",f19() );
+
+  auto f20 = [&l](){CNR_RETURN_BOOL_THROTTLE(l, 1,1.0, "TEST");};
+  EXECUTION_TIME( id, "CNR_RETURN_BOOL_THROTTLE",f20() );
+
+  auto f21 = [&l](){CNR_RETURN_BOOL_THROTTLE(l, 0,1.0, "TEST");};
+  EXECUTION_TIME( id, "CNR_RETURN_BOOL_THROTTLE",f21() );
+
+  auto f22 = [&l](){CNR_RETURN_TRUE_THROTTLE(l,1.0);};
+  EXECUTION_TIME( id, "CNR_RETURN_TRUE_THROTTLE",f22() );
+
+  auto f23 = [&l](){CNR_RETURN_FALSE_THROTTLE(l,1.0);};
+  EXECUTION_TIME( id, "CNR_RETURN_TRUE_THROTTLE",f23() );
+
+  auto f24 = [&l](){CNR_RETURN_TRUE_THROTTLE(l,1.0, "TEST");};
+  EXECUTION_TIME( id, "CNR_RETURN_TRUE_THROTTLE",f24() );
+
+  auto f25 = [&l](){CNR_RETURN_FALSE_THROTTLE(l,1.0, "TEST");};
+  EXECUTION_TIME( id, "CNR_RETURN_TRUE_THROTTLE",f25() );
+
+  auto f26 = [&l](){CNR_RETURN_OK_THROTTLE(l, void(), 1.0,"");};
+  EXECUTION_TIME( id, "CNR_RETURN_OK_THROTTLE",f26() );
+
+  auto f27 = [&l](){CNR_RETURN_OK_THROTTLE(l,void(), 1.0, "TEST");};
+  EXECUTION_TIME( id, "CNR_RETURN_OK_THROTTLE",f27() );
+
+  auto f28 = [&l](){CNR_RETURN_NOTOK_THROTTLE(l, void(),1.0,"");};
+  EXECUTION_TIME( id, "CNR_RETURN_NOTOK_THROTTLE",f28() );
+
+  auto f29 = [&l](){CNR_RETURN_NOTOK_THROTTLE(l,void(), 1.0, "TEST");};
+  EXECUTION_TIME( id, "CNR_RETURN_NOTOK_THROTTLE",f29() );
+
+  auto f30 = [&l](){CNR_RETURN_BOOL_THROTTLE_DEFAULT(l, 1);};
+  EXECUTION_TIME( id, "CNR_RETURN_BOOL_THROTTLE",f30() );
+
+  auto f31 = [&l](){CNR_RETURN_BOOL_THROTTLE_DEFAULT(l, 0);};
+  EXECUTION_TIME( id, "CNR_RETURN_BOOL_THROTTLE",f31() );
+
+  auto f32 = [&l](){CNR_RETURN_BOOL_THROTTLE_DEFAULT(l, 1, "TEST");};
+  EXECUTION_TIME( id, "CNR_RETURN_BOOL_THROTTLE",f32() );
+
+  auto f33 = [&l](){CNR_RETURN_BOOL_THROTTLE_DEFAULT(l, 0, "TEST");};
+  EXECUTION_TIME( id, "CNR_RETURN_BOOL_THROTTLE",f33() );
+
+  auto f34 = [&l](){CNR_RETURN_TRUE_THROTTLE_DEFAULT(*l);};
+  EXECUTION_TIME( id, "CNR_RETURN_TRUE_THROTTLE",f34() );
+  
+  auto f35 = [&l](){CNR_RETURN_FALSE_THROTTLE_DEFAULT(*l);};
+  EXECUTION_TIME( id, "CNR_RETURN_FALSE_THROTTLE",f35() );
+
+  auto f36 = [&l](){CNR_RETURN_TRUE_THROTTLE_DEFAULT(l,"TEST");};
+  EXECUTION_TIME( id, "CNR_RETURN_TRUE_THROTTLE",f36() );
+
+  auto f37 = [&l](){CNR_RETURN_FALSE_THROTTLE_DEFAULT(l,"TEST");};
+  EXECUTION_TIME( id, "CNR_RETURN_FALSE_THROTTLE",f37() );
+
+  auto f38 = [&l](){CNR_RETURN_OK_THROTTLE_DEFAULT(l, void(),"");};
+  EXECUTION_TIME( id, "CNR_RETURN_OK_THROTTLE",f38() );
+
+  auto f39 = [&l](){CNR_RETURN_OK_THROTTLE_DEFAULT(l,void(), "TEST");};
+  EXECUTION_TIME( id, "CNR_RETURN_OK_THROTTLE",f39() );
+
+  auto f40 = [&l](){CNR_RETURN_NOTOK_THROTTLE_DEFAULT(l, void(),"");};
+  EXECUTION_TIME( id, "CNR_RETURN_NOTOK_THROTTLE",f40() );
+
+  auto f41 = [&l](){CNR_RETURN_NOTOK_THROTTLE_DEFAULT(l,void(),"TEST");};
+  EXECUTION_TIME( id, "CNR_RETURN_NOTOK_THROTTLE",f41() );
+}
+
 TEST(TestSuite, colorTest)
 {
   std::cout << "Color Test" << std::endl;
@@ -499,7 +718,8 @@ TEST(TestSuite, flushFileAndScreen)
 {
   auto ll = createLogger("file_and_screen_same_appender");
   macroTest(ll);
-  printTest(ll);
+  timeTest( "flushFileAndScreen", ll);
+  //printTest(ll);
   EXPECT_TRUE(ll->logFile());
   EXPECT_TRUE(ll->logScreen());
   EXPECT_TRUE(ll->logSyncFileAndScreen());
@@ -513,7 +733,8 @@ TEST(TestSuite, flushOnlyFile)
 {
   auto ll = createLogger("only_file_streamer");
   macroTest(ll);
-  printTest(ll);
+  timeTest("flushOnlyFile", ll);
+  //printTest(ll);
   EXPECT_TRUE(ll->logFile());
   EXPECT_FALSE(ll->logScreen());
   EXPECT_FALSE(ll->logSyncFileAndScreen());
@@ -526,7 +747,8 @@ TEST(TestSuite, flushOnlyScreen)
 {
   auto ll = createLogger("only_screen_streamer");
   macroTest(ll);
-  printTest(ll);
+  timeTest("flushOnlyScreen", ll);
+  //printTest(ll);
   EXPECT_FALSE(ll->logFile());
   EXPECT_TRUE(ll->logScreen());
   EXPECT_FALSE(ll->logSyncFileAndScreen());
@@ -557,5 +779,12 @@ int main(int argc, char **argv)
   std::cerr << "Time used: STD CTIME" << std::endl;
 #endif
 
-  return RUN_ALL_TESTS();
+  bool ok = false;
+  for(size_t i=0;i<100;i++)
+  {
+    ok = RUN_ALL_TESTS();
+  }
+  printStatistics();
+
+  return ok;
 }
