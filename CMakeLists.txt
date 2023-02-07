@@ -81,7 +81,7 @@ else(USE_ROS)
     message(STATUS "Enable testing enable_testing")
     enable_testing()
     find_package(GTest REQUIRED)
-    
+
     if(ENABLE_COVERAGE_TESTING AND NOT WIN32)
       set(CMAKE_CXX_FLAGS "-Wno-deprecated-register ${CMAKE_CXX_FLAGS}")
       set(CMAKE_CXX_FLAGS_DEBUG "-Wno-deprecated-register -O0 -g -fprofile-arcs -ftest-coverage ${CMAKE_CXX_FLAGS_DEBUG}")
