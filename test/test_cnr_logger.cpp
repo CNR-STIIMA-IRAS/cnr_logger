@@ -287,7 +287,8 @@ void macroTest(std::shared_ptr<cnr_logger::TraceLogger>& l)
   EXPECT_NO_FATAL_FAILURE( CNR_TRACE_START_THROTTLE_DEFAULT(l));
   EXPECT_NO_FATAL_FAILURE( CNR_TRACE_START_THROTTLE_DEFAULT(l, "TEST"));
 
-  auto f0 = [&l](){CNR_RETURN_BOOL(l, 1, "");};
+  auto f0 = [&l](){CNR_RETURN_BOOL(l, 1, "");};  
+  std::cout << "QUI AT " << __LINE__ << std::endl;
   EXPECT_TRUE( f0() );
 
   auto f1 = [&l](){CNR_RETURN_BOOL(l, 0, "");};
