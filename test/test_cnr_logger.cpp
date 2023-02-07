@@ -102,7 +102,7 @@ template<class F>
   }
 }
 
-std::map<std::string, std::map<std::string, std::vector<double>> > statistics;
+std::map<std::string, std::map<std::string, std::vector<double> > > statistics;
 
 #define EXECUTION_TIME( id1, id2, ... )\
 {\

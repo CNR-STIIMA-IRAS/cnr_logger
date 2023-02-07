@@ -55,6 +55,7 @@
 
 
 #include <log4cxx/logger.h>
+#include <cnr_logger/visibility_control.h>
 
 /**
  * @brief cnr_logger main namespace for the package
@@ -76,11 +77,16 @@ public:
   /**
    * @brief TraceLogger. The constructor does not initilize the class. The function init() must be called afterwards.
    */
+  CNR_LOGGER_PUBLIC
   explicit TraceLogger()= default;
   
+  CNR_LOGGER_PUBLIC
   TraceLogger(const TraceLogger&) = delete;
+  
+  CNR_LOGGER_PUBLIC
   TraceLogger(TraceLogger&&) noexcept = delete;
 
+  CNR_LOGGER_PUBLIC
   virtual ~TraceLogger();
 
   /**
@@ -93,6 +99,7 @@ public:
    * @param[IN] default_values: in the case the parameters are not found under the input namespace, the default
    * configuration is loaded. If FALSE, the function returns false if the parameters are not found.
    */
+  CNR_LOGGER_PUBLIC
   TraceLogger(const std::string& logger_id, const std::string& path,
                 const bool star_header=false, const bool default_values=true, std::string* what=nullptr);
   
@@ -108,69 +115,94 @@ public:
    * @param what: if it is different from nullptr, it stores warnings and errors 
    * @return True if correctly initialized
    */
+  CNR_LOGGER_PUBLIC
   bool init(const std::string& logger_id, const std::string& path,
               const bool star_header = false, const bool default_values = true, std::string* what = nullptr);
 
   [[deprecated("Use the init(const std::string&, const std::string&, const bool, const bool, std::string*)")]]
+  CNR_LOGGER_PUBLIC
   bool init_logger(const std::string& logger_id, const std::string& path,
               const bool star_header = false, const bool default_values = true, std::string* what = nullptr);
 
+  CNR_LOGGER_PUBLIC
   TraceLogger& operator=(const TraceLogger& rhs);
+  
+  CNR_LOGGER_PUBLIC
   TraceLogger const & operator=(TraceLogger &&) = delete; 
 
   /**
    * @brief SyncFileAndScreen logger getter.
    * @return the logger if exist the SyncFileAndScreen Appender level of logginge
    */
+  CNR_LOGGER_PUBLIC
   log4cxx::LoggerPtr syncFileAndScreenLogger( );
 
   /**
    * @brief File logger getter.
    * @return the logger if exist the File Appender level of logginge
    */
+  CNR_LOGGER_PUBLIC
   log4cxx::LoggerPtr fileLogger( );
 
   /**
    * @brief Console logger getter.
    * @return the logger if exist the Console Appender level of logginge
    */
+  CNR_LOGGER_PUBLIC
   log4cxx::LoggerPtr consoleLogger( );
 
   /**
    * @brief Configuration getter.
    * @return True if the logger has an appender linked to a file, false otherwise
    */
+  CNR_LOGGER_PUBLIC
   bool logFile();
   /**
    * @brief Configuration getter.
    * @return True if the logger has an appender linked to a the console, false otherwise
    */
+  CNR_LOGGER_PUBLIC
   bool logScreen();
 
    /**
    * @brief Configuration getter.
    * @return True if the logger has an appender linked only to a file, false otherwise
    */
+  CNR_LOGGER_PUBLIC
   bool logOnlyFile();
   /**
    * @brief Configuration getter.
    * @return True if the logger has an appender linked only to a the console, false otherwise
    */
+  CNR_LOGGER_PUBLIC
   bool logOnlyScreen();
 
   /**
    * @brief Configuration getter.
    * @return True if the logger has an appender linked to both the console and the file, false otherwise
    */
+  CNR_LOGGER_PUBLIC
   bool logSyncFileAndScreen();
 
+  CNR_LOGGER_PUBLIC
   const double& defaultThrottleTime() const;
 
+  CNR_LOGGER_PUBLIC
   bool logFatal() const;
+  
+  CNR_LOGGER_PUBLIC
   bool logError() const;
+  
+  CNR_LOGGER_PUBLIC
   bool logWarn()  const;
+  
+  CNR_LOGGER_PUBLIC
   bool logInfo()  const;
+  
+  CNR_LOGGER_PUBLIC
   bool logDebug() const;
+  
+  CNR_LOGGER_PUBLIC
   bool logTrace() const;
 
   friend std::string to_string(const TraceLogger& logger);
