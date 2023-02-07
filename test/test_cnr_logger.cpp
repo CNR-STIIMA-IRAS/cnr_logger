@@ -120,7 +120,7 @@ void printStatistics()
 {
   for(const auto & p : statistics)
   {
-    std::cout<< std::endl 
+    std::cout<< std::endl
             << "-------------------------------------" << std::endl
             <<"Flush Type: " << p.first << " " << std::endl
             << "-------------------------------------" << std::endl;
@@ -137,7 +137,7 @@ void printStatistics()
     }
   }
 }
-  
+
 
 std::string full_path(const std::string& what)
 {
@@ -287,10 +287,8 @@ void macroTest(std::shared_ptr<cnr_logger::TraceLogger>& l)
   EXPECT_NO_FATAL_FAILURE( CNR_TRACE_START_THROTTLE_DEFAULT(l));
   EXPECT_NO_FATAL_FAILURE( CNR_TRACE_START_THROTTLE_DEFAULT(l, "TEST"));
 
-  auto f0 = [&l](){CNR_RETURN_BOOL(l, 1, "");};  
-  std::cout << "QUI AT " << __LINE__ << std::endl;
+  auto f0 = [&l](){CNR_RETURN_BOOL(l, 1, "");};
   EXPECT_TRUE( f0() );
-  std::cout << "QUI AT " << __LINE__ << std::endl;
 
   auto f1 = [&l](){CNR_RETURN_BOOL(l, 0, "");};
   EXPECT_FALSE( f1() );
@@ -393,7 +391,7 @@ void macroTest(std::shared_ptr<cnr_logger::TraceLogger>& l)
 
   auto f34 = [&l](){CNR_RETURN_TRUE_THROTTLE_DEFAULT(*l);};
   EXPECT_TRUE( f34() );
-  
+
   auto f35 = [&l](){CNR_RETURN_FALSE_THROTTLE_DEFAULT(*l);};
   EXPECT_FALSE( f35() );
 
@@ -574,7 +572,7 @@ void timeTest(std::string id, std::shared_ptr<cnr_logger::TraceLogger>& l)
 
   auto f34 = [&l](){CNR_RETURN_TRUE_THROTTLE_DEFAULT(*l);};
   EXECUTION_TIME( id, "CNR_RETURN_TRUE_THROTTLE",f34() );
-  
+
   auto f35 = [&l](){CNR_RETURN_FALSE_THROTTLE_DEFAULT(*l);};
   EXECUTION_TIME( id, "CNR_RETURN_FALSE_THROTTLE",f35() );
 
