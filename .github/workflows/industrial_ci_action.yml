@@ -29,7 +29,7 @@ jobs:
       SONAR_SERVER_URL: "https://sonarcloud.io"
       BUILD_WRAPPER_OUT_DIR: /home/runner/target_ws/
 
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2   # clone target repository
       - uses: actions/cache@v2      # fetch/store the directory used by ccache before/after the ci run
