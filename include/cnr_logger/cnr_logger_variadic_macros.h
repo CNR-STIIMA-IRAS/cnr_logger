@@ -67,6 +67,9 @@ namespace cl = cnr_logger;
 // ============================== IN/OUT Functions
 #if 0
 
+/**
+ *
+ */
 #define CNR_TRACE_START(logger, ...)\
 do\
 {\
@@ -95,7 +98,9 @@ do\
 } while (false);\
 return ret;\
 
-
+/**
+ *
+ */
 #define CNR_RETURN_TRUE(logger,  ...)\
 do\
 {\

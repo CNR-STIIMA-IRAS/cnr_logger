@@ -139,7 +139,7 @@ jobs:
         endif()
 
     - name: Check Path
-      run: pwd && ls 
+      run: pwd && ls
 
     - name: Run tests
       shell: cmake -P {0}
@@ -163,7 +163,7 @@ jobs:
         name: test_results_xml
         path: ${{runner.workspace}}/build/test-results/**/*.xml
 
-    - uses: codecov/codecov-action@v1
+    - uses: codecov/codecov-action@v3
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
         flags: unittests # optional
