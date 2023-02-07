@@ -19,7 +19,7 @@ jobs:
         config:
         - {
             name: "Ubuntu Debug", artifact: "Linux.tar.xz",
-            os: ubuntu-latest,
+            os: ubuntu-20.04,
             build_type: "Debug", cc: "gcc", cxx: "g++", cmake_version_used: "3.16.2"
           }
     steps:
