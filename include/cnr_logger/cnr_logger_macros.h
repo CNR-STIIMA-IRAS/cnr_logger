@@ -56,15 +56,13 @@
 
 
 #include <cnr_logger/cnr_logger.h>
+#include <cnr_logger/cnr_logger_color_macros.h>
+#include <cnr_logger/cnr_logger_static_macros.h>
+#include <cnr_logger/cnr_logger_variadic_macros.h>
 
-// user can force the use of ROS time by adding "-DFORCE_ROS_TIME_USE"
 
-#if defined(FORCE_ROS_TIME_USE)
-  #include <ros/time.h>
-  #include <ros/console.h>
-  #define CONSOLE_THROTTLE_CHECK(now, last, period)\
-    ROSCONSOLE_THROTTLE_CHECK(now, last, period)
 
+<<<<<<< HEAD
   #define TIME_NOW()\
     ::ros::Time::now().toSec()
 #else
@@ -864,5 +862,7 @@ do\
   CNR_TRACE_COND_THROTTLE(logger, period>0, period, cl::RED() + "[FAILED] " + cl::RESET() << __FUNCTION__);\
 } while (false);\
 return(var);
+=======
+>>>>>>> b5d9ad8d7a55b45cc01a0780856bc6010bc458ae
 
 #endif  // CNR_LOGGER_CNR_LOGGER_MACROS_H

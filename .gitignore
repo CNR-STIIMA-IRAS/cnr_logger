@@ -1,6 +1,5 @@
 *~
 *.kdev4
-kdev4/
 *.user
 *.user*
 *.creator
@@ -10,12 +9,15 @@ kdev4/
 *.qtcreator*
 *.kate-swp
 *.vscode
-.vscode/
 *.orig
+*.autosave 
+
 doc/
 html/
 latex/
 doc/html
 doc/latex
 build/
-*.autosave
+.vscode/
+kdev4/
+
