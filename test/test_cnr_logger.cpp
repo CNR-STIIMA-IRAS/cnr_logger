@@ -33,6 +33,7 @@
  *  POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <cstdio>
 #include <iostream>
 #if !defined (ROS_NOT_AVAILABLE)
   #include <ros/ros.h>
@@ -133,7 +134,11 @@ void printStatistics()
         auto min = std::min_element(std::begin(k.second), std::end(k.second));
         double mean = std::accumulate(std::begin(k.second), std::end(k.second), 0.0);
         mean = mean / double(k.second.size());
-        printf("%36s [%5zu]: %3.3fms, %3.3fms, %3.3fms\n", k.first.c_str(), k.second.size(), *min, mean, * max);
+        int sz = std::printf("%36s [%5zu]: %3.3fms, %3.3fms, %3.3fms\n", k.first.c_str(), k.second.size(), *min, mean, * max);
+        if(sz<=0)
+        {
+          std::cerr << "Error in printing the report .." << std::endl;
+        }
       }
     }
   }
@@ -779,7 +784,7 @@ int main(int argc, char **argv)
 #endif
 
   bool ok = false;
-  for(size_t i=0;i<100;i++)
+  for(size_t i=0u;i<100u;i++)
   {
     ok = RUN_ALL_TESTS();
   }
