@@ -4,11 +4,11 @@ project(cnr_logger)
 
 if(${CMAKE_VERSION} VERSION_GREATER  "3.0.0")
   cmake_policy(SET CMP0048 NEW)
-  set(cnr_param_MAJOR_VERSION 0)
-  set(cnr_param_MINOR_VERSION 1)
-  set(cnr_param_PATCH_VERSION 0)
-  set(cnr_param_VERSION
-    ${cnr_param_MAJOR_VERSION}.${cnr_param_MINOR_VERSION}.${cnr_param_PATCH_VERSION})
+  set(cnr_logger_MAJOR_VERSION 0)
+  set(cnr_logger_MINOR_VERSION 1)
+  set(cnr_logger_PATCH_VERSION 0)
+  set(cnr_logger_VERSION
+    ${cnr_logger_MAJOR_VERSION}.${cnr_logger_MINOR_VERSION}.${cnr_logger_PATCH_VERSION})
 endif()
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
@@ -16,7 +16,7 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 endif()
 
 if(NOT CMAKE_CXX_STANDARD)
-  set(CMAKE_CXX_STANDARD 17)
+  set(CMAKE_CXX_STANDARD 14)
 endif()
 
 ###################
@@ -34,7 +34,6 @@ endif()
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/cnrConfigMacros.cmake)
 
 cnr_set_flags()
-
 
 #################
 ## DEPENDECIES ##
@@ -84,9 +83,9 @@ else(USE_ROS)
   pkg_check_modules(YAML_CPP REQUIRED yaml-cpp)
 
   ### Log4cxx
-  find_package(Log4cxx)
+  find_package(Log4cxx REQUIRED)
 
-  ### Log4cxx Threads
+  ### Threads
   find_package(Threads REQUIRED)
 
   if(ENABLE_TESTING)
@@ -219,8 +218,6 @@ if( ENABLE_TESTING AND ENABLE_COVERAGE_TESTING AND NOT WIN32 )
   endif()
 endif()
 
-
-
 #############
 ## Install ##
 #############
@@ -240,4 +237,4 @@ if(USE_ROS)
   install(DIRECTORY launch/
     DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch
     PATTERN ".svn" EXCLUDE)
-  endif()
+endif()
