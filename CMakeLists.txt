@@ -4,11 +4,10 @@ project(cnr_logger)
 
 if(${CMAKE_VERSION} VERSION_GREATER  "3.0.0")
   cmake_policy(SET CMP0048 NEW)
-  set(cnr_logger_MAJOR_VERSION 0)
-  set(cnr_logger_MINOR_VERSION 1)
-  set(cnr_logger_PATCH_VERSION 0)
-  set(cnr_logger_VERSION
-    ${cnr_logger_MAJOR_VERSION}.${cnr_logger_MINOR_VERSION}.${cnr_logger_PATCH_VERSION})
+  set(PROJECT_MAJOR_VERSION 0)
+  set(PROJECT_MINOR_VERSION 1)
+  set(PROJECT_PATCH_VERSION 0)
+  set(PROJECT_VERSION ${PROJECT_MAJOR_VERSION}.${PROJECT_MINOR_VERSION}.${PROJECT_PATCH_VERSION})
 endif()
 
 set(LOCAL_CXX_STANDARD 14)
