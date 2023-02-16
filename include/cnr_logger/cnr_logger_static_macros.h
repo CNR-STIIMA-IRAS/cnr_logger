@@ -187,10 +187,14 @@ do\
 {\
   if(cl::getTraceLogger(logger) && cl::getTraceLogger(logger)->logInfo())\
   {\
-    if ((cl::getTraceLogger(logger)->logSyncFileAndScreen())) \
-      LOG4CXX_INFO(cl::getTraceLogger(logger)->syncFileAndScreenLogger(), args)\
-    if (cl::getTraceLogger(logger)->logOnlyFile()) \
-      LOG4CXX_INFO(cl::getTraceLogger(logger)->fileLogger(), args)\
+    if (cl::getTraceLogger(logger)->logSyncFileAndScreen())\
+    {\
+      LOG4CXX_INFO(cl::getTraceLogger(logger)->syncFileAndScreenLogger(), args);\
+    }\
+    if (cl::getTraceLogger(logger)->logOnlyFile())\
+    {\
+      LOG4CXX_INFO(cl::getTraceLogger(logger)->fileLogger(), args);\
+    }\
   }\
 } while (false)
 

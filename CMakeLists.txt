@@ -1,10 +1,22 @@
 cmake_minimum_required(VERSION 2.8.3)
 
+project(cnr_logger)
+
 if(${CMAKE_VERSION} VERSION_GREATER  "3.0.0")
   cmake_policy(SET CMP0048 NEW)
-  project(cnr_logger VERSION 1.0.0)
-else()
-  project(cnr_logger)
+  set(cnr_param_MAJOR_VERSION 0)
+  set(cnr_param_MINOR_VERSION 1)
+  set(cnr_param_PATCH_VERSION 0)
+  set(cnr_param_VERSION
+    ${cnr_param_MAJOR_VERSION}.${cnr_param_MINOR_VERSION}.${cnr_param_PATCH_VERSION})
+endif()
+
+if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  add_compile_options(-Wall -Wextra -Wpedantic)
+endif()
+
+if(NOT CMAKE_CXX_STANDARD)
+  set(CMAKE_CXX_STANDARD 17)
 endif()
 
 ###################
@@ -212,7 +224,7 @@ endif()
 #############
 ## Install ##
 #############
- install(DIRECTORY include/${PROJECT_NAME}/
+ install(DIRECTORY include/${PROJECT_NAME}
    DESTINATION ${CNR_LOGGER_INSTALL_INCLUDE_DIR}
    FILES_MATCHING PATTERN "*.h"
    PATTERN ".git" EXCLUDE
@@ -224,8 +236,8 @@ install(TARGETS ${PROJECT_NAME}
   RUNTIME DESTINATION ${CNR_LOGGER_INSTALL_BIN_DIR}
 )
 
-
-
-install(DIRECTORY launch/
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch
-  PATTERN ".svn" EXCLUDE)
+if(USE_ROS)
+  install(DIRECTORY launch/
+    DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch
+    PATTERN ".svn" EXCLUDE)
+  endif()

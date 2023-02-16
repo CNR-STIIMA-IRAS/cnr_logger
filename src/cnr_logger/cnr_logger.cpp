@@ -281,7 +281,7 @@ bool extract(T& val,
 {
   bool ret = false;
 #if defined(ROS_NOT_AVAILABLE)
-  ret = (res != nullptr) ? (*res)[leaf] : false;
+  ret = (res != nullptr) ? bool( (*res)[leaf] ): false;
 #else
   ret = (res != nullptr) ? ros::param::get(*res + "/" + leaf, val) : false;
 #endif
@@ -305,7 +305,7 @@ bool extractVector(std::vector<std::string>& val,
 {
   bool ret = false;
 #if defined(ROS_NOT_AVAILABLE)
-  ret = (res != nullptr) ? (*res)[leaf] : false;
+  ret = (res != nullptr) ? bool( (*res)[leaf] ) : false;
 #else
   ret = (res != nullptr) ? ros::param::get(*res + "/" + leaf, val) : false;
 #endif
@@ -469,7 +469,7 @@ void extractLayout(const std::string& ns,
   log4cxx::helpers::Transcoder::decode(pattern_layout, _pattern_layout);
   
 #if !defined(_WIN32) && !defined(_WIN64)
-  layout = new log4cxx::ColorPatternLayout(_pattern_layout);
+  layout.reset( new log4cxx::ColorPatternLayout(_pattern_layout) );
 #else
   layout = new log4cxx::PatternLayout(_pattern_layout);
 #endif
@@ -575,7 +575,7 @@ bool configureLoggers(const std::string& logger_id,
 
     log4cxx::LogString _log_file_name;
     log4cxx::helpers::Transcoder::decode(log_file_name,_log_file_name);
-    log4cxx::RollingFileAppenderPtr appender = new log4cxx::RollingFileAppender(layout, _log_file_name, append_to_file);
+    log4cxx::RollingFileAppenderPtr appender( new log4cxx::RollingFileAppender(layout, _log_file_name, append_to_file) );
     if(loggers.find(TraceLogger::AppenderType::FILE_STREAM) != loggers.end())
     {
       loggers[ TraceLogger::AppenderType::FILE_STREAM ]->addAppender(appender);
@@ -596,7 +596,7 @@ bool configureLoggers(const std::string& logger_id,
   {
     log4cxx::LogString _logger_id_;
     log4cxx::helpers::Transcoder::decode(logger_id,_logger_id_);
-    log4cxx::ConsoleAppenderPtr appender = new log4cxx::ConsoleAppender(layout, _logger_id_);
+    log4cxx::ConsoleAppenderPtr appender(new log4cxx::ConsoleAppender(layout, _logger_id_) );
     if(loggers.find(TraceLogger::AppenderType::CONSOLE_STREAM) != loggers.end())
     {
       loggers[TraceLogger::AppenderType::CONSOLE_STREAM]->addAppender(appender);
@@ -833,12 +833,11 @@ bool TraceLogger::init(const std::string& logger_id, const std::string& path,
       std::string log_start =  getLoggerStartString(logger_id, log_file_name,loggers_,levels_);
       if(star_header)
       {
-        CNR_INFO_ONLY_FILE((*this), "\n ==================================\n\n"
-                          << "== " << log_start << "\n\n == Ready to Log!");
+        CNR_INFO_ONLY_FILE( this, "\n ==================================\n\n" << "== " << log_start << "\n\n == Ready to Log!");
       }
       else
       {
-        CNR_INFO_ONLY_FILE((*this), log_start);
+        CNR_INFO_ONLY_FILE(this, log_start);
       }
     }
   }
@@ -887,7 +886,7 @@ bool TraceLogger::logScreen()
 
 bool TraceLogger::logOnlyFile()
 {
-  return (loggers_.find(AppenderType::FILE_STREAM) != loggers_.end()) ;
+  return loggers_.find(AppenderType::FILE_STREAM) != loggers_.end();
 }
 
 bool TraceLogger::logOnlyScreen()
