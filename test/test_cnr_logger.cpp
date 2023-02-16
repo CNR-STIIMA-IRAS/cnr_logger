@@ -132,7 +132,7 @@ void printStatistics()
         auto min = std::min_element(std::begin(k.second), std::end(k.second));
         double mean = std::accumulate(std::begin(k.second), std::end(k.second), 0.0);
         mean = mean / double(k.second.size());
-        printf("%36s [%5u]: %3.3fms, %3.3fms, %3.3fms\n", k.first.c_str(), k.second.size(), *min, mean, * max);
+        printf("%36s [%5zu]: %3.3fms, %3.3fms, %3.3fms\n", k.first.c_str(), k.second.size(), *min, mean, * max);
       }
     }
   }
