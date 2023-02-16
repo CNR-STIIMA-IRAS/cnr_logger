@@ -38,6 +38,7 @@
   #include <ros/ros.h>
 #endif
 
+#include <time.h>
 #include <numeric>
 #include <cnr_logger/cnr_logger.h>
 #include <gtest/gtest.h>

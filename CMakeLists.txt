@@ -14,7 +14,7 @@ endif()
 set(LOCAL_CXX_STANDARD 14)
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   
-  add_compile_options(-Wall -Wextra -Wpedantic)
+  add_compile_options(-Wall -Wextra -Wpedantic -D_TIME_BITS=64 -D_FILE_OFFSET_BITS=64)
 
   if(CMAKE_CXX_COMPILER_ID MATCHES "Clang" AND CMAKE_CXX_COMPILER_VERSION GREATER 12)
     set(LOCAL_CXX_STANDARD 17)
