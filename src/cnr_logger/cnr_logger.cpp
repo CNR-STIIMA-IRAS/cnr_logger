@@ -68,6 +68,9 @@
 #include <cstdlib>
 #include <boost/filesystem.hpp>
 
+#if !defined(Log4cxx_MAJOR_VERSION) 
+  #error The Version of Log4cxx are not available. Add -DLog4cxx_MAJOR_VERSION to compile options
+#endif
 
 
 //========================================================
@@ -469,7 +472,11 @@ void extractLayout(const std::string& ns,
   log4cxx::helpers::Transcoder::decode(pattern_layout, _pattern_layout);
   
 #if !defined(_WIN32) && !defined(_WIN64)
-  layout.reset( new log4cxx::ColorPatternLayout(_pattern_layout) );
+  #if (Log4cxx_MAJOR_VERSION==0) && (Log4cxx_MINOR_VERSION > 10)
+    layout.reset( new log4cxx::ColorPatternLayout(_pattern_layout) );
+  #else
+    layout = new log4cxx::ColorPatternLayout(_pattern_layout);
+  #endif
 #else
   layout = new log4cxx::PatternLayout(_pattern_layout);
 #endif

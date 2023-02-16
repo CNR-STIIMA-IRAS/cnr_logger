@@ -11,12 +11,20 @@ if(${CMAKE_VERSION} VERSION_GREATER  "3.0.0")
     ${cnr_logger_MAJOR_VERSION}.${cnr_logger_MINOR_VERSION}.${cnr_logger_PATCH_VERSION})
 endif()
 
+set(LOCAL_CXX_STANDARD 14)
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
+  if(CMAKE_CXX_COMPILER_VERSION GREATER 12)
+    set(LOCAL_CXX_STANDARD 17)
+  endif()
+elseif(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+  if(CMAKE_CXX_COMPILER_VERSION GREATER 10)
+    set(LOCAL_CXX_STANDARD 17)
+  endif()
 endif()
 
 if(NOT CMAKE_CXX_STANDARD)
-  set(CMAKE_CXX_STANDARD 14)
+  set(CMAKE_CXX_STANDARD ${LOCAL_CXX_STANDARD})
 endif()
 
 ###################
@@ -42,6 +50,19 @@ cnr_set_flags()
 ## common
 find_package(Boost REQUIRED COMPONENTS date_time filesystem)
 
+## common
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(Log4cxx REQUIRED liblog4cxx)
+
+string(REPLACE "." ";" VERSION_LIST ${Log4cxx_VERSION})
+list(GET VERSION_LIST 0 Log4cxx_MAJOR_VERSION)
+list(GET VERSION_LIST 1 Log4cxx_MINOR_VERSION)
+list(GET VERSION_LIST 2 Log4cxx_PATCH_VERSION)
+
+add_definitions(-DLog4cxx_MAJOR_VERSION=${Log4cxx_MAJOR_VERSION})
+add_definitions(-DLog4cxx_MINOR_VERSION=${Log4cxx_MINOR_VERSION})
+add_definitions(-DLog4cxx_PATCH_VERSION=${Log4cxx_PATCH_VERSION})
+
 if(USE_ROS)
 
   MESSAGE(STATUS "ROS SUPPORT ENABLED")
@@ -58,7 +79,6 @@ if(USE_ROS)
       APPEND_COVERAGE_COMPILER_FLAGS()
     endif(ENABLE_COVERAGE_TESTING AND NOT WIN32)
   endif(ENABLE_TESTING)
-
 
   set(CNR_LOGGER_TARGET_LINK_LIBRARIES  ${catkin_LIBRARIES} )
   set(CNR_LOGGER_TARGET_INCLUDE_DIRS    ${catkin_INCLUDE_DIRS} )
@@ -81,9 +101,6 @@ else(USE_ROS)
   ### YAML-CPP
   find_package(PkgConfig REQUIRED)
   pkg_check_modules(YAML_CPP REQUIRED yaml-cpp)
-
-  ### Log4cxx
-  find_package(Log4cxx REQUIRED)
 
   ### Threads
   find_package(Threads REQUIRED)
