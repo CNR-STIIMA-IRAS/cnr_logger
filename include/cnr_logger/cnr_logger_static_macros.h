@@ -126,13 +126,13 @@ do \
   if(cl::getTraceLogger(logger) && cl::getTraceLogger(logger)->logFatal())\
   {\
     if(cl::getTraceLogger(logger)->logSyncFileAndScreen())\
-      LOG4CXX_FATAL(cl::getTraceLogger(logger)->syncFileAndScreenLogger(), args)\
+      LOG4CXX_FATAL(cl::getTraceLogger(logger)->syncFileAndScreenLogger(), args);\
     if(cl::getTraceLogger(logger)->logOnlyFile())\
-        LOG4CXX_FATAL(cl::getTraceLogger(logger)->fileLogger(), args)\
+        LOG4CXX_FATAL(cl::getTraceLogger(logger)->fileLogger(), args);\
     if(cl::getTraceLogger(logger)->logOnlyScreen())\
-        LOG4CXX_FATAL(cl::getTraceLogger(logger)->consoleLogger(), args)\
+        LOG4CXX_FATAL(cl::getTraceLogger(logger)->consoleLogger(), args);\
   }\
-} while (false)
+} while (false);
 
 #define CNR_ERROR(logger, args)\
 do \
@@ -140,13 +140,13 @@ do \
   if(cl::getTraceLogger(logger) && cl::getTraceLogger(logger)->logError())\
   {\
     if (cl::getTraceLogger(logger)->logSyncFileAndScreen())\
-      LOG4CXX_ERROR(cl::getTraceLogger(logger)->syncFileAndScreenLogger(), args)\
+      LOG4CXX_ERROR(cl::getTraceLogger(logger)->syncFileAndScreenLogger(), args);\
     if (cl::getTraceLogger(logger)->logOnlyFile())\
-        LOG4CXX_ERROR(cl::getTraceLogger(logger)->fileLogger(), args)\
+        LOG4CXX_ERROR(cl::getTraceLogger(logger)->fileLogger(), args);\
     if (cl::getTraceLogger(logger)->logOnlyScreen())\
-        LOG4CXX_ERROR(cl::getTraceLogger(logger)->consoleLogger(), args)\
+        LOG4CXX_ERROR(cl::getTraceLogger(logger)->consoleLogger(), args);\
   }\
-} while (false)
+} while (false);
 
 #define CNR_WARN(logger, args)\
 do\
@@ -154,13 +154,13 @@ do\
   if(cl::getTraceLogger(logger) && cl::getTraceLogger(logger)->logWarn())\
   {\
     if (cl::getTraceLogger(logger)->logSyncFileAndScreen())\
-      LOG4CXX_WARN(cl::getTraceLogger(logger)->syncFileAndScreenLogger(), args)\
+      LOG4CXX_WARN(cl::getTraceLogger(logger)->syncFileAndScreenLogger(), args);\
     if (cl::getTraceLogger(logger)->logOnlyFile())\
-        LOG4CXX_WARN(cl::getTraceLogger(logger)->fileLogger(), args)\
+        LOG4CXX_WARN(cl::getTraceLogger(logger)->fileLogger(), args);\
     if (cl::getTraceLogger(logger)->logOnlyScreen())\
-        LOG4CXX_WARN(cl::getTraceLogger(logger)->consoleLogger(), args)\
+        LOG4CXX_WARN(cl::getTraceLogger(logger)->consoleLogger(), args);\
   }\
-} while (false)
+} while (false);
 
 #define CNR_INFO(logger, args)\
 do\
@@ -169,30 +169,34 @@ do\
   {\
     if ((cl::getTraceLogger(logger)->logSyncFileAndScreen())) \
     {\
-      LOG4CXX_INFO(cl::getTraceLogger(logger)->syncFileAndScreenLogger(), args)\
+      LOG4CXX_INFO(cl::getTraceLogger(logger)->syncFileAndScreenLogger(), args);\
     }\
     if (cl::getTraceLogger(logger)->logOnlyFile()) \
     {\
-      LOG4CXX_INFO(cl::getTraceLogger(logger)->fileLogger(), args)\
+      LOG4CXX_INFO(cl::getTraceLogger(logger)->fileLogger(), args);\
     }\
     if (cl::getTraceLogger(logger)->logOnlyScreen()) \
     {\
-      LOG4CXX_INFO(cl::getTraceLogger(logger)->consoleLogger(), args)\
+      LOG4CXX_INFO(cl::getTraceLogger(logger)->consoleLogger(), args);\
     }\
   }\
-} while (false)
+} while (false);
 
 #define CNR_INFO_ONLY_FILE(logger, args)\
 do\
 {\
   if(cl::getTraceLogger(logger) && cl::getTraceLogger(logger)->logInfo())\
   {\
-    if ((cl::getTraceLogger(logger)->logSyncFileAndScreen())) \
-      LOG4CXX_INFO(cl::getTraceLogger(logger)->syncFileAndScreenLogger(), args)\
-    if (cl::getTraceLogger(logger)->logOnlyFile()) \
-      LOG4CXX_INFO(cl::getTraceLogger(logger)->fileLogger(), args)\
+    if (cl::getTraceLogger(logger)->logSyncFileAndScreen())\
+    {\
+      LOG4CXX_INFO(cl::getTraceLogger(logger)->syncFileAndScreenLogger(), args);\
+    }\
+    if (cl::getTraceLogger(logger)->logOnlyFile())\
+    {\
+      LOG4CXX_INFO(cl::getTraceLogger(logger)->fileLogger(), args);\
+    }\
   }\
-} while (false)
+} while (false);
 
 #define CNR_DEBUG(logger, args)\
 do\
@@ -200,13 +204,13 @@ do\
   if(cl::getTraceLogger(logger) && cl::getTraceLogger(logger)->logDebug())\
   {\
     if (cl::getTraceLogger(logger)->logSyncFileAndScreen())\
-      LOG4CXX_DEBUG(cl::getTraceLogger(logger)->syncFileAndScreenLogger(), args)\
+      LOG4CXX_DEBUG(cl::getTraceLogger(logger)->syncFileAndScreenLogger(), args);\
     if (cl::getTraceLogger(logger)->logOnlyFile())\
-      LOG4CXX_DEBUG(cl::getTraceLogger(logger)->fileLogger(), args)\
+      LOG4CXX_DEBUG(cl::getTraceLogger(logger)->fileLogger(), args);\
     if (cl::getTraceLogger(logger)->logOnlyScreen())\
-      LOG4CXX_DEBUG(cl::getTraceLogger(logger)->consoleLogger(), args)\
+      LOG4CXX_DEBUG(cl::getTraceLogger(logger)->consoleLogger(), args);\
   }\
-} while (false)
+} while (false);
 
 #define CNR_TRACE(logger, args)\
 do\
@@ -214,13 +218,13 @@ do\
   if(cl::getTraceLogger(logger) && cl::getTraceLogger(logger)->logTrace())\
   {\
     if (cl::getTraceLogger(logger)->logSyncFileAndScreen())\
-      LOG4CXX_TRACE(cl::getTraceLogger(logger)->syncFileAndScreenLogger(), args)\
+      LOG4CXX_TRACE(cl::getTraceLogger(logger)->syncFileAndScreenLogger(), args);\
     if (cl::getTraceLogger(logger)->logOnlyFile())\
-      LOG4CXX_TRACE(cl::getTraceLogger(logger)->fileLogger(), args)\
+      LOG4CXX_TRACE(cl::getTraceLogger(logger)->fileLogger(), args);\
     if (cl::getTraceLogger(logger)->logOnlyScreen())\
-      LOG4CXX_TRACE(cl::getTraceLogger(logger)->consoleLogger(), args)\
+      LOG4CXX_TRACE(cl::getTraceLogger(logger)->consoleLogger(), args);\
   }\
-} while (false)
+} while (false);
 // =================
 
 
@@ -235,7 +239,7 @@ do\
       __log_throttle_last_hit__ = __log_throttle_now__; \
       CNR_FATAL(logger, args); \
     } \
-  } while (false)
+  } while (false);
 
 #define CNR_ERROR_THROTTLE(logger, period, args)\
   do \
@@ -247,7 +251,7 @@ do\
       __log_throttle_last_hit__ = __log_throttle_now__; \
       CNR_ERROR(logger, args); \
     } \
-  } while (false)
+  } while (false);
 
 #define CNR_WARN_THROTTLE(logger, period, args)\
   do \
@@ -259,7 +263,7 @@ do\
       __log_throttle_last_hit__ = __log_throttle_now__; \
       CNR_WARN(logger, args); \
     } \
-  } while (false)
+  } while (false);
 
 #define CNR_INFO_THROTTLE(logger, period, args)\
   do \
@@ -271,7 +275,7 @@ do\
       __log_throttle_last_hit__ = __log_throttle_now__; \
       CNR_INFO(logger, args); \
     } \
-  } while (false)
+  } while (false);
 
 #define CNR_DEBUG_THROTTLE(logger, period, args)\
   do \
@@ -283,7 +287,7 @@ do\
       __log_throttle_last_hit__ = __log_throttle_now__; \
       CNR_DEBUG(logger, args); \
     } \
-  } while (false)
+  } while (false);
 
 
 #define CNR_TRACE_THROTTLE(logger, period, args)\
@@ -296,7 +300,7 @@ do\
       __log_throttle_last_hit__ = __log_throttle_now__; \
       CNR_TRACE(logger, args); \
     } \
-  } while (false)
+  } while (false);
 // =================
 
 
@@ -305,37 +309,37 @@ do\
   do\
   {\
     if (cond) { CNR_FATAL(logger, args); }\
-  } while (false)
+  } while (false);
 
 #define CNR_ERROR_COND(logger, cond, args)\
   do\
   {\
     if (cond) { CNR_ERROR(logger, args); }\
-  } while (false)
+  } while (false);
 
 #define CNR_WARN_COND(logger, cond, args)\
   do\
   {\
     if (cond) { CNR_WARN(logger, args); }\
-} while (false)
+} while (false);
 
 #define CNR_INFO_COND(logger, cond, args)\
   do\
   {\
     if (cond) { CNR_INFO(logger, args); }\
-  } while (false)
+  } while (false);
 
 #define CNR_DEBUG_COND(logger, cond, args)\
   do\
   {\
     if (cond) { CNR_DEBUG(logger, args); }\
-  } while (false)
+  } while (false);
 
 #define CNR_TRACE_COND(logger, cond, args)\
   do\
   {\
     if (cond) { CNR_TRACE(logger, args); }\
-  } while (false)
+  } while (false);
 
 
 // ================= COND THROTTLE
@@ -343,37 +347,37 @@ do\
 do\
 {\
   if (cond) { CNR_FATAL_THROTTLE(logger, period, args); }\
-} while (false)
+} while (false);
 
 #define CNR_ERROR_COND_THROTTLE(logger, cond, period, args)\
 do\
 {\
   if (cond) { CNR_ERROR_THROTTLE(logger, period, args); }\
-} while (false)
+} while (false);
 
 #define CNR_WARN_COND_THROTTLE(logger, cond, period, args)\
 do\
 {\
   if (cond) { CNR_WARN_THROTTLE(logger, period, args); }\
-} while (false)
+} while (false);
 
 #define CNR_INFO_COND_THROTTLE(logger, cond, period, args)\
 do\
 {\
   if (cond) { CNR_INFO_THROTTLE(logger, period, args); }\
-} while (false)
+} while (false);
 
 #define CNR_DEBUG_COND_THROTTLE(logger, cond, period, args)\
 do\
 {\
   if (cond) { CNR_DEBUG_THROTTLE(logger, period, args); }\
-} while (false)
+} while (false);
 
 #define CNR_TRACE_COND_THROTTLE(logger, cond, period, args)\
 do\
 {\
   if (cond) { CNR_TRACE_THROTTLE(logger, period, args); }\
-} while (false)
+} while (false);
 
 
 // =============================== RETURN UTILS

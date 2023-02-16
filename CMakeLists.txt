@@ -1,10 +1,32 @@
 cmake_minimum_required(VERSION 2.8.3)
 
+project(cnr_logger)
+
 if(${CMAKE_VERSION} VERSION_GREATER  "3.0.0")
   cmake_policy(SET CMP0048 NEW)
-  project(cnr_logger VERSION 1.0.0)
-else()
-  project(cnr_logger)
+  set(cnr_logger_MAJOR_VERSION 0)
+  set(cnr_logger_MINOR_VERSION 1)
+  set(cnr_logger_PATCH_VERSION 0)
+  set(cnr_logger_VERSION
+    ${cnr_logger_MAJOR_VERSION}.${cnr_logger_MINOR_VERSION}.${cnr_logger_PATCH_VERSION})
+endif()
+
+set(LOCAL_CXX_STANDARD 14)
+if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  
+  add_compile_options(-Wall -Wextra -Wpedantic -D_TIME_BITS=64 -D_FILE_OFFSET_BITS=64)
+
+  if(CMAKE_CXX_COMPILER_ID MATCHES "Clang" AND CMAKE_CXX_COMPILER_VERSION GREATER 12)
+    set(LOCAL_CXX_STANDARD 17)
+  elseif(CMAKE_COMPILER_IS_GNUCXX AND CMAKE_CXX_COMPILER_VERSION GREATER 10)
+    set(LOCAL_CXX_STANDARD 17)
+  endif()
+
+endif()
+
+if(NOT CMAKE_CXX_STANDARD)
+  MESSAGE(STATUS "CMAKE CXX STANDARD: ${LOCAL_CXX_STANDARD}")
+  set(CMAKE_CXX_STANDARD ${LOCAL_CXX_STANDARD})
 endif()
 
 ###################
@@ -23,13 +45,25 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/cnrConfigMacros.cmake)
 
 cnr_set_flags()
 
-
 #################
 ## DEPENDECIES ##
 #################
 
 ## common
 find_package(Boost REQUIRED COMPONENTS date_time filesystem)
+
+## common
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(Log4cxx REQUIRED liblog4cxx)
+
+string(REPLACE "." ";" VERSION_LIST ${Log4cxx_VERSION})
+list(GET VERSION_LIST 0 Log4cxx_MAJOR_VERSION)
+list(GET VERSION_LIST 1 Log4cxx_MINOR_VERSION)
+list(GET VERSION_LIST 2 Log4cxx_PATCH_VERSION)
+
+add_definitions(-DLog4cxx_MAJOR_VERSION=${Log4cxx_MAJOR_VERSION})
+add_definitions(-DLog4cxx_MINOR_VERSION=${Log4cxx_MINOR_VERSION})
+add_definitions(-DLog4cxx_PATCH_VERSION=${Log4cxx_PATCH_VERSION})
 
 if(USE_ROS)
 
@@ -47,7 +81,6 @@ if(USE_ROS)
       APPEND_COVERAGE_COMPILER_FLAGS()
     endif(ENABLE_COVERAGE_TESTING AND NOT WIN32)
   endif(ENABLE_TESTING)
-
 
   set(CNR_LOGGER_TARGET_LINK_LIBRARIES  ${catkin_LIBRARIES} )
   set(CNR_LOGGER_TARGET_INCLUDE_DIRS    ${catkin_INCLUDE_DIRS} )
@@ -71,10 +104,7 @@ else(USE_ROS)
   find_package(PkgConfig REQUIRED)
   pkg_check_modules(YAML_CPP REQUIRED yaml-cpp)
 
-  ### Log4cxx
-  find_package(Log4cxx)
-
-  ### Log4cxx Threads
+  ### Threads
   find_package(Threads REQUIRED)
 
   if(ENABLE_TESTING)
@@ -91,7 +121,7 @@ else(USE_ROS)
   #add_compile_definitions(ROS_NOT_AVAILABLE)
   add_definitions(-DROS_NOT_AVAILABLE)
 
-  set(CNR_LOGGER_TARGET_LINK_LIBRARIES  ${YAML_CPP_LIBRARIES} ${Log4cxx_LIBRARY} ${Boost_LIBRARIES})
+  set(CNR_LOGGER_TARGET_LINK_LIBRARIES  ${YAML_CPP_LIBRARIES} ${Log4cxx_LIBRARIES} ${Boost_LIBRARIES})
   set(CNR_LOGGER_TARGET_INCLUDE_DIRS    ${YAML_CPP_INCLUDE_DIRS})
 
   set(CNR_LOGGER_INSTALL_INCLUDE_DIR    "${CMAKE_INSTALL_PREFIX}/include")
@@ -160,6 +190,7 @@ if(ENABLE_TESTING)
     if(${CMAKE_VERSION} VERSION_GREATER  "3.16.0")
       target_link_libraries(${PROJECT_NAME}_test ${PROJECT_NAME} ${CNR_LOGGER_TARGET_LINK_LIBRARIES} gtest Threads::Threads)
     else()
+    target_link_libraries(${PROJECT_NAME}_test ${PROJECT_NAME} ${CNR_LOGGER_TARGET_LINK_LIBRARIES} gtest)
       if(THREADS_HAVE_PTHREAD_ARG)
         target_compile_options(${PROJECT_NAME}_test PUBLIC "-pthread")
       endif()
@@ -207,12 +238,10 @@ if( ENABLE_TESTING AND ENABLE_COVERAGE_TESTING AND NOT WIN32 )
   endif()
 endif()
 
-
-
 #############
 ## Install ##
 #############
- install(DIRECTORY include/${PROJECT_NAME}/
+ install(DIRECTORY include/${PROJECT_NAME}
    DESTINATION ${CNR_LOGGER_INSTALL_INCLUDE_DIR}
    FILES_MATCHING PATTERN "*.h"
    PATTERN ".git" EXCLUDE
@@ -224,8 +253,8 @@ install(TARGETS ${PROJECT_NAME}
   RUNTIME DESTINATION ${CNR_LOGGER_INSTALL_BIN_DIR}
 )
 
-
-
-install(DIRECTORY launch/
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch
-  PATTERN ".svn" EXCLUDE)
+if(USE_ROS)
+  install(DIRECTORY launch/
+    DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch
+    PATTERN ".svn" EXCLUDE)
+endif()
