@@ -107,7 +107,7 @@ jobs:
             -S .
             -B build
             -D CMAKE_BUILD_TYPE=${{ matrix.config.build_type }}
-            -D USE_ROS=OFF
+            -D USE_ROS1=OFF
             -D ENABLE_TESTING=ON
             -D ENABLE_COVERAGE_TESTING=ON
             -D COMPILE_EXAMPLE=OFF
