@@ -126,8 +126,8 @@ endif(USE_ROS1)
 ##########################
 add_library           (${PROJECT_NAME} SHARED src/${PROJECT_NAME}/cnr_logger.cpp )
 target_link_libraries (${PROJECT_NAME} ${CNR_LOGGER_TARGET_LINK_LIBRARIES})
-target_include_directories (include ${CNR_LOGGER_TARGET_INCLUDE_DIRS} )
-#cnr_target_compile_options(${PROJECT_NAME})
+target_include_directories(${PROJECT_NAME} PUBLIC include ${CNR_LOGGER_TARGET_INCLUDE_DIRS} )
+cnr_target_compile_options(${PROJECT_NAME})
 
 if(${CMAKE_VERSION} VERSION_GREATER  "3.16.0")
   target_precompile_headers(${PROJECT_NAME} PUBLIC
