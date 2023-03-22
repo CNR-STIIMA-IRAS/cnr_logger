@@ -35,7 +35,7 @@
 
 #include <cstdio>
 #include <iostream>
-#if !defined (ROS_NOT_AVAILABLE)
+#if !defined (ROS1_NOT_AVAILABLE)
   #include <ros/ros.h>
 #endif
 
@@ -148,7 +148,7 @@ void printStatistics()
 std::string full_path(const std::string& what)
 {
   std::string ret;
-#if defined(ROS_NOT_AVAILABLE)
+#if defined(ROS1_NOT_AVAILABLE)
   ret = path_to_src + "/" + what + ".yaml";
 #else
   ret = "/" + what ;
@@ -231,7 +231,7 @@ void printTest(std::shared_ptr<cnr_logger::TraceLogger> l)
     CNR_FATAL_COND_THROTTLE(*l, true, 1.0, "THROTTLE Log fatal");
     CNR_TRACE_COND_THROTTLE(*l, false, 1.0, "THROTTLE Log trace");
 
-#if defined(ROS_NOT_AVAILABLE)
+#if defined(ROS1_NOT_AVAILABLE)
     sleep(0.1);
 #else
     ros::Duration(0.1).sleep();
@@ -765,7 +765,7 @@ int main(int argc, char **argv)
 {
 
   testing::InitGoogleTest(&argc, argv);
-#if !defined (ROS_NOT_AVAILABLE)
+#if !defined (ROS1_NOT_AVAILABLE)
   ros::init(argc, argv, "cnr_logger_tester");
   ros::NodeHandle nh;
 #else

@@ -1,48 +1,41 @@
+#############################
+## PRELIMINARIES           ##
+#############################
 cmake_minimum_required(VERSION 2.8.3)
-
-project(cnr_logger)
-
-if(${CMAKE_VERSION} VERSION_GREATER  "3.0.0")
-  cmake_policy(SET CMP0048 NEW)
-  set(PROJECT_MAJOR_VERSION 0)
-  set(PROJECT_MINOR_VERSION 1)
-  set(PROJECT_PATCH_VERSION 0)
-  set(PROJECT_VERSION ${PROJECT_MAJOR_VERSION}.${PROJECT_MINOR_VERSION}.${PROJECT_PATCH_VERSION})
-endif()
-
-set(LOCAL_CXX_STANDARD 14)
-if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-  
-  add_compile_options(-Wall -Wextra -Wpedantic -D_TIME_BITS=64 -D_FILE_OFFSET_BITS=64)
-
-  if(CMAKE_CXX_COMPILER_ID MATCHES "Clang" AND CMAKE_CXX_COMPILER_VERSION GREATER 12)
-    set(LOCAL_CXX_STANDARD 17)
-  elseif(CMAKE_COMPILER_IS_GNUCXX AND CMAKE_CXX_COMPILER_VERSION GREATER 10)
-    set(LOCAL_CXX_STANDARD 17)
-  endif()
-
-endif()
-
-if(NOT CMAKE_CXX_STANDARD)
-  MESSAGE(STATUS "CMAKE CXX STANDARD: ${LOCAL_CXX_STANDARD}")
-  set(CMAKE_CXX_STANDARD ${LOCAL_CXX_STANDARD})
-endif()
-
-###################
-## OPTIONS       ##
-###################
-option(USE_ROS "ROS SUPPORT" ON)
-option(ENABLE_TESTING "ENABLE TESTING" OFF)
-option(ENABLE_COVERAGE_TESTING "ENABLE COVERAGE TESTING" OFF)
-option(COMPILE_EXAMPLE "COMPILE THE EXAMPLE" OFF)
-
-if(USE_ROS)
-  set(ENABLE_TESTING ${CATKIN_ENABLE_TESTING})
-endif()
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/cnrConfigMacros.cmake)
 
+get_project_name("package.xml" extracted_name extracted_version)
+
+if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}"LESS 3.0)
+  project(${extracted_name})
+else()
+  project(${extracted_name} VERSION ${extracted_version} LANGUAGES CXX)
+endif()
+
 cnr_set_flags()
+#############################
+## END - PRELIMINARIES     ##
+#############################
+
+
+#############################
+## OPTIONS                 ##
+#############################
+option(USE_ROS1                 "ROS SUPPORT" ON)
+option(ENABLE_TESTING           "ENABLE TESTING" OFF)
+option(ENABLE_COVERAGE_TESTING  "ENABLE COVERAGE TESTING" OFF)
+option(COMPILE_EXAMPLE          "COMPILE THE EXAMPLE" OFF)
+
+if(USE_ROS1)
+  set(ENABLE_TESTING ${CATKIN_ENABLE_TESTING})
+endif()
+#############################
+## END - OPTIONS           ##
+#############################
+
+
+
 
 #################
 ## DEPENDECIES ##
@@ -64,7 +57,7 @@ add_definitions(-DLog4cxx_MAJOR_VERSION=${Log4cxx_MAJOR_VERSION})
 add_definitions(-DLog4cxx_MINOR_VERSION=${Log4cxx_MINOR_VERSION})
 add_definitions(-DLog4cxx_PATCH_VERSION=${Log4cxx_PATCH_VERSION})
 
-if(USE_ROS)
+if(USE_ROS1)
 
   MESSAGE(STATUS "ROS SUPPORT ENABLED")
 
@@ -93,7 +86,7 @@ if(USE_ROS)
   "--filter=-whitespace/braces,--filter=-runtime/references,-runtime/int,--max-line-length=180")
   roslint_cpp( src/${PROJECT_NAME}/cnr_logger.cpp )
 
-else(USE_ROS)
+else(USE_ROS1)
 
   MESSAGE(STATUS "ROS SUPPORT DISABLED")
 
@@ -117,8 +110,7 @@ else(USE_ROS)
     endif(ENABLE_COVERAGE_TESTING AND NOT WIN32)
   endif(ENABLE_TESTING)
 
-  #add_compile_definitions(ROS_NOT_AVAILABLE)
-  add_definitions(-DROS_NOT_AVAILABLE)
+  add_definitions(-DROS1_NOT_AVAILABLE)
 
   set(CNR_LOGGER_TARGET_LINK_LIBRARIES  ${YAML_CPP_LIBRARIES} ${Log4cxx_LIBRARIES} ${Boost_LIBRARIES})
   set(CNR_LOGGER_TARGET_INCLUDE_DIRS    ${YAML_CPP_INCLUDE_DIRS})
@@ -127,7 +119,7 @@ else(USE_ROS)
   set(CNR_LOGGER_INSTALL_LIB_DIR        "${CMAKE_INSTALL_PREFIX}/lib")
   set(CNR_LOGGER_INSTALL_BIN_DIR        "${CMAKE_INSTALL_PREFIX}/bin")
   set(CNR_LOGGER_INSTALL_SHARE_DIR      "${CMAKE_INSTALL_PREFIX}/share")
-endif(USE_ROS)
+endif(USE_ROS1)
 
 ##########################
 ## TARGETS              ##
@@ -168,7 +160,7 @@ endif()
 ## Testing              ##
 ##########################
 if(ENABLE_TESTING)
-  if(USE_ROS)
+  if(USE_ROS1)
 
     # Test using ROS TIME
     add_rostest_gtest(${PROJECT_NAME}_test test/test.launch test/test_cnr_logger.cpp)
@@ -202,7 +194,7 @@ if(ENABLE_TESTING)
 
     gtest_add_tests(${PROJECT_NAME}_test "${CMAKE_SOURCE_DIR}/test/config/" AUTO)
 
-  endif(USE_ROS)
+  endif(USE_ROS1)
 
   install(TARGETS ${PROJECT_NAME}_test
     ARCHIVE DESTINATION ${CNR_LOGGER_INSTALL_SHARE_DIR}
@@ -224,7 +216,7 @@ endif(ENABLE_TESTING)
 ## Coverage Testing     ##
 ##########################
 if( ENABLE_TESTING AND ENABLE_COVERAGE_TESTING AND NOT WIN32 )
-  if(USE_ROS)
+  if(USE_ROS1)
     message(STATUS "The coverage testing is enabled")
     set(COVERAGE_EXCLUDES "*/${PROJECT_NAME}/test*")
     add_code_coverage(
@@ -252,7 +244,7 @@ install(TARGETS ${PROJECT_NAME}
   RUNTIME DESTINATION ${CNR_LOGGER_INSTALL_BIN_DIR}
 )
 
-if(USE_ROS)
+if(USE_ROS1)
   install(DIRECTORY launch/
     DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch
     PATTERN ".svn" EXCLUDE)

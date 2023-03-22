@@ -34,7 +34,7 @@
  */
 
 #include <iostream>
-#if defined(ROS_NOT_AVAILABLE)
+#if defined(ROS1_NOT_AVAILABLE)
   #include <unistd.h>
 #else
   #include <ros/ros.h>
@@ -47,7 +47,7 @@ std::shared_ptr<cnr_logger::TraceLogger> logger;
 // Run all the tests that were declared with TEST()
 int main(int argc, char **argv)
 {
-#if !defined(ROS_NOT_AVAILABLE)
+#if !defined(ROS1_NOT_AVAILABLE)
   ros::init(argc, argv, "cnr_logger_example");
   ros::NodeHandle nh;
 #endif
@@ -78,7 +78,7 @@ int main(int argc, char **argv)
     CNR_FATAL_COND_THROTTLE(*logger, true, 1.0, "Ciao-log-1-fatal");
     CNR_TRACE_COND_THROTTLE(*logger, false, 1.0, "Ciao-log-1-trace");
 
-#if defined(ROS_NOT_AVAILABLE)
+#if defined(ROS1_NOT_AVAILABLE)
   sleep(0.1);
 #else
   ros::Duration(0.1).sleep();

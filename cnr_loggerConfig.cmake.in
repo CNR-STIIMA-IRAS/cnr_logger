@@ -1,0 +1,16 @@
+# - Config file for the cnr_logger package
+# It defines the following variables
+#  cnr_logger_INCLUDE_DIRS - include directories for FooBar
+#  cnr_logger_LIBRARIES    - libraries to link against
+#  cnr_logger_EXECUTABLE   - the bar executable
+
+set(cnr_logger_INCLUDE_DIRS "@CONF_INCLUDE_DIRS@")
+
+# Our library dependencies (contains definitions for IMPORTED targets)
+include("${cnr_logger_DIR}/export_cnr_logger.cmake")
+
+# These are IMPORTED targets created by cnr_loggerTargets.cmake
+set(cnr_logger_LIBRARIES cnr_logger_utilities)
+
+set(cnr_logger_EXECUTABLE cnr_logger_server)
+

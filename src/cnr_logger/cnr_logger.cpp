@@ -50,7 +50,7 @@
 //
 #include <cnr_logger/cnr_logger.h>
 
-#if defined(ROS_NOT_AVAILABLE)
+#if defined(ROS1_NOT_AVAILABLE)
   #include <yaml-cpp/yaml.h>
 #else
   #include <ros/common.h>
@@ -233,7 +233,7 @@ void ColorPatternLayout::format(LogString &output, const spi::LoggingEventPtr &e
     output.append(_color);
 }
 
-#if defined(ROS_NOT_AVAILABLE)
+#if defined(ROS1_NOT_AVAILABLE)
   using resource_t = YAML::Node;
 #else
   using resource_t = std::string;
@@ -249,14 +249,14 @@ namespace cnr_logger
  * @brief Utility to print nicely the time.
  * @param now Time to translate in string.
  */
-#if defined(ROS_NOT_AVAILABLE) || !defined(FORCE_ROS_TIME_USE)
+#if defined(ROS1_NOT_AVAILABLE) || !defined(FORCE_ROS_TIME_USE)
 std::string to_string(const time_t& now)
 #else
 std::string to_string(const ros::Time& now)
 #endif
 {
   std::string ret;
-#if defined(ROS_NOT_AVAILABLE) || !defined(FORCE_ROS_TIME_USE)
+#if defined(ROS1_NOT_AVAILABLE) || !defined(FORCE_ROS_TIME_USE)
   ret = time_stamp(now);
 #else
 
@@ -283,7 +283,7 @@ bool extract(T& val,
                     const T& default_val)
 {
   bool ret = false;
-#if defined(ROS_NOT_AVAILABLE)
+#if defined(ROS1_NOT_AVAILABLE)
   ret = (res != nullptr) ? bool( (*res)[leaf] ): false;
 #else
   ret = (res != nullptr) ? ros::param::get(*res + "/" + leaf, val) : false;
@@ -292,7 +292,7 @@ bool extract(T& val,
   {
     val = default_val;
   }
-#if defined(ROS_NOT_AVAILABLE)
+#if defined(ROS1_NOT_AVAILABLE)
   else
   {
     val = (*res)[leaf].as<T>();
@@ -307,7 +307,7 @@ bool extractVector(std::vector<std::string>& val,
                           const std::vector<std::string>& default_val)
 {
   bool ret = false;
-#if defined(ROS_NOT_AVAILABLE)
+#if defined(ROS1_NOT_AVAILABLE)
   ret = (res != nullptr) ? bool( (*res)[leaf] ) : false;
 #else
   ret = (res != nullptr) ? ros::param::get(*res + "/" + leaf, val) : false;
@@ -317,7 +317,7 @@ bool extractVector(std::vector<std::string>& val,
     val.resize(default_val.size());
     std::copy(default_val.begin(), default_val.end(), val.begin());
   }
-#if defined(ROS_NOT_AVAILABLE)
+#if defined(ROS1_NOT_AVAILABLE)
   else if(ret)
   {
     for(YAML::const_iterator it=(*res)[leaf].begin();it!=(*res)[leaf].end();++it)
@@ -516,7 +516,7 @@ bool getFileName(const std::string& ns,
   }
 
   
-  #if defined(ROS_NOT_AVAILABLE) || !defined(FORCE_ROS_TIME_USE)
+  #if defined(ROS1_NOT_AVAILABLE) || !defined(FORCE_ROS_TIME_USE)
     auto now = std::time(nullptr); 
   #else
       auto now = ros::Time::now();
@@ -551,7 +551,7 @@ std::string getLoggerStartString(const std::string& logger_id,
     loggers_str += level2string(l.second) + "|";
   }
 
-  #if defined(ROS_NOT_AVAILABLE) || !defined(FORCE_ROS_TIME_USE)
+  #if defined(ROS1_NOT_AVAILABLE) || !defined(FORCE_ROS_TIME_USE)
     auto now = std::time(nullptr); 
   #else
       auto now = ros::Time::now();
@@ -669,7 +669,7 @@ TraceLogger::TraceLogger(const std::string& logger_id, const std::string& path,
 bool TraceLogger::check(const std::string& path) const
 {
   bool res = true;
-#if defined(ROS_NOT_AVAILABLE)
+#if defined(ROS1_NOT_AVAILABLE)
   if(!exists_test(path))
   {
     res = false;
@@ -788,7 +788,7 @@ bool TraceLogger::init(const std::string& logger_id, const std::string& path,
   std::vector<std::string> warnings;
 
   
-#if defined(ROS_NOT_AVAILABLE)
+#if defined(ROS1_NOT_AVAILABLE)
   YAML::Node* resource = nullptr;
   if(exists_test(path))
   {
