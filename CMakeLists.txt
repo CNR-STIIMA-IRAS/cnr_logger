@@ -196,23 +196,69 @@ if( ENABLE_TESTING AND ENABLE_COVERAGE_TESTING AND NOT WIN32 )
   endif()
 endif()
 
-#############
-## Install ##
-#############
- install(DIRECTORY include/${PROJECT_NAME}
-   DESTINATION ${CNR_LOGGER_INSTALL_INCLUDE_DIR}
-   FILES_MATCHING PATTERN "*.h"
-   PATTERN ".git" EXCLUDE
- )
 
-install(TARGETS ${PROJECT_NAME}
-  ARCHIVE DESTINATION ${CNR_LOGGER_INSTALL_LIB_DIR}
-  LIBRARY DESTINATION ${CNR_LOGGER_INSTALL_LIB_DIR}
-  RUNTIME DESTINATION ${CNR_LOGGER_INSTALL_BIN_DIR}
-)
 
+#############################
+## INSTALL                 ##
+#############################
 if(USE_ROS1)
+  install(TARGETS ${PROJECT_NAME}
+    ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+    LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+    RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+  )
+
+  install(DIRECTORY include/${PROJECT_NAME}/
+    DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+    FILES_MATCHING  PATTERN "*.h"
+                    PATTERN "*.hpp"
+                    PATTERN ".svn" EXCLUDE
+  )
+  
   install(DIRECTORY launch/
     DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch
     PATTERN ".svn" EXCLUDE)
+
+else()
+
+  install(
+    DIRECTORY include/
+    DESTINATION include
+  )
+
+  install(
+    TARGETS cnr_logger
+    EXPORT export_cnr_logger
+    ARCHIVE DESTINATION lib
+    LIBRARY DESTINATION lib
+    RUNTIME DESTINATION bin
+  )
+
+  # export targets
+  set(export_targets ${export_targets};cnr_logger )
+  export(EXPORT export_cnr_logger
+    FILE "${PROJECT_BINARY_DIR}/export_cnr_logger.cmake")
+
+  # Create the cnr_loggerConfig.cmake
+  set(CONF_INCLUDE_DIRS "${CMAKE_INSTALL_PREFIX}/include")
+  configure_file(cnr_loggerConfig.cmake.in
+    "${PROJECT_BINARY_DIR}/${CMAKE_FILES_DIRECTORY}/cnr_loggerConfig.cmake" @ONLY)
+
+  # Create the cnr_loggerConfigVersion.cmake
+  configure_file(cnr_loggerConfigVersion.cmake.in
+    "${PROJECT_BINARY_DIR}/cnr_loggerConfigVersion.cmake" @ONLY)
+
+  install(FILES
+    "${PROJECT_BINARY_DIR}/${CMAKE_FILES_DIRECTORY}/cnr_loggerConfig.cmake"
+    "${PROJECT_BINARY_DIR}/cnr_loggerConfigVersion.cmake"
+    
+    DESTINATION "share/cnr_logger/cmake" COMPONENT dev)
+  install(EXPORT export_cnr_logger
+    DESTINATION "share/cnr_logger/cmake"
+    FILE export_cnr_logger.cmake
+    COMPONENT dev)
+
 endif()
+#############################
+## END INSTALL             ##
+#############################
