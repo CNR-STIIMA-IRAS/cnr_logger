@@ -7,7 +7,7 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/cnrConfigMacros.cmake)
 
 get_project_name("package.xml" extracted_name extracted_version)
 
-if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}"LESS 3.0)
+if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" LESS 3.0.2)
   project(${extracted_name})
 else()
   project(${extracted_name} VERSION ${extracted_version} LANGUAGES CXX)
@@ -64,27 +64,8 @@ if(USE_ROS1)
   find_package(catkin REQUIRED COMPONENTS roscpp roslint)
   catkin_package( INCLUDE_DIRS include LIBRARIES ${PROJECT_NAME} )
 
-  ## CODE COVERAGE INTEGRATED WITH ROSTEST
-  if(ENABLE_TESTING)
-    find_package(rostest REQUIRED)
-
-    if(ENABLE_COVERAGE_TESTING AND NOT WIN32)
-      find_package(code_coverage REQUIRED)
-      APPEND_COVERAGE_COMPILER_FLAGS()
-    endif(ENABLE_COVERAGE_TESTING AND NOT WIN32)
-  endif(ENABLE_TESTING)
-
   set(CNR_LOGGER_TARGET_LINK_LIBRARIES  ${catkin_LIBRARIES} )
   set(CNR_LOGGER_TARGET_INCLUDE_DIRS    ${catkin_INCLUDE_DIRS} )
-
-  set(CNR_LOGGER_INSTALL_INCLUDE_DIR    ${CATKIN_PACKAGE_INCLUDE_DESTINATION})
-  set(CNR_LOGGER_INSTALL_LIB_DIR        ${CATKIN_PACKAGE_LIB_DESTINATION})
-  set(CNR_LOGGER_INSTALL_BIN_DIR        ${CATKIN_GLOBAL_BIN_DESTINATION})
-  set(CNR_LOGGER_INSTALL_SHARE_DIR      ${CATKIN_PACKAGE_SHARE_DESTINATION})
-
-  set(ROSLINT_CPP_OPTS
-  "--filter=-whitespace/braces,--filter=-runtime/references,-runtime/int,--max-line-length=180")
-  roslint_cpp( src/${PROJECT_NAME}/cnr_logger.cpp )
 
 else(USE_ROS1)
 
@@ -99,43 +80,39 @@ else(USE_ROS1)
   ### Threads
   find_package(Threads REQUIRED)
 
-  if(ENABLE_TESTING)
-    message(STATUS "Enable testing enable_testing")
-    enable_testing()
-    find_package(GTest REQUIRED)
-
-    if(ENABLE_COVERAGE_TESTING AND NOT WIN32)
-      set(CMAKE_CXX_FLAGS "-Wno-deprecated-register ${CMAKE_CXX_FLAGS}")
-      set(CMAKE_CXX_FLAGS_DEBUG "-Wno-deprecated-register -O0 -g -fprofile-arcs -ftest-coverage ${CMAKE_CXX_FLAGS_DEBUG}")
-    endif(ENABLE_COVERAGE_TESTING AND NOT WIN32)
-  endif(ENABLE_TESTING)
-
   add_definitions(-DROS1_NOT_AVAILABLE)
 
   set(CNR_LOGGER_TARGET_LINK_LIBRARIES  ${YAML_CPP_LIBRARIES} ${Log4cxx_LIBRARIES} ${Boost_LIBRARIES})
   set(CNR_LOGGER_TARGET_INCLUDE_DIRS    ${YAML_CPP_INCLUDE_DIRS})
 
-  set(CNR_LOGGER_INSTALL_INCLUDE_DIR    "${CMAKE_INSTALL_PREFIX}/include")
-  set(CNR_LOGGER_INSTALL_LIB_DIR        "${CMAKE_INSTALL_PREFIX}/lib")
-  set(CNR_LOGGER_INSTALL_BIN_DIR        "${CMAKE_INSTALL_PREFIX}/bin")
-  set(CNR_LOGGER_INSTALL_SHARE_DIR      "${CMAKE_INSTALL_PREFIX}/share")
 endif(USE_ROS1)
+
+cnr_install_directories(USE_ROS1 
+  CNR_LOGGER_INSTALL_INCLUDE_DIR CNR_LOGGER_INSTALL_LIB_DIR CNR_LOGGER_INSTALL_BIN_DIR CNR_LOGGER_INSTALL_SHARE_DIR)
+cnr_enable_testing(ENABLE_TESTING ENABLE_COVERAGE USE_ROS1)
 
 ##########################
 ## TARGETS              ##
 ##########################
-add_library           (${PROJECT_NAME} SHARED src/${PROJECT_NAME}/cnr_logger.cpp )
-target_link_libraries (${PROJECT_NAME} ${CNR_LOGGER_TARGET_LINK_LIBRARIES})
-target_include_directories(${PROJECT_NAME} PUBLIC 
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/ ${CNR_LOGGER_TARGET_INCLUDE_DIRS} >  
-  $<INSTALL_INTERFACE:include/ ${CNR_LOGGER_TARGET_INCLUDE_DIRS} > 
-)
+set(BUILD_INTERFACE_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/include ${CNR_LOGGER_TARGET_INCLUDE_DIRS})
+set(INSTALL_INTERFACE_INCLUDE_DIRS include ${CNR_LOGGER_TARGET_INCLUDE_DIRS})
+set(CNR_LOGGER_LIB_SRCS src/${PROJECT_NAME}/cnr_logger.cpp)
+
+add_library(${PROJECT_NAME} SHARED ${CNR_LOGGER_LIB_SRCS} )
+target_link_libraries(${PROJECT_NAME} ${CNR_LOGGER_TARGET_LINK_LIBRARIES})
+if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" LESS 3.0.2)
+  include_directories("${BUILD_INTERFACE_INCLUDE_DIRS}")
+else()
+  target_include_directories(${PROJECT_NAME} PUBLIC 
+                              "$<BUILD_INTERFACE:${BUILD_INTERFACE_INCLUDE_DIRS}>"
+                                "$<INSTALL_INTERFACE:${INSTALL_INTERFACE_INCLUDE_DIRS}>" )
+endif()
 
 cnr_target_compile_options(${PROJECT_NAME})
 
 if(COMPILE_EXAMPLE)
-  add_executable        (${PROJECT_NAME}_example src/cnr_logger_example.cpp )
-  target_link_libraries (${PROJECT_NAME}_example ${PROJECT_NAME} ${CNR_LOGGER_TARGET_LINK_LIBRARIES})
+  add_executable(${PROJECT_NAME}_example src/cnr_logger_example.cpp )
+  target_link_libraries(${PROJECT_NAME}_example ${PROJECT_NAME})
   cnr_target_compile_options(${PROJECT_NAME}_example)
 
   install(TARGETS ${PROJECT_NAME}_example

@@ -1,5 +1,6 @@
-
-
+#
+# get_project_name
+#
 macro(get_project_name filename extracted_name extracted_version)
   # Read the package manifest.
   file(READ "${CMAKE_CURRENT_SOURCE_DIR}/${filename}" package_xml_str)
@@ -25,10 +26,10 @@ macro(get_project_name filename extracted_name extracted_version)
   endif()
 
 endmacro()
-####
+
 #
+# cnr_set_flags
 #
-####
 macro(cnr_set_flags)
   if(CMAKE_CXX_FLAGS MATCHES "/W[0-4]")
     string(REGEX REPLACE "/W[0-4]" "/W3" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
@@ -79,10 +80,9 @@ macro(cnr_set_flags)
 
 endmacro()
 
-####
 #
+# cnr_target_compile_options
 #
-####
 macro(cnr_target_compile_options TARGET_NAME)
 
 if (CMAKE_CXX_COMPILER_ID MATCHES "GNU")
@@ -102,4 +102,48 @@ elseif(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
   target_compile_options(${TARGET_NAME} PRIVATE /W3)
 
   endif()
+endmacro()
+
+#
+# cnr_enable_testing
+#
+macro(cnr_enable_testing ENABLE_TESTING ENABLE_COVERAGE USE_ROS1)
+  if(${ENABLE_TESTING})
+    message(STATUS "Enable testing")
+    if(${USE_ROS1})
+      find_package(rostest REQUIRED)
+      find_package(roscpp REQUIRED)  
+    else()
+      enable_testing()
+      find_package(GTest REQUIRED)
+    endif()
+
+    if(${ENABLE_COVERAGE_TESTING} AND NOT WIN32)
+      message(STATUS "Enable Coverage")
+      if(${USE_ROS1})
+        find_package(code_coverage REQUIRED)
+        APPEND_COVERAGE_COMPILER_FLAGS()
+      else() 
+        set(CMAKE_CXX_FLAGS "-Wno-deprecated-register ${CMAKE_CXX_FLAGS}")
+        set(CMAKE_CXX_FLAGS_DEBUG "-Wno-deprecated-register -O0 -g -fprofile-arcs -ftest-coverage ${CMAKE_CXX_FLAGS_DEBUG}")
+      endif()
+    endif()
+  endif()
+endmacro()
+
+#
+# cnr_install_directories
+#
+macro(cnr_install_directories USE_ROS1 CNR_INSTALL_INCLUDE_DIR CNR_INSTALL_LIB_DIR CNR_INSTALL_BIN_DIR CNR_INSTALL_SHARE_DIR)
+if(USE_ROS1)
+  set(${CNR_INSTALL_INCLUDE_DIR}    ${CATKIN_PACKAGE_INCLUDE_DESTINATION})
+  set(${CNR_INSTALL_LIB_DIR}        ${CATKIN_PACKAGE_LIB_DESTINATION})
+  set(${CNR_INSTALL_BIN_DIR}        ${CATKIN_GLOBAL_BIN_DESTINATION})
+  set(${CNR_INSTALL_SHARE_DIR}      ${CATKIN_PACKAGE_SHARE_DESTINATION})
+else()
+  set(${CNR_INSTALL_INCLUDE_DIR}    "${CMAKE_INSTALL_PREFIX}/include")
+  set(${CNR_INSTALL_LIB_DIR}        "${CMAKE_INSTALL_PREFIX}/lib")
+  set(${CNR_INSTALL_BIN_DIR}        "${CMAKE_INSTALL_PREFIX}/bin")
+  set(${CNR_INSTALL_SHARE_DIR}      "${CMAKE_INSTALL_PREFIX}/share")
+endif()
 endmacro()
