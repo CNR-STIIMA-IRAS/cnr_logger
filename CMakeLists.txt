@@ -126,22 +126,12 @@ endif(USE_ROS1)
 ##########################
 add_library           (${PROJECT_NAME} SHARED src/${PROJECT_NAME}/cnr_logger.cpp )
 target_link_libraries (${PROJECT_NAME} ${CNR_LOGGER_TARGET_LINK_LIBRARIES})
-target_include_directories(${PROJECT_NAME} PUBLIC include ${CNR_LOGGER_TARGET_INCLUDE_DIRS} )
-cnr_target_compile_options(${PROJECT_NAME})
+target_include_directories(${PROJECT_NAME} PUBLIC 
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/ ${CNR_LOGGER_TARGET_INCLUDE_DIRS} >  
+  $<INSTALL_INTERFACE:include/ ${CNR_LOGGER_TARGET_INCLUDE_DIRS} > 
+)
 
-if(${CMAKE_VERSION} VERSION_GREATER  "3.16.0")
-  target_precompile_headers(${PROJECT_NAME} PUBLIC
-            <map>
-            <string>
-            <iostream>
-            <log4cxx/logger.h>
-            <log4cxx/basicconfigurator.h>
-            <log4cxx/propertyconfigurator.h>
-            <log4cxx/helpers/exception.h>
-            <log4cxx/rollingfileappender.h>
-            <log4cxx/consoleappender.h>
-            <log4cxx/patternlayout.h> )
-endif()
+cnr_target_compile_options(${PROJECT_NAME})
 
 if(COMPILE_EXAMPLE)
   add_executable        (${PROJECT_NAME}_example src/cnr_logger_example.cpp )
