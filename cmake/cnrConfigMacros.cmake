@@ -21,7 +21,7 @@ macro(get_project_name filename extracted_name extracted_version)
 
   if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" LESS 3.0)
     cmake_policy(SET CMP0048 OLD)
-  else()  
+  else()
     cmake_policy(SET CMP0048 NEW)
   endif()
 
@@ -46,14 +46,14 @@ macro(cnr_set_flags)
 
 
   if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" LESS 3.0)
-    
+
     set(CMAKE_CXX_FLAGS "-std=c++11")
 
   else()
-    
+
     set(LOCAL_CXX_STANDARD 14)
     if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-      
+
       add_compile_options(-Wall -Wextra -Wpedantic -D_TIME_BITS=64 -D_FILE_OFFSET_BITS=64)
 
       if(CMAKE_CXX_COMPILER_ID MATCHES "Clang" AND CMAKE_CXX_COMPILER_VERSION GREATER 12)
@@ -87,13 +87,13 @@ macro(cnr_target_compile_options TARGET_NAME)
 
 if (CMAKE_CXX_COMPILER_ID MATCHES "GNU")
 
-  target_compile_options(${TARGET_NAME} 
+  target_compile_options(${TARGET_NAME}
     PRIVATE -Wall -Wextra -Wunreachable-code -Wpedantic
     PUBLIC $<$<CONFIG:Release>:-Ofast -funroll-loops -ffast-math >)
 
 elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 
-  target_compile_options(${TARGET_NAME} 
+  target_compile_options(${TARGET_NAME}
     PRIVATE -Wweak-vtables -Wexit-time-destructors -Wglobal-constructors -Wmissing-noreturn -Wno-gnu-zero-variadic-macro-arguments
     PUBLIC $<$<CONFIG:Release>:-Ofast -funroll-loops -ffast-math >)
 
@@ -112,7 +112,7 @@ macro(cnr_enable_testing ENABLE_TESTING ENABLE_COVERAGE USE_ROS1)
     message(STATUS "Enable testing")
     if(${USE_ROS1})
       find_package(rostest REQUIRED)
-      find_package(roscpp REQUIRED)  
+      find_package(roscpp REQUIRED)
     else()
       enable_testing()
       find_package(GTest REQUIRED)
@@ -123,7 +123,7 @@ macro(cnr_enable_testing ENABLE_TESTING ENABLE_COVERAGE USE_ROS1)
       if(${USE_ROS1})
         find_package(code_coverage REQUIRED)
         APPEND_COVERAGE_COMPILER_FLAGS()
-      else() 
+      else()
         set(CMAKE_CXX_FLAGS "-Wno-deprecated-register ${CMAKE_CXX_FLAGS}")
         set(CMAKE_CXX_FLAGS_DEBUG "-Wno-deprecated-register -O0 -g -fprofile-arcs -ftest-coverage ${CMAKE_CXX_FLAGS_DEBUG}")
       endif()

@@ -235,7 +235,7 @@ else()
   )
 
   # export targets
-  set(export_targets ${export_targets};cnr_logger )
+  set(export_targets ${export_targets};cnr_logger)
   export(EXPORT export_cnr_logger
     FILE "${PROJECT_BINARY_DIR}/export_cnr_logger.cmake")
 

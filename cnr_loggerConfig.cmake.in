@@ -10,7 +10,5 @@ set(cnr_logger_INCLUDE_DIRS "@CONF_INCLUDE_DIRS@")
 include("${cnr_logger_DIR}/export_cnr_logger.cmake")
 
 # These are IMPORTED targets created by cnr_loggerTargets.cmake
-set(cnr_logger_LIBRARIES cnr_logger_utilities)
-
-set(cnr_logger_EXECUTABLE cnr_logger_server)
+set(cnr_logger_LIBRARIES cnr_logger)
 
