@@ -12,13 +12,9 @@
 
   <author email="nicola.pedrocchi@stiima.cnr.it">Nicola Pedrocchi</author>
 
-  <doc_depend>doxygen</doc_depend>
   <buildtool_depend>catkin</buildtool_depend>
-  <build_depend>roscpp</build_depend>
-
-  <build_depend>roslint</build_depend>
-  <build_depend>rostest</build_depend>
-
+  <buildtool_depend>cmake</buildtool_depend>
+  
   <exec_depend>rosconsole</exec_depend>
   
   <test_depend>curl</test_depend>
