@@ -60,7 +60,4 @@
 #include <cnr_logger/cnr_logger_static_macros.h>
 #include <cnr_logger/cnr_logger_variadic_macros.h>
 
-
-
-
 #endif  // CNR_LOGGER_CNR_LOGGER_MACROS_H

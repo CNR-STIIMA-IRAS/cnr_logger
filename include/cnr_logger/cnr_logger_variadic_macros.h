@@ -40,7 +40,8 @@
  * @brief File containing the macro definition.
  *
  * The macro have been designed to follow the basic log4cxx structure (and ROS).
- * The further macro CNR_TRACE_START and CNR_RETURN_xxx are used to trace the input and the output values of the functions
+ * The further macro CNR_TRACE_START and CNR_RETURN_xxx are used to trace the input and the output values of the
+ * functions
  */
 #ifndef CNR_LOGGER_CNR_LOGGER_VARIADIC_MACROS_H
 #define CNR_LOGGER_CNR_LOGGER_VARIADIC_MACROS_H
@@ -51,429 +52,150 @@
 #include <string>
 
 #if defined(_MSC_VER)
-  #define __PRETTY_FUNCTION__ __FUNCDNAME__
+#define __PRETTY_FUNCTION__ __FUNCDNAME__
 #endif
-
 
 #include <cnr_logger/cnr_logger.h>
 #include <cnr_logger/cnr_logger_color_macros.h>
 #include <cnr_logger/cnr_logger_static_macros.h>
-#include <cnr_logger/cnr_logger_variadic_macros_support.h>
-
 
 //! Shortcut
 namespace cl = cnr_logger;
 
-// ============================== IN/OUT Functions
-#if 0
+// ================= STANDARD
+#define CNR_FATAL(...) BOOST_PP_OVERLOAD(CNR_FATAL_, __VA_ARGS__)(__VA_ARGS__)
 
-/**
- *
- */
-#define CNR_TRACE_START(logger, ...)\
-do\
-{\
-  if((std::string(__VA_ARGS__).length() > 0))\
-    CNR_TRACE(logger, cl::YELLOW() + "[ START] " +cl::RESET() << std::string(__VA_ARGS__) );\
-  else\
-    CNR_TRACE(logger, cl::YELLOW() + "[ START] " +cl::RESET() << __FUNCTION__);\
-} while (false)
+#define CNR_ERROR(...) BOOST_PP_OVERLOAD(CNR_ERROR_, __VA_ARGS__)(__VA_ARGS__)
 
-#define CNR_TRACE_END(logger, ...)\
-do\
-{\
-  CNR_INFO_COND(logger, (std::string(__VA_ARGS__).length() > 0), std::string(__VA_ARGS__)); \
-  CNR_TRACE(logger, "[  DONE] " << __FUNCTION__);\
-} while (false)
+#define CNR_WARN(...) BOOST_PP_OVERLOAD(CNR_WARN_, __VA_ARGS__)(__VA_ARGS__)
 
+#define CNR_INFO(...) BOOST_PP_OVERLOAD(CNR_INFO_, __VA_ARGS__)(__VA_ARGS__)
 
-#define CNR_RETURN_BOOL(logger, ret, ...)\
-do\
-{\
-  std::string result = (ret ? cl::GREEN()+"[  DONE] " : cl::RED()+"[FAILED] ") + cl::RESET();\
-  if((std::string(__VA_ARGS__).length() > 0))\
-    CNR_TRACE(logger, result << std::string(__VA_ARGS__) );\
-  else\
-    CNR_TRACE(logger, result << __FUNCTION__);\
-} while (false);\
-return ret;\
+#define CNR_INFO_ONLY_FILE(...) BOOST_PP_OVERLOAD(CNR_INFO_ONLY_FILE_, __VA_ARGS__)(__VA_ARGS__)
 
-/**
- *
- */
-#define CNR_RETURN_TRUE(logger,  ...)\
-do\
-{\
-  if(std::string(__VA_ARGS__).length()>0)\
-  {\
-    CNR_RETURN_BOOL(logger, true, __VA_ARGS__);\
-  }\
-  else\
-  {\
-    CNR_RETURN_BOOL(logger, true,"");\
-  }\
-} while (false);\
+#define CNR_DEBUG(...) BOOST_PP_OVERLOAD(CNR_DEBUG_, __VA_ARGS__)(__VA_ARGS__)
 
-#define CNR_RETURN_FALSE(logger, ...)\
-do\
-{\
-  if(std::string(__VA_ARGS__).length()>0)\
-  {\
-    CNR_RETURN_BOOL(logger, false, __VA_ARGS__);\
-  }\
-  else\
-  {\
-    CNR_RETURN_BOOL(logger, false,"");\
-  }\
-} while (false);\
+#define CNR_TRACE(...) BOOST_PP_OVERLOAD(CNR_TRACE_, __VA_ARGS__)(__VA_ARGS__)
 
-#define CNR_RETURN_FATAL(logger, ...)\
-  do\
-  {\
-    CNR_FATAL_COND(logger, std::string(__VA_ARGS__).length() > 0, std::string(__VA_ARGS__));\
-    CNR_TRACE(logger, (cl::RED() + "[FAILED] " + cl::RESET())<< __FUNCTION__);\
-  } while (false);\
-  return false;\
+#define CNR_FATAL_THROTTLE(...) BOOST_PP_OVERLOAD(CNR_FATAL_THROTTLE_, __VA_ARGS__)(__VA_ARGS__)
 
+#define CNR_ERROR_THROTTLE(...) BOOST_PP_OVERLOAD(CNR_ERROR_THROTTLE_, __VA_ARGS__)(__VA_ARGS__)
 
-#define CNR_RETURN_OK(logger, var, ...)\
-do\
-{\
-  CNR_INFO_COND(logger, std::string(__VA_ARGS__).length() > 0, std::string(__VA_ARGS__));\
-  CNR_TRACE(logger, "[  DONE] " << __FUNCTION__);\
-} while (false);\
-return(var);
+#define CNR_WARN_THROTTLE(...) BOOST_PP_OVERLOAD(CNR_WARN_THROTTLE_, __VA_ARGS__)(__VA_ARGS__)
 
-#define CNR_RETURN_NOTOK(logger, var, ...)\
-do\
-{\
-  CNR_ERROR_COND(logger, std::string(__VA_ARGS__).length() > 0, std::string(__VA_ARGS__));\
-  CNR_TRACE(logger, cl::RED() + "[FAILED] " + cl::RESET() << __FUNCTION__);\
-} while (false);\
-return(var);
+#define CNR_INFO_THROTTLE(...) BOOST_PP_OVERLOAD(CNR_INFO_THROTTLE_, __VA_ARGS__)(__VA_ARGS__)
 
-#define CNR_RETURN_VOID(logger, ok, ...)\
-  if(ok)\
-  {\
-    CNR_RETURN_OK(logger,void(),__VA_ARGS__);\
-  }\
-  else\
-  {\
-    CNR_RETURN_NOTOK(logger,void(),__VA_ARGS__);\
-  }
+#define CNR_DEBUG_THROTTLE(...) BOOST_PP_OVERLOAD(CNR_DEBUG_THROTTLE_, __VA_ARGS__)(__VA_ARGS__)
 
-#define CNR_EXIT_EX(logger, ok, ...)\
-do\
-{\
-  if (ok) \
-  {\
-    CNR_ERROR_COND(logger, std::string(__VA_ARGS__).length() > 0, std::string(__VA_ARGS__)); \
-    CNR_TRACE(logger, "[  DONE] " << __FUNCTION__);\
-    return;\
-  }\
-  else\
-  {\
-    CNR_INFO_COND(logger, std::string(__VA_ARGS__).length() > 0, std::string(__VA_ARGS__));\
-    CNR_TRACE(logger, cl::RED() + "[FAILED] " + cl::RESET() << __FUNCTION__);\
-    throw std::invalid_argument(std::string(__VA_ARGS__).c_str());\
-  }\
-} while (false)
+#define CNR_TRACE_THROTTLE(...) BOOST_PP_OVERLOAD(CNR_TRACE_THROTTLE_, __VA_ARGS__)(__VA_ARGS__)
 
+#define CNR_FATAL_COND(...) BOOST_PP_OVERLOAD(CNR_FATAL_COND_, __VA_ARGS__)(__VA_ARGS__)
 
-// ============================== IN/OUT Functions THROTTLE
-#define CNR_TRACE_START_THROTTLE(logger, period, ...)\
-do\
-{\
-  CNR_INFO_COND_THROTTLE(logger, std::string(__VA_ARGS__).length() > 0, period, std::string(__VA_ARGS__)); \
-  CNR_TRACE_COND_THROTTLE(logger, period>0, period, "[ START] " << __FUNCTION__);\
-} while (false)
+#define CNR_ERROR_COND(...) BOOST_PP_OVERLOAD(CNR_ERROR_COND_, __VA_ARGS__)(__VA_ARGS__)
 
-#define CNR_RETURN_BOOL_THROTTLE(logger, ret, period, ...)\
-do\
-{\
-  if (ret) { CNR_INFO_COND_THROTTLE(logger, std::string(__VA_ARGS__).length() > 0, period, std::string(__VA_ARGS__)); }\
-  else     { CNR_ERROR_COND_THROTTLE(logger, std::string(__VA_ARGS__).length() > 0, period, std::string(__VA_ARGS__));}\
-  CNR_TRACE_COND_THROTTLE(logger, period>0, period, (ret ? "[  DONE] " : cl::RED() + "[FAILED] " + cl::RESET())\
-                                    << __FUNCTION__);\
-} while (false);\
-return ret;
+#define CNR_WARN_COND(...) BOOST_PP_OVERLOAD(CNR_WARN_COND_, __VA_ARGS__)(__VA_ARGS__)
 
-#define CNR_RETURN_TRUE_THROTTLE(logger,  period, ...)\
-    CNR_RETURN_BOOL_THROTTLE(logger, true, period, __VA_ARGS__);
+#define CNR_INFO_COND(...) BOOST_PP_OVERLOAD(CNR_INFO_COND_, __VA_ARGS__)(__VA_ARGS__)
 
-#define CNR_RETURN_FALSE_THROTTLE(logger, period, ...)\
-  CNR_RETURN_BOOL_THROTTLE(logger, false, period, __VA_ARGS__);
+#define CNR_DEBUG_COND(...) BOOST_PP_OVERLOAD(CNR_DEBUG_COND_, __VA_ARGS__)(__VA_ARGS__)
 
-#define CNR_RETURN_OK_THROTTLE(logger, var, period, ...)\
-do\
-{\
-  CNR_INFO_COND_THROTTLE(logger, std::string(__VA_ARGS__).length() > 0, period, std::string(__VA_ARGS__));\
-  CNR_TRACE_COND_THROTTLE(logger, period>0, period, "[  DONE] " << __FUNCTION__);\
-} while (false);\
-return(var);
+#define CNR_TRACE_COND(...) BOOST_PP_OVERLOAD(CNR_TRACE_COND_, __VA_ARGS__)(__VA_ARGS__)
 
-#define CNR_RETURN_NOTOK_THROTTLE(logger, var, period, ...)\
-do\
-{\
-  CNR_ERROR_COND_THROTTLE(logger, std::string(__VA_ARGS__).length() > 0, period, std::string(__VA_ARGS__));\
-  CNR_TRACE_COND_THROTTLE(logger, period>0, period, cl::RED() + "[FAILED] " + cl::RESET() << __FUNCTION__);\
-} while (false);\
-return(var);
+#define CNR_FATAL_COND_THROTTLE(...) BOOST_PP_OVERLOAD(CNR_FATAL_COND_THROTTLE_, __VA_ARGS__)(__VA_ARGS__)
 
+#define CNR_ERROR_COND_THROTTLE(...) BOOST_PP_OVERLOAD(CNR_ERROR_COND_THROTTLE_, __VA_ARGS__)(__VA_ARGS__)
 
+#define CNR_WARN_COND_THROTTLE(...) BOOST_PP_OVERLOAD(CNR_WARN_COND_THROTTLE_, __VA_ARGS__)(__VA_ARGS__)
 
+#define CNR_INFO_COND_THROTTLE(...) BOOST_PP_OVERLOAD(CNR_INFO_COND_THROTTLE_, __VA_ARGS__)(__VA_ARGS__)
 
-// ============================== IN/OUT Functions THROTTLE DEFAULT
-#define CNR_TRACE_START_THROTTLE_DEFAULT(logger, ...)\
-do\
-{\
-  double period = cl::getTraceLogger(logger) ? cl::getTraceLogger(logger)->defaultThrottleTime() : 1.0;\
-  CNR_INFO_COND_THROTTLE(logger, std::string(__VA_ARGS__).length() > 0, period, std::string(__VA_ARGS__)); \
-  CNR_TRACE_COND_THROTTLE(logger, period>0, period, "[ START] " << __FUNCTION__);\
-} while (false)
+#define CNR_DEBUG_COND_THROTTLE(...) BOOST_PP_OVERLOAD(CNR_DEBUG_COND_THROTTLE_, __VA_ARGS__)(__VA_ARGS__)
 
-#define CNR_RETURN_BOOL_THROTTLE_DEFAULT(logger, ret, ...)\
-do\
-{\
-  double period = cl::getTraceLogger(logger) ? cl::getTraceLogger(logger)->defaultThrottleTime() : 1.0;\
-  if (ret) { CNR_INFO_COND_THROTTLE(logger, std::string(__VA_ARGS__).length() > 0, period, std::string(__VA_ARGS__)); }\
-  else     { CNR_ERROR_COND_THROTTLE(logger, std::string(__VA_ARGS__).length() > 0, period, std::string(__VA_ARGS__));}\
-  CNR_TRACE_COND_THROTTLE(logger, period>0, period, (ret ? "[  DONE] " : cl::RED() + "[FAILED] " + cl::RESET())\
-                                    << __FUNCTION__);\
-} while (false);\
-return ret;
+#define CNR_TRACE_COND_THROTTLE(...) BOOST_PP_OVERLOAD(CNR_TRACE_COND_THROTTLE_, __VA_ARGS__)(__VA_ARGS__)
 
-#define CNR_RETURN_TRUE_THROTTLE_DEFAULT(logger,  ...)\
-do\
-{\
-  double period = cl::getTraceLogger(logger) ? cl::getTraceLogger(logger)->defaultThrottleTime() : 1.0;\
-  CNR_RETURN_BOOL_THROTTLE(logger, true, period, __VA_ARGS__);\
-} while(false);\
+#define CNR_RETURN_OK(...) BOOST_PP_OVERLOAD(CNR_RETURN_OK_, __VA_ARGS__)(__VA_ARGS__)
 
+#define CNR_RETURN_NOTOK(...) BOOST_PP_OVERLOAD(CNR_RETURN_NOTOK_, __VA_ARGS__)(__VA_ARGS__)
 
-#define CNR_RETURN_FALSE_THROTTLE_DEFAULT(logger, ...)\
-do\
-{\
-  double period = cl::getTraceLogger(logger) ? cl::getTraceLogger(logger)->defaultThrottleTime() : 1.0;\
-  CNR_RETURN_BOOL_THROTTLE(logger, false, period, __VA_ARGS__);\
-} while(false);\
+#define CNR_RETURN_VOID(...) BOOST_PP_OVERLOAD(CNR_RETURN_VOID_, __VA_ARGS__)(__VA_ARGS__)
 
-#define CNR_RETURN_OK_THROTTLE_DEFAULT(logger, var, ...)\
-do\
-{\
-  double period = cl::getTraceLogger(logger) ? cl::getTraceLogger(logger)->defaultThrottleTime() : 1.0;\
-  CNR_INFO_COND_THROTTLE(logger, std::string(__VA_ARGS__).length() > 0, period, std::string(__VA_ARGS__));\
-  CNR_TRACE_COND_THROTTLE(logger, period>0, period, "[  DONE] " << __FUNCTION__);\
-} while (false);\
-return(var);
+#define CNR_RETURN_OK_THROTTLE(...) BOOST_PP_OVERLOAD(CNR_RETURN_OK_THROTTLE_, __VA_ARGS__)(__VA_ARGS__)
 
-#define CNR_RETURN_NOTOK_THROTTLE_DEFAULT(logger, var, ...)\
-do\
-{\
-  double period = cl::getTraceLogger(logger) ? cl::getTraceLogger(logger)->defaultThrottleTime() : 1.0;\
-  CNR_ERROR_COND_THROTTLE(logger, std::string(__VA_ARGS__).length() > 0, period, std::string(__VA_ARGS__));\
-  CNR_TRACE_COND_THROTTLE(logger, period>0, period, cl::RED() + "[FAILED] " + cl::RESET() << __FUNCTION__);\
-} while (false);\
-return(var);
+#define CNR_RETURN_OK_THROTTLE_DEFAULT(...) BOOST_PP_OVERLOAD(CNR_RETURN_OK_THROTTLE_DEFAULT_, __VA_ARGS__)(__VA_ARGS__)
 
-#else
+#define CNR_RETURN_NOTOK_THROTTLE(...) BOOST_PP_OVERLOAD(CNR_RETURN_NOTOK_THROTTLE_, __VA_ARGS__)(__VA_ARGS__)
+
+#define CNR_RETURN_NOTOK_THROTTLE_DEFAULT(...)                                                                         \
+  BOOST_PP_OVERLOAD(CNR_RETURN_NOTOK_THROTTLE_DEFAULT_, __VA_ARGS__)(__VA_ARGS__)
 
 // ============================== IN/OUT Functions
-/**
- * @input: logger [mandatory], message [optional]
- */
-#define CNR_TRACE_START(...)\
-do\
-{\
-  cl::VariadicParser e(__VA_ARGS__);\
-  CNR_TRACE(e.logger_, \
-    cl::YELLOW() + "[ START] " + cl::RESET() << ( e.msg_.empty() ? __FUNCTION__ : e.msg_) );\
-} while (false)
+#define CNR_TRACE_START(...) BOOST_PP_OVERLOAD(CNR_TRACE_START_, __VA_ARGS__)(__VA_ARGS__)
 
 /**
  * @input: logger [mandatory], message [optional]
  */
-#define CNR_TRACE_END(...)\
-do\
-{\
-  cl::VariadicParser e(__VA_ARGS__);\
-  CNR_INFO_COND(e.logger_, !e.msg_.empty(), e.msg_); \
-  CNR_TRACE(e.logger_, "[  DONE] " << __FUNCTION__);\
-} while (false)
+#define CNR_TRACE_END(...) BOOST_PP_OVERLOAD(CNR_TRACE_END_, __VA_ARGS__)(__VA_ARGS__)
 
 /**
  * @input: logger [mandatory], True OR False [mandatory], message [optional]
  */
-#define CNR_RETURN_BOOL(...)\
-do\
-{\
-  cl::VariadicParser e(__VA_ARGS__);\
-  std::string result = (e.ok_ ? cl::GREEN()+"[  DONE] " : cl::RED()+"[FAILED] ") + cl::RESET();\
-  CNR_TRACE(e.logger_, result << (e.msg_.empty() ? __FUNCTION__ : e.msg_ ) );\
-  return(e.ok_);\
-} while (false);\
-
+#define CNR_RETURN_BOOL(...) BOOST_PP_OVERLOAD(CNR_RETURN_BOOL_, __VA_ARGS__)(__VA_ARGS__)
 
 /**
  * @input: logger [mandatory], message [optional]
  */
-#define CNR_RETURN_TRUE(...)\
-do\
-{\
-  cl::VariadicParser e(__VA_ARGS__);\
-  \
-  std::string msg = cl::GREEN()+"[  DONE] " + cl::RESET() + (e.msg_.empty() ? __FUNCTION__ : e.msg_ );\
-  CNR_TRACE(e.logger_, msg);\
-} while (false);\
-return(true);
+#define CNR_RETURN_TRUE(...) BOOST_PP_OVERLOAD(CNR_RETURN_TRUE_, __VA_ARGS__)(__VA_ARGS__)
 
 /**
  * @input: logger [mandatory], message [optional]
  */
-#define CNR_RETURN_FALSE(...)\
-do\
-{\
-  cl::VariadicParser e(__VA_ARGS__);\
-  \
-  std::string msg = cl::RED()+"[FAILED] " + cl::RESET() + (e.msg_.empty() ? __FUNCTION__ : e.msg_ );\
-  CNR_TRACE(e.logger_, msg );\
-} while (false);\
-return(false);
+#define CNR_RETURN_FALSE(...) BOOST_PP_OVERLOAD(CNR_RETURN_FALSE_, __VA_ARGS__)(__VA_ARGS__)
 
 /**
  * @input: logger [mandatory], message [optional]
  */
-#define CNR_RETURN_FATAL(...)\
-  do\
-  {\
-    cl::VariadicParser e(__VA_ARGS__);\
-    \
-    CNR_FATAL_COND(e.logger_, e.msg_.length(), e.msg_);\
-    CNR_TRACE(e.logger_, (cl::RED() + "[FAILED] " + cl::RESET())<< __FUNCTION__);\
-  } while (false);\
-  return false;\
+#define CNR_RETURN_FATAL(...) BOOST_PP_OVERLOAD(CNR_RETURN_FATAL_, __VA_ARGS__)(__VA_ARGS__)
 
 /**
- * @input: logger [mandatory], message [optional]
+ * @input: logger [mandatory], ok [mandatory] message [optional]
  */
-
-#define CNR_EXIT_EX(...)\
-do\
-{\
-  cl::VariadicParser e(__VA_ARGS__);\
-  if(e.ok_) \
-  {\
-    CNR_ERROR_COND(e.logger_, e.msg_.length() > 0, e.msg_); \
-    CNR_TRACE(e.logger_, "[  DONE] " << __FUNCTION__);\
-    return;\
-  }\
-  else\
-  {\
-    CNR_INFO_COND(e.logger_, e.msg_.length() > 0, e.msg_);\
-    CNR_TRACE(e.logger_, cl::RED() + "[FAILED] " + cl::RESET() << __FUNCTION__);\
-    throw std::invalid_argument(e.msg_.c_str());\
-  }\
-} while (false)
-
-
-// ============================== IN/OUT Functions THROTTLE
+#define CNR_EXIT_EX(...) BOOST_PP_OVERLOAD(CNR_EXIT_EX_, __VA_ARGS__)(__VA_ARGS__)
 
 /**
  * @input: logger [mandatory], time [optional], message [optional]
  */
-#define CNR_TRACE_START_THROTTLE(...)\
-do\
-{\
-  cl::VariadicParser e(__VA_ARGS__);\
-  CNR_INFO_COND_THROTTLE(e.logger_, e.msg_.length(), e.period_, e.msg_); \
-  CNR_TRACE_COND_THROTTLE(e.logger_, e.period_>0, e.period_, "[ START] " << __FUNCTION__);\
-} while (false)
+#define CNR_TRACE_START_THROTTLE(...) BOOST_PP_OVERLOAD(CNR_TRACE_START_THROTTLE_, __VA_ARGS__)(__VA_ARGS__)
+
+/**
+ * @input: logger [mandatory], time [optional], message [optional]
+ */
+#define CNR_TRACE_START_THROTTLE_DEFAULT(...)                                                                          \
+  BOOST_PP_OVERLOAD(CNR_TRACE_START_THROTTLE_DEFAULT_, __VA_ARGS__)(__VA_ARGS__)
 
 /**
  * @input: logger [mandatory], True OR False [mandatory], time [optional], message [optional]
  */
-#define CNR_RETURN_BOOL_THROTTLE(...)\
-do\
-{\
-  cl::VariadicParser e(__VA_ARGS__);\
-  if (e.ok_){ CNR_INFO_COND_THROTTLE(e.logger_, e.msg_.length(), e.period_, e.msg_); }\
-  else      { CNR_ERROR_COND_THROTTLE(e.logger_, e.msg_.length(), e.period_, e.msg_);}\
-  CNR_TRACE_COND_THROTTLE(e.logger_, e.period_>0, e.period_, \
-      (e.ok_ ? "[  DONE] " : cl::RED() + "[FAILED] " + cl::RESET()) << __FUNCTION__);\
-  return(e.ok_);\
-} while (false);\
-
+#define CNR_RETURN_BOOL_THROTTLE(...) BOOST_PP_OVERLOAD(CNR_RETURN_BOOL_THROTTLE_, __VA_ARGS__)(__VA_ARGS__)
 
 /**
  * @input: logger [mandatory], time [optional], message [optional]
  */
-#define CNR_RETURN_TRUE_THROTTLE(...)\
-do\
-{\
-  cl::VariadicParser e(__VA_ARGS__);\
-  CNR_INFO_COND_THROTTLE(e.logger_, e.msg_.length(), e.period_, e.msg_);\
-  CNR_TRACE_COND_THROTTLE(e.logger_, e.period_>0, e.period_, ("[  DONE] "+cl::RESET()) << __FUNCTION__);\
-} while (false);\
-return(true);
+#define CNR_RETURN_TRUE_THROTTLE(...) BOOST_PP_OVERLOAD(CNR_RETURN_TRUE_THROTTLE_, __VA_ARGS__)(__VA_ARGS__)
 
 /**
  * @input: logger [mandatory], time [optional], message [optional]
  */
-#define CNR_RETURN_FALSE_THROTTLE(...)\
-do\
-{\
-  cl::VariadicParser e; e.pp_get(__VA_ARGS__);\
-  CNR_ERROR_COND_THROTTLE(e.logger_, e.msg_.length(), e.period_, e.msg_);\
-  CNR_TRACE_COND_THROTTLE(e.logger_, e.period_>0, e.period_, ("[  DONE] "+cl::RESET()) << __FUNCTION__);\
-} while (false);\
-return(false);
-
-
+#define CNR_RETURN_FALSE_THROTTLE(...) BOOST_PP_OVERLOAD(CNR_RETURN_FALSE_THROTTLE_, __VA_ARGS__)(__VA_ARGS__)
 
 // ============================== IN/OUT Functions THROTTLE DEFAULT
-#define CNR_TRACE_START_THROTTLE_DEFAULT(...)\
-do\
-{\
-  cl::VariadicParser e(__VA_ARGS__);\
-  e.default_period();\
-  CNR_INFO_COND_THROTTLE(e.logger_, e.msg_.length() > 0, e.period_, e.msg_); \
-  CNR_TRACE_COND_THROTTLE(e.logger_, e.period_>0, e.period_, "[ START] " << __FUNCTION__);\
-} while (false)
+#define CNR_RETURN_FALSE_THROTTLE(...) BOOST_PP_OVERLOAD(CNR_RETURN_FALSE_THROTTLE_, __VA_ARGS__)(__VA_ARGS__)
 
-#define CNR_RETURN_BOOL_THROTTLE_DEFAULT(...)\
-do\
-{\
-  cl::VariadicParser e(__VA_ARGS__);\
-  e.default_period();\
-  if (e.ok_){ CNR_INFO_COND_THROTTLE(e.logger_, e.msg_.length() > 0, e.period_, e.msg_); }\
-  else      { CNR_ERROR_COND_THROTTLE(e.logger_, e.msg_.length() > 0, e.period_, e.msg_);}\
-  CNR_TRACE_COND_THROTTLE(e.logger_, e.period_>0, e.period_,\
-      (e.ok_ ? "[  DONE] " : cl::RED() + "[FAILED] " + cl::RESET())  << __FUNCTION__);\
-  return(e.ok_);\
-} while (false);
+#define CNR_RETURN_BOOL_THROTTLE_DEFAULT(...)                                                                          \
+  BOOST_PP_OVERLOAD(CNR_RETURN_BOOL_THROTTLE_DEFAULT_, __VA_ARGS__)(__VA_ARGS__)
 
-#define CNR_RETURN_TRUE_THROTTLE_DEFAULT(...)\
-do\
-{\
-  cl::VariadicParser e(__VA_ARGS__);\
-  e.default_period();\
-  CNR_INFO_COND_THROTTLE( e.logger_, e.msg_.length() > 0, e.period_, e.msg_);\
-  CNR_TRACE_COND_THROTTLE(e.logger_, e.period_>0, e.period_, "[  DONE] " << __FUNCTION__);\
-  return(true);\
-} while(false);\
+#define CNR_RETURN_TRUE_THROTTLE_DEFAULT(...)                                                                          \
+  BOOST_PP_OVERLOAD(CNR_RETURN_TRUE_THROTTLE_DEFAULT_, __VA_ARGS__)(__VA_ARGS__)
 
-
-#define CNR_RETURN_FALSE_THROTTLE_DEFAULT(...)\
-do\
-{\
-  cl::VariadicParser e(__VA_ARGS__);\
-  e.default_period();\
-  CNR_ERROR_COND_THROTTLE(e.logger_, e.msg_.length() > 0, e.period_, e.msg_);\
-  CNR_TRACE_COND_THROTTLE(e.logger_, e.period_>0, e.period_, "[  DONE] " << __FUNCTION__);\
-  return(false);\
-} while(false);\
-
-
-#endif
-
+#define CNR_RETURN_FALSE_THROTTLE_DEFAULT(...)                                                                         \
+  BOOST_PP_OVERLOAD(CNR_RETURN_FALSE_THROTTLE_DEFAULT_, __VA_ARGS__)(__VA_ARGS__)
 #endif  // CNR_LOGGER_CNR_LOGGER_VARIADIC_MACROS_H

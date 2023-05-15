@@ -765,7 +765,7 @@ int main(int argc, char **argv)
 {
 
   testing::InitGoogleTest(&argc, argv);
-#if !defined (ROS1_NOT_AVAILABLE)
+#if !defined(ROS1_NOT_AVAILABLE)
   ros::init(argc, argv, "cnr_logger_tester");
   ros::NodeHandle nh;
 #else
