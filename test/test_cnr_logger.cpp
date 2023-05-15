@@ -323,13 +323,13 @@ void macroTest(std::shared_ptr<cnr_logger::TraceLogger>& l)
   auto f9 = [&l](){CNR_RETURN_FATAL(l,"TEST");};
   EXPECT_FALSE( f9() );
 
-  auto f10 = [&l](){CNR_RETURN_OK(l, void(),"");};
+  auto f10 = [&l](){CNR_RETURN_OK(l, void());};
   EXPECT_NO_FATAL_FAILURE( f10() );
 
   auto f11 = [&l](){CNR_RETURN_OK(l,void(), "TEST");};
   EXPECT_NO_FATAL_FAILURE( f11() );
 
-  auto f12 = [&l](){CNR_RETURN_NOTOK(l, void(),"");};
+  auto f12 = [&l](){CNR_RETURN_NOTOK(l, void());};
   EXPECT_NO_FATAL_FAILURE( f12() );
 
   auto f13 = [&l](){CNR_RETURN_NOTOK(l,void(), "TEST");};
@@ -371,13 +371,13 @@ void macroTest(std::shared_ptr<cnr_logger::TraceLogger>& l)
   auto f25 = [&l](){CNR_RETURN_FALSE_THROTTLE(l,1.0, "TEST");};
   EXPECT_FALSE( f25() );
 
-  auto f26 = [&l](){CNR_RETURN_OK_THROTTLE(l, void(), 1.0,"");};
+  auto f26 = [&l](){CNR_RETURN_OK_THROTTLE(l, void(), 1.0);};
   EXPECT_NO_FATAL_FAILURE( f26() );
 
   auto f27 = [&l](){CNR_RETURN_OK_THROTTLE(l,void(), 1.0, "TEST");};
   EXPECT_NO_FATAL_FAILURE( f27() );
 
-  auto f28 = [&l](){CNR_RETURN_NOTOK_THROTTLE(l, void(),1.0,"");};
+  auto f28 = [&l](){CNR_RETURN_NOTOK_THROTTLE(l, void(),1.0);};
   EXPECT_NO_FATAL_FAILURE( f28() );
 
   auto f29 = [&l](){CNR_RETURN_NOTOK_THROTTLE(l,void(), 1.0, "TEST");};
@@ -407,17 +407,24 @@ void macroTest(std::shared_ptr<cnr_logger::TraceLogger>& l)
   auto f37 = [&l](){CNR_RETURN_FALSE_THROTTLE_DEFAULT(l,"TEST");};
   EXPECT_FALSE( f37() );
 
-  auto f38 = [&l](){CNR_RETURN_OK_THROTTLE_DEFAULT(l, void(),"");};
+  auto f38 = [&l](){CNR_RETURN_OK_THROTTLE_DEFAULT(l, void());};
   EXPECT_NO_FATAL_FAILURE( f38() );
 
   auto f39 = [&l](){CNR_RETURN_OK_THROTTLE_DEFAULT(l,void(), "TEST");};
   EXPECT_NO_FATAL_FAILURE( f39() );
 
-  auto f40 = [&l](){CNR_RETURN_NOTOK_THROTTLE_DEFAULT(l, void(),"");};
+  auto f40 = [&l](){CNR_RETURN_NOTOK_THROTTLE_DEFAULT(l, void());};
   EXPECT_NO_FATAL_FAILURE( f40() );
 
   auto f41 = [&l](){CNR_RETURN_NOTOK_THROTTLE_DEFAULT(l,void(),"TEST");};
   EXPECT_NO_FATAL_FAILURE( f41() );
+
+  auto f42 = [&l](){CNR_RETURN_BOOL(l, 1);};
+  EXPECT_TRUE( f42() );
+
+  auto f43 = [&l](){CNR_RETURN_BOOL(l, 0);};
+  EXPECT_FALSE( f43() );
+
 }
 
 
@@ -504,13 +511,13 @@ void timeTest(std::string id, std::shared_ptr<cnr_logger::TraceLogger>& l)
   auto f9 = [&l](){CNR_RETURN_FATAL(l,"TEST");};
   EXECUTION_TIME( id, "CNR_RETURN_FATAL",f9() );
 
-  auto f10 = [&l](){CNR_RETURN_OK(l, void(),"");};
+  auto f10 = [&l](){CNR_RETURN_OK(l, void());};
   EXECUTION_TIME( id, "CNR_RETURN_OK",f10() );
 
   auto f11 = [&l](){CNR_RETURN_OK(l,void(), "TEST");};
   EXECUTION_TIME( id, "CNR_RETURN_OK",f11() );
 
-  auto f12 = [&l](){CNR_RETURN_NOTOK(l, void(),"");};
+  auto f12 = [&l](){CNR_RETURN_NOTOK(l, void());};
   EXECUTION_TIME( id, "CNR_RETURN_NOTOK",f12() );
 
   auto f13 = [&l](){CNR_RETURN_NOTOK(l,void(), "TEST");};
@@ -552,13 +559,13 @@ void timeTest(std::string id, std::shared_ptr<cnr_logger::TraceLogger>& l)
   auto f25 = [&l](){CNR_RETURN_FALSE_THROTTLE(l,1.0, "TEST");};
   EXECUTION_TIME( id, "CNR_RETURN_TRUE_THROTTLE",f25() );
 
-  auto f26 = [&l](){CNR_RETURN_OK_THROTTLE(l, void(), 1.0,"");};
+  auto f26 = [&l](){CNR_RETURN_OK_THROTTLE(l, void(), 1.0);};
   EXECUTION_TIME( id, "CNR_RETURN_OK_THROTTLE",f26() );
 
   auto f27 = [&l](){CNR_RETURN_OK_THROTTLE(l,void(), 1.0, "TEST");};
   EXECUTION_TIME( id, "CNR_RETURN_OK_THROTTLE",f27() );
 
-  auto f28 = [&l](){CNR_RETURN_NOTOK_THROTTLE(l, void(),1.0,"");};
+  auto f28 = [&l](){CNR_RETURN_NOTOK_THROTTLE(l, void(),1.0);};
   EXECUTION_TIME( id, "CNR_RETURN_NOTOK_THROTTLE",f28() );
 
   auto f29 = [&l](){CNR_RETURN_NOTOK_THROTTLE(l,void(), 1.0, "TEST");};
@@ -588,13 +595,13 @@ void timeTest(std::string id, std::shared_ptr<cnr_logger::TraceLogger>& l)
   auto f37 = [&l](){CNR_RETURN_FALSE_THROTTLE_DEFAULT(l,"TEST");};
   EXECUTION_TIME( id, "CNR_RETURN_FALSE_THROTTLE",f37() );
 
-  auto f38 = [&l](){CNR_RETURN_OK_THROTTLE_DEFAULT(l, void(),"");};
+  auto f38 = [&l](){CNR_RETURN_OK_THROTTLE_DEFAULT(l, void());};
   EXECUTION_TIME( id, "CNR_RETURN_OK_THROTTLE",f38() );
 
   auto f39 = [&l](){CNR_RETURN_OK_THROTTLE_DEFAULT(l,void(), "TEST");};
   EXECUTION_TIME( id, "CNR_RETURN_OK_THROTTLE",f39() );
 
-  auto f40 = [&l](){CNR_RETURN_NOTOK_THROTTLE_DEFAULT(l, void(),"");};
+  auto f40 = [&l](){CNR_RETURN_NOTOK_THROTTLE_DEFAULT(l, void());};
   EXECUTION_TIME( id, "CNR_RETURN_NOTOK_THROTTLE",f40() );
 
   auto f41 = [&l](){CNR_RETURN_NOTOK_THROTTLE_DEFAULT(l,void(),"TEST");};

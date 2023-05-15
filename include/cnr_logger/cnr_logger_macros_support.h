@@ -62,17 +62,18 @@
 #define CONSOLE_THROTTLE_CHECK(now, last, period) ROSCONSOLE_THROTTLE_CHECK(now, last, period)
 
 #define TIME_NOW() ::ros::Time::now().toSec()
-#elif defined(ROS1_NOT_AVAILABLE)
+#else
+
 #include <ctime>
 #if defined(_MSC_VER)
-#define ROS_LIKELY(x) (x)
-#define ROS_UNLIKELY(x) (x)
+#define CNR_LIKELY(x) (x)
+#define CNR_UNLIKELY(x) (x)
 #else
-#define ROS_LIKELY(x) __builtin_expect((x), 1)
-#define ROS_UNLIKELY(x) __builtin_expect((x), 0)
+#define CNR_LIKELY(x) __builtin_expect((x), 1)
+#define CNR_UNLIKELY(x) __builtin_expect((x), 0)
 #endif
 
-#define CONSOLE_THROTTLE_CHECK(now, last, period) (ROS_UNLIKELY(last + period <= now) || ROS_UNLIKELY(now < last))
+#define CONSOLE_THROTTLE_CHECK(now, last, period) (CNR_UNLIKELY(last + period <= now) || CNR_UNLIKELY(now < last))
 
 #define TIME_NOW() std::time(0)
 #endif
@@ -178,7 +179,7 @@ namespace cl = cnr_logger;
   {                                                                                                                    \
     if (__period <= 0)                                                                                                 \
     {                                                                                                                  \
-      std::cerr << __PRETTY_FUNCTION__ << ": " << __LINE__ << " Error in the MACRO. Period is negative " << std::endl; \
+      std::cerr << __PRETTY_FUNCTION__ << ": " << __LINE__ << ": Error in the MACRO. Period is negative " << std::endl; \
       exit(-1);                                                                                                        \
     }                                                                                                                  \
     static double __log_throttle_last_hit__ = 0.0;                                                                     \

@@ -158,7 +158,7 @@
   return;
 
 #define CNR_RETURN_OK_THROTTLE_3(__lgr, __ret_val, __period)                                                           \
-  CNR_TRACE_THROTTLE_3(__lgr, __period, __fcn_done);                                                                   \
+  CNR_TRACE_THROTTLE_3(__lgr, __period, __fcn__done);                                                                  \
   return (__ret_val);
 
 #define CNR_RETURN_NOTOK_THROTTLE_3(__lgr, __ret_val, __period)                                                        \

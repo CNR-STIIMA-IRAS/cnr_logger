@@ -624,7 +624,7 @@ void getThrottletime(const std::string& ns,
   // Default Throttle Time
   //
   // =======================================================================================
-  if(!extract(default_throttle_time, res, "default_throttle_time", -1.0))
+  if(!extract(default_throttle_time, res, "default_throttle_time", 1.0))
   {
     warnings.emplace_back("Parameter missing '"+ns+"/default_throttle_time'");
     warnings.emplace_back("Parameter superimposed ''"+ns+"/default throttle time= '" + std::to_string(default_throttle_time) +"'");

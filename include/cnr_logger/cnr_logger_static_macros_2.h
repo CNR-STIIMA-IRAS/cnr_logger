@@ -144,7 +144,7 @@
   } while (false)
 
 #define CNR_RETURN_BOOL_2(__lgr, __ret_ok)                                                                             \
-  CNR_RETURN_BOOL_3(__lgr, __ret_ok, , cl::getTraceLogger(__lgr)->defaultMessage())
+  CNR_RETURN_BOOL_3(__lgr, __ret_ok, cl::getTraceLogger(__lgr)->defaultMessage())
 
 #define CNR_RETURN_TRUE_2(__lgr, __msg)                                                                                \
   CNR_TRACE(__lgr, __fcn__done + cl::RESET() + __msg);                                                                 \
