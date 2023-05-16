@@ -51,6 +51,8 @@
 #include <cstdint>
 #include <string>
 
+#include <boost/preprocessor.hpp>
+
 #if defined(_MSC_VER)
 #define __PRETTY_FUNCTION__ __FUNCDNAME__
 #endif
