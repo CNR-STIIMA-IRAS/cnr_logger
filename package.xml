@@ -15,8 +15,7 @@
   <buildtool_depend>catkin</buildtool_depend>
   <buildtool_depend>cmake</buildtool_depend>
   
-  <build_depend>boost_filesystem</build_depend>
-  <build_depend>boost_date_time</build_depend>
+  <build_depend>boost</build_depend>
   <exec_depend>rosconsole</exec_depend>
   
   <test_depend>curl</test_depend>
