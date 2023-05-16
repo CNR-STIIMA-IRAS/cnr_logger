@@ -16,7 +16,7 @@
   <buildtool_depend>cmake</buildtool_depend>
   
   <build_depend>boost</build_depend>
-  <exec_depend>rosconsole</exec_depend>
+  <exec_depend>roscpp</exec_depend>
   
   <test_depend>curl</test_depend>
   <test_depend>code_coverage</test_depend>

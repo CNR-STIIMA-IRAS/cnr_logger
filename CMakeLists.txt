@@ -61,7 +61,7 @@ if(USE_ROS1)
 
   MESSAGE(STATUS "ROS SUPPORT ENABLED")
 
-  find_package(catkin REQUIRED COMPONENTS roscpp roslint)
+  find_package(catkin REQUIRED COMPONENTS roscpp)
   catkin_package( INCLUDE_DIRS include LIBRARIES ${PROJECT_NAME} )
 
   set(CNR_LOGGER_TARGET_LINK_LIBRARIES  ${catkin_LIBRARIES} )
