@@ -53,13 +53,13 @@
 
 #include <cnr_logger/cnr_logger_macros_support.h>
 
-#define CNR_FATAL_2(__lgr, __msg) __log4cxx_helper(__lgr, cl::TraceLogger::Level::FATAL, __msg);
+#define CNR_FATAL_2(__lgr, __msg) __log4cxx_helper(__lgr, cl::TraceLogger::Level::FATAL, __msg)
 
-#define CNR_ERROR_2(__lgr, __msg) __log4cxx_helper(__lgr, cl::TraceLogger::Level::ERROR, __msg);
+#define CNR_ERROR_2(__lgr, __msg) __log4cxx_helper(__lgr, cl::TraceLogger::Level::ERROR, __msg)
 
-#define CNR_WARN_2(__lgr, __msg) __log4cxx_helper(__lgr, cl::TraceLogger::Level::WARN, __msg);
+#define CNR_WARN_2(__lgr, __msg) __log4cxx_helper(__lgr, cl::TraceLogger::Level::WARN, __msg)
 
-#define CNR_INFO_2(__lgr, __msg) __log4cxx_helper(__lgr, cl::TraceLogger::Level::INFO, __msg);
+#define CNR_INFO_2(__lgr, __msg) __log4cxx_helper(__lgr, cl::TraceLogger::Level::INFO, __msg)
 
 #define CNR_INFO_ONLY_FILE_2(__lgr, __msg)                                                                             \
   do                                                                                                                   \
@@ -78,9 +78,9 @@
     }                                                                                                                  \
   } while (false);
 
-#define CNR_DEBUG_2(__lgr, __msg) __log4cxx_helper(__lgr, cl::TraceLogger::Level::DEBUG, __msg);
+#define CNR_DEBUG_2(__lgr, __msg) __log4cxx_helper(__lgr, cl::TraceLogger::Level::DEBUG, __msg)
 
-#define CNR_TRACE_2(__lgr, __msg) __log4cxx_helper(__lgr, cl::TraceLogger::Level::TRACE, __msg);
+#define CNR_TRACE_2(__lgr, __msg) __log4cxx_helper(__lgr, cl::TraceLogger::Level::TRACE, __msg)
 
 #define CNR_FATAL_THROTTLE_2(__lgr, __period)                                                                          \
   CNR_FATAL_THROTTLE_3(__lgr, __period, cl::getTraceLogger(__lgr)->defaultMessage())

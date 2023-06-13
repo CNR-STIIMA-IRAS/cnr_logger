@@ -243,7 +243,29 @@ void printTest(std::shared_ptr<cnr_logger::TraceLogger> l)
 
 void macroTest(std::shared_ptr<cnr_logger::TraceLogger>& l)
 {
-  std::string ss = "ciao"; 
+  std::string str = "ciao"; 
+  if (true)
+    CNR_INFO(l,cnr_logger::RED()<<"\n\n ################# \n "<< str <<" \n################# \n\n");
+  else
+    CNR_INFO(l, cnr_logger::BLUE()<<"\n"<< str <<"\ns");
+
+  if (false)
+    CNR_INFO(l,cnr_logger::RED()<<"\n\n ################# \n "<< str <<" \n################# \n\n");
+  else
+    CNR_INFO(l, cnr_logger::BLUE()<<"\n"<< str <<"\ns");
+
+  std::stringstream ss = "ciao"; 
+  if (true)
+    CNR_INFO(l,cnr_logger::RED()<<"\n\n ################# \n "<< ss <<" \n################# \n\n");
+  else
+    CNR_INFO(l, cnr_logger::BLUE()<<"\n"<< ss <<"\ns");
+
+  if (false)
+    CNR_INFO(l,cnr_logger::RED()<<"\n\n ################# \n "<< ss <<" \n################# \n\n");
+  else
+    CNR_INFO(l, cnr_logger::BLUE()<<"\n"<< ss <<"\ns");
+
+  EXPECT_NO_FATAL_FAILURE( CNR_FATAL(l, "TEST" << str));
   EXPECT_NO_FATAL_FAILURE( CNR_FATAL(l, "TEST" << ss));
   EXPECT_NO_FATAL_FAILURE( CNR_FATAL(l, "TEST" << "CIAO"));
   EXPECT_NO_FATAL_FAILURE( CNR_FATAL(l, "TEST" + std::string("CIAO") ));
@@ -296,6 +318,7 @@ void macroTest(std::shared_ptr<cnr_logger::TraceLogger>& l)
 
   EXPECT_NO_FATAL_FAILURE( CNR_TRACE_START_THROTTLE_DEFAULT(l));
   EXPECT_NO_FATAL_FAILURE( CNR_TRACE_START_THROTTLE_DEFAULT(l, "TEST"));
+
 
   auto f0 = [&l](){CNR_RETURN_BOOL(l, 1, "");};
   EXPECT_TRUE( f0() );
