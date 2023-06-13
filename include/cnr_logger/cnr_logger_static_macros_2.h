@@ -120,7 +120,7 @@
 #define CNR_RETURN_NOTOK_2(__lgr, __ret_val)                                                                           \
   CNR_RETURN_NOTOK_3(__lgr, __ret_val, cl::getTraceLogger(__lgr)->defaultMessage())
 
-#define CNR_RETURN_VOID_2(__lgr, __ret_ok, __msg)                                                                      \
+#define CNR_RETURN_VOID_2(__lgr, __ret_ok)                                                                      \
   CNR_RETURN_VOID_3(__lgr, __ret_ok, cl::getTraceLogger(__lgr)->defaultMessage())
 
 #define CNR_RETURN_OK_THROTTLE_DEFAULT_2(__lgr, __ret_val)                                                             \

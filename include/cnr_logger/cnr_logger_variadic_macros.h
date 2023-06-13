@@ -119,6 +119,7 @@ namespace cl = cnr_logger;
 
 #define CNR_RETURN_NOTOK(...) BOOST_PP_OVERLOAD(CNR_RETURN_NOTOK_, __VA_ARGS__)(__VA_ARGS__)
 
+// ARGS: LOGGER (mandatory), TRUE/FALSE (mandatory), MSG (optional)
 #define CNR_RETURN_VOID(...) BOOST_PP_OVERLOAD(CNR_RETURN_VOID_, __VA_ARGS__)(__VA_ARGS__)
 
 #define CNR_RETURN_OK_THROTTLE(...) BOOST_PP_OVERLOAD(CNR_RETURN_OK_THROTTLE_, __VA_ARGS__)(__VA_ARGS__)

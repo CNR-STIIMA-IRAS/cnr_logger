@@ -350,6 +350,19 @@ void macroTest(std::shared_ptr<cnr_logger::TraceLogger>& l)
   auto f13 = [&l](){CNR_RETURN_NOTOK(l,void(), "TEST");};
   EXPECT_NO_FATAL_FAILURE( f13() );
 
+  auto f13a = [&l](){CNR_RETURN_VOID(l, true, "YEAH");};
+  EXPECT_TRUE(does_not_throw([&]{ f13a(); }));
+
+  auto f13b = [&l](){CNR_RETURN_VOID(l, false, "YEAH");};
+  EXPECT_TRUE(does_not_throw([&]{ f13b(); }));
+  
+  auto f13c = [&l](){CNR_RETURN_VOID(l, true);};
+  EXPECT_TRUE(does_not_throw([&]{ f13c(); }));
+
+  auto f13d = [&l](){CNR_RETURN_VOID(l, false);};
+  EXPECT_TRUE(does_not_throw([&]{ f13d(); }));
+
+
   auto f14 = [&l](){CNR_EXIT_EX(l, 0);};
   EXPECT_FALSE(does_not_throw([&]{ f14(); }));
 
