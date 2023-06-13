@@ -12,7 +12,7 @@
 
   <author email="nicola.pedrocchi@stiima.cnr.it">Nicola Pedrocchi</author>
 
-  <buildtool_depend condition="$ROS_VERSION == 2">catkin</buildtool_depend>
+  <buildtool_depend condition="$ROS_VERSION == 1">catkin</buildtool_depend>
   <buildtool_depend condition="$ROS_VERSION == 2">cmake</buildtool_depend>
   
   <build_depend>boost</build_depend>
