@@ -254,19 +254,7 @@ void macroTest(std::shared_ptr<cnr_logger::TraceLogger>& l)
   else
     CNR_INFO(l, cnr_logger::BLUE()<<"\n"<< str <<"\ns");
 
-  std::stringstream ss = "ciao"; 
-  if (true)
-    CNR_INFO(l,cnr_logger::RED()<<"\n\n ################# \n "<< ss <<" \n################# \n\n");
-  else
-    CNR_INFO(l, cnr_logger::BLUE()<<"\n"<< ss <<"\ns");
-
-  if (false)
-    CNR_INFO(l,cnr_logger::RED()<<"\n\n ################# \n "<< ss <<" \n################# \n\n");
-  else
-    CNR_INFO(l, cnr_logger::BLUE()<<"\n"<< ss <<"\ns");
-
   EXPECT_NO_FATAL_FAILURE( CNR_FATAL(l, "TEST" << str));
-  EXPECT_NO_FATAL_FAILURE( CNR_FATAL(l, "TEST" << ss));
   EXPECT_NO_FATAL_FAILURE( CNR_FATAL(l, "TEST" << "CIAO"));
   EXPECT_NO_FATAL_FAILURE( CNR_FATAL(l, "TEST" + std::string("CIAO") ));
   EXPECT_NO_FATAL_FAILURE( CNR_FATAL(l, "TEST"));
