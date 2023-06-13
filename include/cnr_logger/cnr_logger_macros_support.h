@@ -109,77 +109,78 @@ inline cnr_logger::TraceLogger* getTraceLogger(TraceLoggerPtr logger)
 //! Shortcut
 namespace cl = cnr_logger;
 
-#define __log4cxx_helper(___lgr, level, ...)                                                                           \
+#define __log4cxx_helper(___lgr0123, level, ...)                                                                       \
   do                                                                                                                   \
   {                                                                                                                    \
-    std::stringstream ss;                                                                                              \
-    ss << __VA_ARGS__;                                                                                                 \
-    auto __l = cl::getTraceLogger(___lgr);                                                                             \
-    if (__l && (ss.str().length() > 0))                                                                                \
+    std::stringstream __ss0123;                                                                                        \
+    __ss0123 << __VA_ARGS__;                                                                                           \
+    auto __l0123 = cl::getTraceLogger(___lgr0123);                                                                     \
+    if (__l0123 && (__ss0123.str().length() > 0))                                                                      \
     {                                                                                                                  \
-      if (level == cl::TraceLogger::Level::FATAL && __l->logFatal())                                                   \
+      if (level == cl::TraceLogger::Level::FATAL && __l0123->logFatal())                                               \
       {                                                                                                                \
-        if (__l->logSyncFileAndScreen())                                                                               \
-          LOG4CXX_FATAL(__l->syncFileAndScreenLogger(), ss.str());                                                     \
-        if (__l->logOnlyFile())                                                                                        \
-          LOG4CXX_FATAL(__l->fileLogger(), ss.str());                                                                  \
-        if (__l->logOnlyScreen())                                                                                      \
-          LOG4CXX_FATAL(__l->consoleLogger(), ss.str());                                                               \
+        if (__l0123->logSyncFileAndScreen())                                                                           \
+          LOG4CXX_FATAL(__l0123->syncFileAndScreenLogger(), __ss0123.str());                                           \
+        if (__l0123->logOnlyFile())                                                                                    \
+          LOG4CXX_FATAL(__l0123->fileLogger(), __ss0123.str());                                                        \
+        if (__l0123->logOnlyScreen())                                                                                  \
+          LOG4CXX_FATAL(__l0123->consoleLogger(), __ss0123.str());                                                     \
       }                                                                                                                \
-      else if (level == cl::TraceLogger::Level::ERROR && __l->logError())                                              \
+      else if (level == cl::TraceLogger::Level::ERROR && __l0123->logError())                                          \
       {                                                                                                                \
-        if (__l->logSyncFileAndScreen())                                                                               \
-          LOG4CXX_ERROR(__l->syncFileAndScreenLogger(), ss.str());                                                     \
-        if (__l->logOnlyFile())                                                                                        \
-          LOG4CXX_ERROR(__l->fileLogger(), ss.str());                                                                  \
-        if (__l->logOnlyScreen())                                                                                      \
-          LOG4CXX_ERROR(__l->consoleLogger(), ss.str());                                                               \
+        if (__l0123->logSyncFileAndScreen())                                                                           \
+          LOG4CXX_ERROR(__l0123->syncFileAndScreenLogger(), __ss0123.str());                                           \
+        if (__l0123->logOnlyFile())                                                                                    \
+          LOG4CXX_ERROR(__l0123->fileLogger(), __ss0123.str());                                                        \
+        if (__l0123->logOnlyScreen())                                                                                  \
+          LOG4CXX_ERROR(__l0123->consoleLogger(), __ss0123.str());                                                     \
       }                                                                                                                \
-      else if (level == cl::TraceLogger::Level::WARN && __l->logWarn())                                                \
+      else if (level == cl::TraceLogger::Level::WARN && __l0123->logWarn())                                            \
       {                                                                                                                \
-        if (__l->logSyncFileAndScreen())                                                                               \
-          LOG4CXX_WARN(__l->syncFileAndScreenLogger(), ss.str());                                                      \
-        if (__l->logOnlyFile())                                                                                        \
-          LOG4CXX_WARN(__l->fileLogger(), ss.str());                                                                   \
-        if (__l->logOnlyScreen())                                                                                      \
-          LOG4CXX_WARN(__l->consoleLogger(), ss.str());                                                                \
+        if (__l0123->logSyncFileAndScreen())                                                                           \
+          LOG4CXX_WARN(__l0123->syncFileAndScreenLogger(), __ss0123.str());                                            \
+        if (__l0123->logOnlyFile())                                                                                    \
+          LOG4CXX_WARN(__l0123->fileLogger(), __ss0123.str());                                                         \
+        if (__l0123->logOnlyScreen())                                                                                  \
+          LOG4CXX_WARN(__l0123->consoleLogger(), __ss0123.str());                                                      \
       }                                                                                                                \
-      else if (level == cl::TraceLogger::Level::INFO && __l->logInfo())                                                \
+      else if (level == cl::TraceLogger::Level::INFO && __l0123->logInfo())                                            \
       {                                                                                                                \
-        if (__l->logSyncFileAndScreen())                                                                               \
-          LOG4CXX_INFO(__l->syncFileAndScreenLogger(), ss.str());                                                      \
-        if (__l->logOnlyFile())                                                                                        \
-          LOG4CXX_INFO(__l->fileLogger(), ss.str());                                                                   \
-        if (__l->logOnlyScreen())                                                                                      \
-          LOG4CXX_INFO(__l->consoleLogger(), ss.str());                                                                \
+        if (__l0123->logSyncFileAndScreen())                                                                           \
+          LOG4CXX_INFO(__l0123->syncFileAndScreenLogger(), __ss0123.str());                                            \
+        if (__l0123->logOnlyFile())                                                                                    \
+          LOG4CXX_INFO(__l0123->fileLogger(), __ss0123.str());                                                         \
+        if (__l0123->logOnlyScreen())                                                                                  \
+          LOG4CXX_INFO(__l0123->consoleLogger(), __ss0123.str());                                                      \
       }                                                                                                                \
-      else if (level == cl::TraceLogger::Level::DEBUG && __l->logDebug())                                              \
+      else if (level == cl::TraceLogger::Level::DEBUG && __l0123->logDebug())                                          \
       {                                                                                                                \
-        if (__l->logSyncFileAndScreen())                                                                               \
-          LOG4CXX_DEBUG(__l->syncFileAndScreenLogger(), ss.str());                                                     \
-        if (__l->logOnlyFile())                                                                                        \
-          LOG4CXX_DEBUG(__l->fileLogger(), ss.str());                                                                  \
-        if (__l->logOnlyScreen())                                                                                      \
-          LOG4CXX_DEBUG(__l->consoleLogger(), ss.str());                                                               \
+        if (__l0123->logSyncFileAndScreen())                                                                           \
+          LOG4CXX_DEBUG(__l0123->syncFileAndScreenLogger(), __ss0123.str());                                           \
+        if (__l0123->logOnlyFile())                                                                                    \
+          LOG4CXX_DEBUG(__l0123->fileLogger(), __ss0123.str());                                                        \
+        if (__l0123->logOnlyScreen())                                                                                  \
+          LOG4CXX_DEBUG(__l0123->consoleLogger(), __ss0123.str());                                                     \
       }                                                                                                                \
-      else if (level == cl::TraceLogger::Level::TRACE && __l->logTrace())                                              \
+      else if (level == cl::TraceLogger::Level::TRACE && __l0123->logTrace())                                          \
       {                                                                                                                \
-        if (__l->logSyncFileAndScreen())                                                                               \
-          LOG4CXX_TRACE(__l->syncFileAndScreenLogger(), ss.str());                                                     \
-        if (__l->logOnlyFile())                                                                                        \
-          LOG4CXX_TRACE(__l->fileLogger(), ss.str());                                                                  \
-        if (__l->logOnlyScreen())                                                                                      \
-          LOG4CXX_TRACE(__l->consoleLogger(), ss.str());                                                               \
+        if (__l0123->logSyncFileAndScreen())                                                                           \
+          LOG4CXX_TRACE(__l0123->syncFileAndScreenLogger(), __ss0123.str());                                           \
+        if (__l0123->logOnlyFile())                                                                                    \
+          LOG4CXX_TRACE(__l0123->fileLogger(), __ss0123.str());                                                        \
+        if (__l0123->logOnlyScreen())                                                                                  \
+          LOG4CXX_TRACE(__l0123->consoleLogger(), __ss0123.str());                                                     \
       }                                                                                                                \
     }                                                                                                                  \
   } while (false)
 
-#define __log4cxx_helper_throttle(___lgr, ___lvl, __period, ...)                                                       \
+#define __log4cxx_helper_throttle(___lgr0123, ___lvl, __period, ...)                                                   \
   do                                                                                                                   \
   {                                                                                                                    \
     if (__period <= 0)                                                                                                 \
     {                                                                                                                  \
-      std::cerr << __PRETTY_FUNCTION__ << ": " << __LINE__ << ": Error in the MACRO. Period is negative " << std::endl; \
+      std::cerr << __PRETTY_FUNCTION__ << ": " << __LINE__ << ": Error in the MACRO. Period is negative "              \
+                << std::endl;                                                                                          \
       exit(-1);                                                                                                        \
     }                                                                                                                  \
     static double __log_throttle_last_hit__ = 0.0;                                                                     \
@@ -187,7 +188,7 @@ namespace cl = cnr_logger;
     if (CONSOLE_THROTTLE_CHECK(__log_throttle_now__, __log_throttle_last_hit__, __period))                             \
     {                                                                                                                  \
       __log_throttle_last_hit__ = __log_throttle_now__;                                                                \
-      __log4cxx_helper(___lgr, ___lvl, __VA_ARGS__);                                                                   \
+      __log4cxx_helper(___lgr0123, ___lvl, __VA_ARGS__);                                                               \
     }                                                                                                                  \
   } while (false)
 

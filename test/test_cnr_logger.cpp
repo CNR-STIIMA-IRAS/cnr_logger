@@ -243,6 +243,10 @@ void printTest(std::shared_ptr<cnr_logger::TraceLogger> l)
 
 void macroTest(std::shared_ptr<cnr_logger::TraceLogger>& l)
 {
+  std::string ss = "ciao"; 
+  EXPECT_NO_FATAL_FAILURE( CNR_FATAL(l, "TEST" << ss));
+  EXPECT_NO_FATAL_FAILURE( CNR_FATAL(l, "TEST" << "CIAO"));
+  EXPECT_NO_FATAL_FAILURE( CNR_FATAL(l, "TEST" + std::string("CIAO") ));
   EXPECT_NO_FATAL_FAILURE( CNR_FATAL(l, "TEST"));
   EXPECT_NO_FATAL_FAILURE( CNR_ERROR(l, "TEST"));
   EXPECT_NO_FATAL_FAILURE( CNR_WARN(l, "TEST"));
