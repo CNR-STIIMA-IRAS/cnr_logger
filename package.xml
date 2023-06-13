@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<package format="2">
+<package format="3">
   <name>cnr_logger</name>
   <version>0.0.0</version>
   <description>The cnr_logger package</description>
@@ -12,15 +12,15 @@
 
   <author email="nicola.pedrocchi@stiima.cnr.it">Nicola Pedrocchi</author>
 
-  <buildtool_depend>catkin</buildtool_depend>
-  <buildtool_depend>cmake</buildtool_depend>
+  <buildtool_depend condition="$ROS_VERSION == 2">catkin</buildtool_depend>
+  <buildtool_depend condition="$ROS_VERSION == 2">cmake</buildtool_depend>
   
   <build_depend>boost</build_depend>
   <exec_depend>roscpp</exec_depend>
   
   <test_depend>rostest</test_depend>
   <test_depend>curl</test_depend>
-  <test_depend>code_coverage</test_depend>
+  <test_depend condition="$ROS_VERSION == 1">code_coverage</test_depend>
   
   <export>
     <rosdoc config="rosdoc.yaml" />
