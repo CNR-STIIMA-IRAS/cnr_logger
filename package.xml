@@ -16,6 +16,7 @@
   <buildtool_depend condition="$ROS_VERSION == 2">cmake</buildtool_depend>
   
   <build_depend>boost</build_depend>
+  <build_depend>liblog4cxx</build_depend>
   <exec_depend condition="$ROS_VERSION == 1">roscpp</exec_depend>
   
   <test_depend>curl</test_depend>
@@ -23,6 +24,7 @@
   <test_depend condition="$ROS_VERSION == 1">code_coverage</test_depend>
   
   <export>
-    <rosdoc config="rosdoc.yaml" />
+    <build_type condition="$ROS_VERSION == 1">catkin</build_type>
+    <build_type condition="$ROS_VERSION == 2">cmake</build_type>
   </export>
 </package>
