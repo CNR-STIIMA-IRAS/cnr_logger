@@ -135,4 +135,5 @@ jobs:
           ROS_DISTRO: ${{ matrix.ROS_DISTRO }}
           ROS_REPO: ${{ matrix.ROS_REPO }}
           CMAKE_ARGS : -DUSE_ROS1=OFF
+          VERBOSE_OUTPUT : TRUE
      
