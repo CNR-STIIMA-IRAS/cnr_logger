@@ -205,6 +205,12 @@ public:
   CNR_LOGGER_PUBLIC
   bool logTrace() const;
 
+  CNR_LOGGER_PUBLIC
+  const std::string& defaultMessage() const;
+
+  CNR_LOGGER_PUBLIC
+  const Level& getLevel() const;
+
   friend std::string to_string(const TraceLogger& logger);
   friend std::ofstream& operator<<(std::ofstream& out, const TraceLogger& logger);
 
@@ -216,7 +222,9 @@ private:
   Level max_level_ = TraceLogger::Level::INFO;
   std::string logger_id_ ="";
   std::string path_ = "";
+  std::string default_message_ = "..."; 
   bool default_values_ = false;
+
 
   std::map<AppenderType, log4cxx::LoggerPtr> loggers_;
   std::map<AppenderType, Level> levels_;

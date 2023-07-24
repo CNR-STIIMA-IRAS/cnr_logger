@@ -2,7 +2,7 @@ name: 'PLAIN CMake CI'
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master, back_compatibility ]
     paths-ignore:
     - 'docs/**'
     - 'README.md'

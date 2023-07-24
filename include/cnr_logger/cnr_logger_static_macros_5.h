@@ -43,21 +43,16 @@
  * The further macro CNR_TRACE_START and CNR_RETURN_xxx are used to trace the input and the output values of the
  * functions
  */
-#ifndef CNR_LOGGER_CNR_LOGGER_STATIC_MACROS_H
-#define CNR_LOGGER_CNR_LOGGER_STATIC_MACROS_H
+#ifndef CNR_LOGGER_CNR_LOGGER_STATIC_MACROS_5_H
+#define CNR_LOGGER_CNR_LOGGER_STATIC_MACROS_5_H
 
 #include <iostream>
 #include <type_traits>
 #include <cstdint>
 #include <string>
 
-#if defined(_MSC_VER)
-#define __PRETTY_FUNCTION__ __FUNCDNAME__
-#endif
+#include <cnr_logger/cnr_logger_macros_support.h>
 
-#include <cnr_logger/cnr_logger_static_macros_1.h>
-#include <cnr_logger/cnr_logger_static_macros_2.h>
-#include <cnr_logger/cnr_logger_static_macros_3.h>
-#include <cnr_logger/cnr_logger_static_macros_4.h>
 
-#endif  // CNR_LOGGER_CNR_LOGGER_STATIC_MACROS_H
+
+#endif  // CNR_LOGGER_CNR_LOGGER_STATIC_MACROS_5_H

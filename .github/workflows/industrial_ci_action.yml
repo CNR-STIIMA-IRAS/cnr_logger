@@ -9,7 +9,7 @@ name: 'ROS INDUSTRIAL CI'
 # or more fine-grained
 on:
   push:
-    branches: [ master ]
+    branches: [ master, back_compatibility ]
     paths-ignore:
     - 'docs/**'  # When there is a pull request against master
     - 'README.md'
@@ -31,8 +31,8 @@ jobs:
 
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v2   # clone target repository
-      - uses: actions/cache@v2      # fetch/store the directory used by ccache before/after the ci run
+      - uses: actions/checkout@v3   # clone target repository
+      - uses: actions/cache@v3      # fetch/store the directory used by ccache before/after the ci run
         with:
           path: ${{ env.CCACHE_DIR }}
           key: ccache-${{ matrix.ROS_DISTRO }}-${{ matrix.ROS_REPO }}-${{github.run_id}}
@@ -107,3 +107,31 @@ jobs:
         with:
           name: metrics
           path: ./metrics
+  industrial_ci_2:
+    strategy:
+      matrix: # matrix is the product of entries
+        ROS_DISTRO: [humble]
+        ROS_REPO: [main]
+    env:
+      CCACHE_DIR: "/home/runner/target_ws/.ccache"  #/github/home/.ccache # Directory for ccache (and how we enable ccache in industrial_ci)
+      ISOLATION: "shell"
+      SONAR_SCANNER_VERSION: 4.4.0.2170
+      SONAR_SERVER_URL: "https://sonarcloud.io"
+      BUILD_WRAPPER_OUT_DIR: /home/runner/target_ws/
+
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3   # clone target repository
+      - uses: actions/cache@v3      # fetch/store the directory used by ccache before/after the ci run
+        with:
+          path: ${{ env.CCACHE_DIR }}
+          key: ccache-${{ matrix.ROS_DISTRO }}-${{ matrix.ROS_REPO }}-${{github.run_id}}
+          restore-keys: |
+            ccache-${{ matrix.ROS_DISTRO }}-${{ matrix.ROS_REPO }}-
+      # Run industrial_ci
+      - name: industrial_ci
+        uses: 'ros-industrial/industrial_ci@master'
+        env:
+          ROS_DISTRO: ${{ matrix.ROS_DISTRO }}
+          ROS_REPO: ${{ matrix.ROS_REPO }}
+     

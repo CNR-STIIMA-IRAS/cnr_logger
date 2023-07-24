@@ -189,7 +189,7 @@ LOG4CXX_PTR_DEF(ColorPatternLayout);
 }
 
 using namespace log4cxx;
-IMPLEMENT_LOG4CXX_OBJECT(ColorPatternLayout);
+IMPLEMENT_LOG4CXX_OBJECT(ColorPatternLayout)
 ColorPatternLayout::ColorPatternLayout() : log4cxx::PatternLayout(){}
 
 ColorPatternLayout::ColorPatternLayout(const LogString &s): log4cxx::PatternLayout(s){}
@@ -514,7 +514,6 @@ bool getFileName(const std::string& ns,
     warnings.emplace_back("Parameter missing '"+ns+"/append_date_to_file_name'");
     warnings.emplace_back("Parameter superimposed '"+ns+"/append_date_to_file_name= '" + std::to_string(append_date_to_file_name) +"'");
   }
-
   
   #if defined(ROS1_NOT_AVAILABLE) || !defined(FORCE_ROS_TIME_USE)
     auto now = std::time(nullptr); 
@@ -566,8 +565,8 @@ bool configureLoggers(const std::string& logger_id,
                         const std::string& log_file_name, 
                           const bool& append_to_file,
                             const log4cxx::PatternLayoutPtr& layout, 
-                              std::map<TraceLogger::AppenderType, log4cxx::LoggerPtr>& loggers,
-                                std::vector<std::string>& warnings)
+                                std::map<TraceLogger::AppenderType, log4cxx::LoggerPtr>& loggers,
+                                  std::vector<std::string>& warnings)
 {
   std::string root_path; 
   if(!mkLogDir(root_path))
@@ -625,7 +624,7 @@ void getThrottletime(const std::string& ns,
   // Default Throttle Time
   //
   // =======================================================================================
-  if(!extract(default_throttle_time, res, "default_throttle_time", -1.0))
+  if(!extract(default_throttle_time, res, "default_throttle_time", 1.0))
   {
     warnings.emplace_back("Parameter missing '"+ns+"/default_throttle_time'");
     warnings.emplace_back("Parameter superimposed ''"+ns+"/default throttle time= '" + std::to_string(default_throttle_time) +"'");
@@ -768,6 +767,7 @@ bool TraceLogger::init(const std::string& logger_id, const std::string& path,
   
   logger_id_      = logger_id;
   path_           = path;
+  default_message_= "...";
   default_values_ = default_values;
 
   
@@ -803,12 +803,9 @@ bool TraceLogger::init(const std::string& logger_id, const std::string& path,
   // =======================================================================================
   extractAppendersAndLevels(path, resource, appenders_data,levels_data, warnings);
 
-  
   // =======================================================================================
   setLoggers(logger_id_,  appenders_data, levels_data, loggers_, levels_, max_level_);
-  
-
-  
+   
   // =======================================================================================
   // Layout
   //
@@ -816,14 +813,12 @@ bool TraceLogger::init(const std::string& logger_id, const std::string& path,
   log4cxx::PatternLayoutPtr layout;
   extractLayout(path, resource, layout, warnings);
   // =======================================================================================
-
   
   // =======================================================================================
   // Default Throttle Time
   //
   // =======================================================================================
   getThrottletime(path, resource, default_throttle_time_, warnings);
-
   
   // =======================================================================================
   // Configure appenders and loggers
@@ -831,7 +826,8 @@ bool TraceLogger::init(const std::string& logger_id, const std::string& path,
   // =======================================================================================
   bool append_to_file;
   std::string log_file_name;
-  bool ok = getFileName(path, resource, logger_id,log_file_name, append_to_file, warnings);
+  bool ok = getFileName(path, resource, logger_id, log_file_name, append_to_file, warnings);
+                        
   if(ok)
   {
     ok = configureLoggers(logger_id_, log_file_name, append_to_file, layout, loggers_, warnings);
@@ -840,15 +836,21 @@ bool TraceLogger::init(const std::string& logger_id, const std::string& path,
       std::string log_start =  getLoggerStartString(logger_id, log_file_name,loggers_,levels_);
       if(star_header)
       {
-        CNR_INFO_ONLY_FILE( this, "\n ==================================\n\n" << "== " << log_start << "\n\n == Ready to Log!");
+        CNR_INFO_ONLY_FILE_2( this, "\n ==================================\n\n" << "== " << log_start << "\n\n == Ready to Log!");
       }
       else
       {
-        CNR_INFO_ONLY_FILE(this, log_start);
+        CNR_INFO_ONLY_FILE_2(this, log_start);
       }
     }
   }
 
+  std::string default_message = default_message_;
+  if(!extract(default_message, resource, "default_message", default_message_))
+  {
+    warnings.emplace_back("Parameter missing '"+path+"/default_message'");
+    warnings.emplace_back("Parameter superimposed '"+path+"/default_message= '" + default_message +"'");
+  }
   
   for(size_t i=0;i<warnings.size();i++)
   {
@@ -944,6 +946,17 @@ bool TraceLogger::logTrace() const
 {
   return Level::TRACE<=max_level_;
 }
+
+const std::string& TraceLogger::defaultMessage() const
+{
+  return default_message_;
+}
+
+const TraceLogger::Level& TraceLogger::getLevel()  const
+{
+  return max_level_;
+}
+
 
 log4cxx::LoggerPtr TraceLogger::syncFileAndScreenLogger( )
 {
