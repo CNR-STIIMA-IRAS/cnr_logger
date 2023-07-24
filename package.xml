@@ -17,6 +17,7 @@
   
   <build_depend>boost</build_depend>
   <build_depend>log4cxx</build_depend>
+  <build_depend>yamlcpp</build_depend>
   <exec_depend condition="$ROS_VERSION == 1">roscpp</exec_depend>
   
   <test_depend>curl</test_depend>
