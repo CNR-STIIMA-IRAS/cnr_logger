@@ -883,7 +883,7 @@ bool TraceLogger::init(const std::string& logger_id, const std::string& path,
   
   for(size_t i=0;i<warnings.size();i++)
   {
-    if_error_fill(what, std::to_string(i+1) + "#1 " + warnings.at(i) + "\n", true);
+    if_error_fill(what, std::to_string(i+1) + "#" + std::to_string(warnings.size())+" " + warnings.at(i) + "\n", true);
   }
 
   initialized_ = ok;
