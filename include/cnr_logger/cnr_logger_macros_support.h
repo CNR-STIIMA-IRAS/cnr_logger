@@ -108,7 +108,7 @@ inline cnr_logger::TraceLogger* getTraceLogger(TraceLoggerPtr logger)
 }  // namespace cnr_logger
 
 //! Shortcut
-std::string make_string(const char* msg, ...)
+inline std::string make_string(const char* msg, ...)
 {
   constexpr const size_t max_lenght = 1024;
   char buffer[max_lenght] = { 0 };  // maximum expected length of the float

@@ -102,8 +102,6 @@ public:
   CNR_LOGGER_PUBLIC
   TraceLogger(const std::string& logger_id, const std::string& path,
                 const bool star_header=false, const bool default_values=true, std::string* what=nullptr);
-  
-
   /**
    * @brief init
    * @param logger_id: unique id for the logger. When the class has more than one appender configured, the logger_id
