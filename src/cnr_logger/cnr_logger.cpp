@@ -33,6 +33,7 @@
  *  POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <exception>
 #include <string>
 #include <vector>
 #include <iostream>
@@ -797,9 +798,32 @@ bool TraceLogger::init(const std::string& logger_id, const std::string& path,
   YAML::Node* resource = nullptr;
   if(exists_test(path))
   {
-     resource = new YAML::Node();
-    *resource = YAML::LoadFile(path);
+    resource = new YAML::Node();
+    try
+    {
+      *resource = YAML::LoadFile(path);
+    }
+    catch(YAML::ParserException& e)
+    {
+      warnings.push_back("The file path '" + path +"' is malformed");
+      resource = nullptr;
+    }
+    catch(YAML::BadFile& e)
+    {
+      warnings.push_back("The file path '" + path +"' cannot be loaded");
+      resource = nullptr;
+    }
+    catch(std::exception& e)
+    {
+      warnings.push_back("The file path '" + path +"' is broken. What: " + e.what());
+      resource = nullptr;
+    }
   } 
+  else
+  {
+    warnings.push_back("The file path '" + path +"' does not exists");
+    resource = nullptr;
+  }
 #else
   const std::string* resource = &path;
 #endif
