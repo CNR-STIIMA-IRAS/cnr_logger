@@ -35,7 +35,7 @@
 
 /**
  * @file cnr_logger_macros.h
- * @author Nicola Pedrocchi, ALessio Prini
+ * @author Nicola Pedrocchi, Alessio Prini
  * @date 30 Gen 2021
  * @brief File containing the macro definition.
  *
