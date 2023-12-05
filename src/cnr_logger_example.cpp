@@ -80,11 +80,16 @@ try
 
   for (size_t i = 0u; i < 10u; i++)
   {
-    CNR_INFO(*logger, "Ciao-log-1-info");
-    CNR_DEBUG(*logger, "Ciao-log-1-debug");
-    CNR_FATAL(*logger, "Ciao-log-1-fatal");
-    CNR_TRACE(*logger, "Ciao-log-1-trace");
+    CNR_INFO(*logger , "Ciao-log-1-info"  << " and I can add whataver I prefer using the stream notation " << 3.14 << "!!");
+    CNR_DEBUG(*logger, "Ciao-log-1-debug" << " and I can add whataver I prefer using the stream notation " << 3.14 << "!!");
+    CNR_FATAL(*logger, "Ciao-log-1-fatal" << " and I can add whataver I prefer using the stream notation " << 3.14 << "!!");
+    CNR_TRACE(*logger, "Ciao-log-1-trace" << " and I can add whataver I prefer using the stream notation " << 3.14 << "!!");
 
+    CNR_INFO(*logger, "Ciao-log-1-info %s%f%s", " and I can add whataver I prefer using the print notation ", 3.14, "!!");
+    CNR_DEBUG(*logger, "Ciao-log-1-debug %s%f%s", " and I can add whataver I prefer using the print notation ", 3.14, "!!");
+    CNR_FATAL(*logger, "Ciao-log-1-fatal %s%f%s", " and I can add whataver I prefer using the print notation ", 3.14, "!!");
+    CNR_TRACE(*logger, "Ciao-log-1-trace %s%f%s", " and I can add whataver I prefer using the print notation ", 3.14, "!!");
+    
     CNR_INFO_THROTTLE(*logger,  1.0, "Ciao-log-1-info");
     CNR_DEBUG_THROTTLE(*logger, 1.0, "Ciao-log-1-debug");
     CNR_FATAL_THROTTLE(*logger, 1.0, "Ciao-log-1-fatal");

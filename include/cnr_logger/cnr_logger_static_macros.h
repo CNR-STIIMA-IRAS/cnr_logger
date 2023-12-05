@@ -46,11 +46,6 @@
 #ifndef CNR_LOGGER_CNR_LOGGER_STATIC_MACROS_H
 #define CNR_LOGGER_CNR_LOGGER_STATIC_MACROS_H
 
-#include <iostream>
-#include <type_traits>
-#include <cstdint>
-#include <string>
-
 #if defined(_MSC_VER)
 #define __PRETTY_FUNCTION__ __FUNCDNAME__
 #endif
@@ -59,5 +54,6 @@
 #include <cnr_logger/cnr_logger_static_macros_2.h>
 #include <cnr_logger/cnr_logger_static_macros_3.h>
 #include <cnr_logger/cnr_logger_static_macros_4.h>
+#include <cnr_logger/cnr_logger_static_macros_5.h>
 
 #endif  // CNR_LOGGER_CNR_LOGGER_STATIC_MACROS_H

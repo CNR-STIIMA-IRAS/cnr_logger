@@ -47,9 +47,10 @@
 #define CNR_LOGGER_CNR_LOGGER_MACROS_SUPPORT__H
 
 #include <iostream>
-#include <type_traits>
-#include <cstdint>
 #include <string>
+#include <string>
+#include <cstdarg>
+#include <cstdio>
 #include <sstream>
 
 #include <cnr_logger/cnr_logger.h>
@@ -105,6 +106,25 @@ inline cnr_logger::TraceLogger* getTraceLogger(TraceLoggerPtr logger)
   }
 }
 }  // namespace cnr_logger
+
+//! Shortcut
+std::string make_string(const char* msg, ...)
+{
+  constexpr const size_t max_lenght = 1024;
+  char buffer[max_lenght] = { 0 };  // maximum expected length of the float
+  va_list args;
+
+  va_start(args, msg);
+  // format the string
+  vsnprintf(buffer, max_lenght, msg, args);
+  va_end(args);
+
+  return std::string(buffer);
+}
+
+#define GET_FIRST(X,...) X
+#define GET_REST(X,...) __VA_ARGS__
+
 
 //! Shortcut
 namespace cl = cnr_logger;

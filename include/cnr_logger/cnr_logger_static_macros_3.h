@@ -54,6 +54,11 @@
 #include <cnr_logger/cnr_logger_macros_support.h>
 #include <cnr_logger/cnr_logger_static_macros_4.h>
 
+#define CNR_FATAL_3(__lgr, __format, ...)  CNR_FATAL_2(__lgr, make_string(__format, __VA_ARGS))
+#define CNR_ERROR_3(__lgr, __format, ...)  CNR_ERROR_2(__lgr, make_string(__format, __VA_ARGS))
+#define CNR_WARN_3(__lgr, __format, ...)  CNR_WARN_2(__lgr, make_string(__format, __VA_ARGS))
+#define CNR_INFO_3(__lgr, __format, ...)  CNR_INFO_2(__lgr, make_string(__format, __VA_ARGS))
+
 #define CNR_FATAL_THROTTLE_3(__lgr, __period, __msg)                                                                   \
   __log4cxx_helper_throttle(__lgr, cl::TraceLogger::Level::FATAL, __period, __msg)
 

@@ -46,13 +46,111 @@
 #ifndef CNR_LOGGER_CNR_LOGGER_STATIC_MACROS_5_H
 #define CNR_LOGGER_CNR_LOGGER_STATIC_MACROS_5_H
 
-#include <iostream>
-#include <type_traits>
-#include <cstdint>
-#include <string>
-
 #include <cnr_logger/cnr_logger_macros_support.h>
 
+#define CNR_FATAL_5(__lgr, __format, ...)  CNR_FATAL_2(__lgr, make_string(__format, __VA_ARGS__))
+#define CNR_ERROR_5(__lgr, __format, ...)  CNR_ERROR_2(__lgr, make_string(__format, __VA_ARGS__))
+#define CNR_WARN_5(__lgr, __format, ...)  CNR_WARN_2(__lgr, make_string(__format, __VA_ARGS__))
+#define CNR_INFO_5(__lgr, __format, ...)  CNR_INFO_2(__lgr, make_string(__format, __VA_ARGS__))
+#define CNR_DEBUG_5(__lgr, __format, ...)  CNR_INFO_2(__lgr, make_string(__format, __VA_ARGS__))
+#define CNR_TRACE_5(__lgr, __format, ...)  CNR_INFO_2(__lgr, make_string(__format, __VA_ARGS__))
 
+#define CNR_FATAL_6(__lgr, __format, ...)  CNR_FATAL_2(__lgr, make_string(__format, __VA_ARGS__))
+#define CNR_ERROR_6(__lgr, __format, ...)  CNR_ERROR_2(__lgr, make_string(__format, __VA_ARGS__))
+#define CNR_WARN_6(__lgr, __format, ...)  CNR_WARN_2(__lgr, make_string(__format, __VA_ARGS__))
+#define CNR_INFO_6(__lgr, __format, ...)  CNR_INFO_2(__lgr, make_string(__format, __VA_ARGS__))
+#define CNR_DEBUG_6(__lgr, __format, ...)  CNR_INFO_2(__lgr, make_string(__format, __VA_ARGS__))
+#define CNR_TRACE_6(__lgr, __format, ...)  CNR_INFO_2(__lgr, make_string(__format, __VA_ARGS__))
+
+#define CNR_FATAL_7(__lgr, __format, ...)  CNR_FATAL_2(__lgr, make_string(__format, __VA_ARGS__))
+#define CNR_ERROR_7(__lgr, __format, ...)  CNR_ERROR_2(__lgr, make_string(__format, __VA_ARGS__))
+#define CNR_WARN_7(__lgr, __format, ...)  CNR_WARN_2(__lgr, make_string(__format, __VA_ARGS__))
+#define CNR_INFO_7(__lgr, __format, ...)  CNR_INFO_2(__lgr, make_string(__format, __VA_ARGS__))
+#define CNR_DEBUG_7(__lgr, __format, ...)  CNR_INFO_2(__lgr, make_string(__format, __VA_ARGS__))
+#define CNR_TRACE_7(__lgr, __format, ...)  CNR_INFO_2(__lgr, make_string(__format, __VA_ARGS__))
+
+#define CNR_FATAL_8(__lgr, __format, ...)  CNR_FATAL_2(__lgr, make_string(__format, __VA_ARGS__))
+#define CNR_ERROR_8(__lgr, __format, ...)  CNR_ERROR_2(__lgr, make_string(__format, __VA_ARGS__))
+#define CNR_WARN_8(__lgr, __format, ...)  CNR_WARN_2(__lgr, make_string(__format, __VA_ARGS__))
+#define CNR_INFO_8(__lgr, __format, ...)  CNR_INFO_2(__lgr, make_string(__format, __VA_ARGS__))
+#define CNR_DEBUG_8(__lgr, __format, ...)  CNR_INFO_2(__lgr, make_string(__format, __VA_ARGS__))
+#define CNR_TRACE_8(__lgr, __format, ...)  CNR_INFO_2(__lgr, make_string(__format, __VA_ARGS__))
+
+#define CNR_FATAL_9(__lgr, __format, ...)  CNR_FATAL_2(__lgr, make_string(__format, __VA_ARGS__))
+#define CNR_ERROR_9(__lgr, __format, ...)  CNR_ERROR_2(__lgr, make_string(__format, __VA_ARGS__))
+#define CNR_WARN_9(__lgr, __format, ...)  CNR_WARN_2(__lgr, make_string(__format, __VA_ARGS__))
+#define CNR_INFO_9(__lgr, __format, ...)  CNR_INFO_2(__lgr, make_string(__format, __VA_ARGS__))
+#define CNR_DEBUG_9(__lgr, __format, ...)  CNR_INFO_2(__lgr, make_string(__format, __VA_ARGS__))
+#define CNR_TRACE_9(__lgr, __format, ...)  CNR_INFO_2(__lgr, make_string(__format, __VA_ARGS__))
+
+#define CNR_FATAL_10(__lgr, __format, ...)  CNR_FATAL_2(__lgr, make_string(__format, __VA_ARGS__))
+#define CNR_ERROR_10(__lgr, __format, ...)  CNR_ERROR_2(__lgr, make_string(__format, __VA_ARGS__))
+#define CNR_WARN_10(__lgr, __format, ...)  CNR_WARN_2(__lgr, make_string(__format, __VA_ARGS__))
+#define CNR_INFO_10(__lgr, __format, ...)  CNR_INFO_2(__lgr, make_string(__format, __VA_ARGS__))
+#define CNR_DEBUG_10(__lgr, __format, ...)  CNR_INFO_2(__lgr, make_string(__format, __VA_ARGS__))
+#define CNR_TRACE_10(__lgr, __format, ...)  CNR_INFO_2(__lgr, make_string(__format, __VA_ARGS__))
+
+#define CNR_FATAL_11(__lgr, __format, ...)  CNR_FATAL_2(__lgr, make_string(__format, __VA_ARGS__))
+#define CNR_ERROR_11(__lgr, __format, ...)  CNR_ERROR_2(__lgr, make_string(__format, __VA_ARGS__))
+#define CNR_WARN_11(__lgr, __format, ...)  CNR_WARN_2(__lgr, make_string(__format, __VA_ARGS__))
+#define CNR_INFO_11(__lgr, __format, ...)  CNR_INFO_2(__lgr, make_string(__format, __VA_ARGS__))
+#define CNR_DEBUG_11(__lgr, __format, ...)  CNR_INFO_2(__lgr, make_string(__format, __VA_ARGS__))
+#define CNR_TRACE_11(__lgr, __format, ...)  CNR_INFO_2(__lgr, make_string(__format, __VA_ARGS__))
+
+#define CNR_FATAL_12(__lgr, __format, ...)  CNR_FATAL_2(__lgr, make_string(__format, __VA_ARGS__))
+#define CNR_ERROR_12(__lgr, __format, ...)  CNR_ERROR_2(__lgr, make_string(__format, __VA_ARGS__))
+#define CNR_WARN_12(__lgr, __format, ...)  CNR_WARN_2(__lgr, make_string(__format, __VA_ARGS__))
+#define CNR_INFO_12(__lgr, __format, ...)  CNR_INFO_2(__lgr, make_string(__format, __VA_ARGS__))
+#define CNR_DEBUG_12(__lgr, __format, ...)  CNR_INFO_2(__lgr, make_string(__format, __VA_ARGS__))
+#define CNR_TRACE_12(__lgr, __format, ...)  CNR_INFO_2(__lgr, make_string(__format, __VA_ARGS__))
+
+#define CNR_FATAL_13(__lgr, __format, ...)  CNR_FATAL_2(__lgr, make_string(__format, __VA_ARGS__))
+#define CNR_ERROR_13(__lgr, __format, ...)  CNR_ERROR_2(__lgr, make_string(__format, __VA_ARGS__))
+#define CNR_WARN_13(__lgr, __format, ...)  CNR_WARN_2(__lgr, make_string(__format, __VA_ARGS__))
+#define CNR_INFO_13(__lgr, __format, ...)  CNR_INFO_2(__lgr, make_string(__format, __VA_ARGS__))
+#define CNR_DEBUG_13(__lgr, __format, ...)  CNR_INFO_2(__lgr, make_string(__format, __VA_ARGS__))
+#define CNR_TRACE_13(__lgr, __format, ...)  CNR_INFO_2(__lgr, make_string(__format, __VA_ARGS__))
+
+#define CNR_FATAL_14(__lgr, __format, ...)  CNR_FATAL_2(__lgr, make_string(__format, __VA_ARGS__))
+#define CNR_ERROR_14(__lgr, __format, ...)  CNR_ERROR_2(__lgr, make_string(__format, __VA_ARGS__))
+#define CNR_WARN_14(__lgr, __format, ...)  CNR_WARN_2(__lgr, make_string(__format, __VA_ARGS__))
+#define CNR_INFO_14(__lgr, __format, ...)  CNR_INFO_2(__lgr, make_string(__format, __VA_ARGS__))
+#define CNR_DEBUG_14(__lgr, __format, ...)  CNR_INFO_2(__lgr, make_string(__format, __VA_ARGS__))
+#define CNR_TRACE_14(__lgr, __format, ...)  CNR_INFO_2(__lgr, make_string(__format, __VA_ARGS__))
+
+#define CNR_FATAL_15(__lgr, __format, ...)  CNR_FATAL_2(__lgr, make_string(__format, __VA_ARGS__))
+#define CNR_ERROR_15(__lgr, __format, ...)  CNR_ERROR_2(__lgr, make_string(__format, __VA_ARGS__))
+#define CNR_WARN_15(__lgr, __format, ...)  CNR_WARN_2(__lgr, make_string(__format, __VA_ARGS__))
+#define CNR_INFO_15(__lgr, __format, ...)  CNR_INFO_2(__lgr, make_string(__format, __VA_ARGS__))
+#define CNR_DEBUG_15(__lgr, __format, ...)  CNR_INFO_2(__lgr, make_string(__format, __VA_ARGS__))
+#define CNR_TRACE_15(__lgr, __format, ...)  CNR_INFO_2(__lgr, make_string(__format, __VA_ARGS__))
+
+#define CNR_FATAL_16(__lgr, __format, ...)  CNR_FATAL_2(__lgr, make_string(__format, __VA_ARGS__))
+#define CNR_ERROR_16(__lgr, __format, ...)  CNR_ERROR_2(__lgr, make_string(__format, __VA_ARGS__))
+#define CNR_WARN_16(__lgr, __format, ...)  CNR_WARN_2(__lgr, make_string(__format, __VA_ARGS__))
+#define CNR_INFO_16(__lgr, __format, ...)  CNR_INFO_2(__lgr, make_string(__format, __VA_ARGS__))
+#define CNR_DEBUG_16(__lgr, __format, ...)  CNR_INFO_2(__lgr, make_string(__format, __VA_ARGS__))
+#define CNR_TRACE_16(__lgr, __format, ...)  CNR_INFO_2(__lgr, make_string(__format, __VA_ARGS__))
+
+#define CNR_FATAL_17(__lgr, __format, ...)  CNR_FATAL_2(__lgr, make_string(__format, __VA_ARGS__))
+#define CNR_ERROR_17(__lgr, __format, ...)  CNR_ERROR_2(__lgr, make_string(__format, __VA_ARGS__))
+#define CNR_WARN_17(__lgr, __format, ...)  CNR_WARN_2(__lgr, make_string(__format, __VA_ARGS__))
+#define CNR_INFO_17(__lgr, __format, ...)  CNR_INFO_2(__lgr, make_string(__format, __VA_ARGS__))
+#define CNR_DEBUG_17(__lgr, __format, ...)  CNR_INFO_2(__lgr, make_string(__format, __VA_ARGS__))
+#define CNR_TRACE_17(__lgr, __format, ...)  CNR_INFO_2(__lgr, make_string(__format, __VA_ARGS__))
+
+#define CNR_FATAL_18(__lgr, __format, ...)  CNR_FATAL_2(__lgr, make_string(__format, __VA_ARGS__))
+#define CNR_ERROR_18(__lgr, __format, ...)  CNR_ERROR_2(__lgr, make_string(__format, __VA_ARGS__))
+#define CNR_WARN_18(__lgr, __format, ...)  CNR_WARN_2(__lgr, make_string(__format, __VA_ARGS__))
+#define CNR_INFO_18(__lgr, __format, ...)  CNR_INFO_2(__lgr, make_string(__format, __VA_ARGS__))
+#define CNR_DEBUG_18(__lgr, __format, ...)  CNR_INFO_2(__lgr, make_string(__format, __VA_ARGS__))
+#define CNR_TRACE_18(__lgr, __format, ...)  CNR_INFO_2(__lgr, make_string(__format, __VA_ARGS__))
+
+#define CNR_FATAL_19(__lgr, __format, ...)  CNR_FATAL_2(__lgr, make_string(__format, __VA_ARGS__))
+#define CNR_ERROR_19(__lgr, __format, ...)  CNR_ERROR_2(__lgr, make_string(__format, __VA_ARGS__))
+#define CNR_WARN_19(__lgr, __format, ...)  CNR_WARN_2(__lgr, make_string(__format, __VA_ARGS__))
+#define CNR_INFO_19(__lgr, __format, ...)  CNR_INFO_2(__lgr, make_string(__format, __VA_ARGS__))
+#define CNR_DEBUG_19(__lgr, __format, ...)  CNR_INFO_2(__lgr, make_string(__format, __VA_ARGS__))
+#define CNR_TRACE_19(__lgr, __format, ...)  CNR_INFO_2(__lgr, make_string(__format, __VA_ARGS__))
 
 #endif  // CNR_LOGGER_CNR_LOGGER_STATIC_MACROS_5_H
