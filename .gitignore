@@ -19,5 +19,6 @@ doc/html
 doc/latex
 build/
 .vscode/
+.cache/
 kdev4/
 

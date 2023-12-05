@@ -33,9 +33,13 @@
  *  POSSIBILITY OF SUCH DAMAGE.
  */
 
+
 #include <iostream>
 #if defined(ROS1_NOT_AVAILABLE)
   #include <unistd.h>
+  #include <stdio.h>
+  #include <limits.h>
+  #include <cstring>
 #else
   #include <ros/ros.h>
 #endif
@@ -53,8 +57,26 @@ int main(int argc, char **argv)
 #endif
 
   std::cout << cnr_logger::BOLDCYAN() << "START" << cnr_logger::RESET() << std::endl;
-
+  
+  std::string what;
+try
+{
+#if !defined(ROS1_NOT_AVAILABLE)
   logger.reset(new cnr_logger::TraceLogger("log1", "/file_and_screen_same_appender", true));
+#else
+  char pwd[PATH_MAX] = {0};
+  if (getcwd(pwd, sizeof(pwd)) != NULL) 
+  {
+    printf("Current working directory : %s\n", pwd);
+  }
+  else
+  {
+    perror("getcwd() error");
+    return 1;
+  }
+  logger.reset(new cnr_logger::TraceLogger("log1", strcat(pwd,"/../test/config/file_and_screen_same_appender.yaml"), true, false, &what));
+#endif
+  std::cerr << what << std::endl;
 
   for (size_t i = 0u; i < 10u; i++)
   {
@@ -83,9 +105,14 @@ int main(int argc, char **argv)
 #else
   ros::Duration(0.1).sleep();
 #endif
-    
   }
   logger.reset();
   std::cout << cnr_logger::BOLDGREEN() << "OK" << cnr_logger::RESET() << std::endl;
+}
+catch(std::exception& e)
+{
+  std::cout << cnr_logger::BOLDRED() << "FAILED" << cnr_logger::RESET() << std::endl;
+  std::cout << cnr_logger::BOLDRED() << "What" << what << std::endl;
+}
   return 0;
 }

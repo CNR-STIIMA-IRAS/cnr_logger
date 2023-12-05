@@ -108,7 +108,7 @@ public:
    * @brief init
    * @param logger_id: unique id for the logger. When the class has more than one appender configured, the logger_id
    * is postponed with a "_x" letter to make the appender unique.
-   * @param path: absolute namespacewhere the initialization parameters are stored.
+   * @param path: absolute namespace where the initialization parameters are stored.
    * @param star_header: if the first log is with '***' to make easy to find the start of the logging in the file.
    * @param default_values: in the case the parameters are not found under the input namespace, the default
    * configuration is loaded. If FALSE, the function returns false if the parameters are not found.
@@ -215,20 +215,19 @@ public:
   friend std::ofstream& operator<<(std::ofstream& out, const TraceLogger& logger);
 
 private:
-  bool check(const std::string& path) const;
+  bool check(const std::string& path, std::string& what) const;
 
   bool initialized_ = false;
   double default_throttle_time_ = 0.0;
   Level max_level_ = TraceLogger::Level::INFO;
   std::string logger_id_ ="";
   std::string path_ = "";
-  std::string default_message_ = "..."; 
+  std::string default_message_ = ""; 
   bool default_values_ = false;
 
 
   std::map<AppenderType, log4cxx::LoggerPtr> loggers_;
   std::map<AppenderType, Level> levels_;
-
 };
 
 using  TraceLoggerPtr = std::shared_ptr< TraceLogger >;

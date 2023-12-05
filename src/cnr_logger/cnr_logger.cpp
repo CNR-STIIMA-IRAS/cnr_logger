@@ -505,7 +505,7 @@ bool getFileName(const std::string& ns,
     warnings.emplace_back("Parameter missing '"+ns+"/file_name'");
     warnings.emplace_back("Parameter superimposed '"+ns+"/file_name= '" + default_log_file_name +"'");
   }
-
+  log_file_name = root_path + "/" + log_file_name;
   
   bool append_date_to_file_name = false;
   bool default_append_date_to_file_name = false;
@@ -665,12 +665,13 @@ TraceLogger::TraceLogger(const std::string& logger_id, const std::string& path,
 }
 
 
-bool TraceLogger::check(const std::string& path) const
+bool TraceLogger::check(const std::string& path, std::string& what) const
 {
   bool res = true;
 #if defined(ROS1_NOT_AVAILABLE)
   if(!exists_test(path))
   {
+    what = "The path does not exist";
     res = false;
   }
   else
@@ -683,6 +684,10 @@ bool TraceLogger::check(const std::string& path) const
     res &= (config["file_name"]?config["file_name"].IsScalar():true);
     res &= (config["append_date_to_file_name"]?config["append_date_to_file_name"].IsScalar():true);
     res &= (config["append_to_file"]?config["append_to_file"].IsScalar():true);
+    if(!res)
+    {
+      what = "The file config is ill-formed";
+    }
   }
 #else
   res = ros::param::has(path + "/appenders")
@@ -767,14 +772,14 @@ bool TraceLogger::init(const std::string& logger_id, const std::string& path,
   
   logger_id_      = logger_id;
   path_           = path;
-  default_message_= "...";
+  default_message_= "";
   default_values_ = default_values;
 
-  
-  if((!default_values) && (!check(path)))
+  std::string msg;
+  if((!default_values) && (!check(path,msg)))
   {
     if_error_fill(what, "Logger ID:" + logger_id +  ", Error in initialization. "
-              +  "  [IN: default_values=" + std::to_string(default_values) + ", path=" + path + " ]");
+              +  "  [IN: default_values=" + std::to_string(default_values) + ", path=" + path + " ], What: " + msg);
     return false;
   }
 
