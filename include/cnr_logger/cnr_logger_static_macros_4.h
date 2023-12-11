@@ -48,12 +48,12 @@
 
 #include <cnr_logger/cnr_logger_macros_support.h>
 
-#define CNR_FATAL_4(__lgr, __format, ...)  CNR_FATAL_2(__lgr, make_string(__format, __VA_ARGS))
-#define CNR_ERROR_4(__lgr, __format, ...)  CNR_ERROR_2(__lgr, make_string(__format, __VA_ARGS))
-#define CNR_WARN_4(__lgr, __format, ...)  CNR_WARN_2(__lgr, make_string(__format, __VA_ARGS))
-#define CNR_INFO_4(__lgr, __format, ...)  CNR_INFO_2(__lgr, make_string(__format, __VA_ARGS))
-#define CNR_DEBUG_4(__lgr, __format, ...)  CNR_INFO_2(__lgr, make_string(__format, __VA_ARGS__))
-#define CNR_TRACE_4(__lgr, __format, ...)  CNR_INFO_2(__lgr, make_string(__format, __VA_ARGS__))
+#define CNR_FATAL_4(__lgr, __format, ...)  CNR_FATAL_2(__lgr, make_string(__format, __VA_ARGS__))
+#define CNR_ERROR_4(__lgr, __format, ...)  CNR_ERROR_2(__lgr, make_string(__format, __VA_ARGS__))
+#define CNR_WARN_4(__lgr, __format, ...)   CNR_WARN_2(__lgr, make_string(__format, __VA_ARGS__))
+#define CNR_INFO_4(__lgr, __format, ...)   CNR_INFO_2(__lgr, make_string(__format, __VA_ARGS__))
+#define CNR_DEBUG_4(__lgr, __format, ...)  CNR_DEBUG_2(__lgr, make_string(__format, __VA_ARGS__))
+#define CNR_TRACE_4(__lgr, __format, ...)  CNR_TRACE_2(__lgr, make_string(__format, __VA_ARGS__))
 
 // ================= COND THROTTLE
 #define CNR_FATAL_COND_THROTTLE_4(__lgr, __cnd, __period, __msg)                                                       \

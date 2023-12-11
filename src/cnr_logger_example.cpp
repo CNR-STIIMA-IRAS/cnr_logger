@@ -75,7 +75,7 @@ try
     return 1;
   }
   auto fn = strcat(pwd,"/../test/config/file_and_screen_same_appender.yaml");
-  std::cout << "Config file with the example configuration: " << fn << stds::endl;
+  std::cout << "Config file with the example configuration: " << fn << std::endl;
   logger.reset(new cnr_logger::TraceLogger("log1", fn, true, false, &what));
 #endif
   std::cerr << "The logger has been built. The warnings are: " << what << std::endl;

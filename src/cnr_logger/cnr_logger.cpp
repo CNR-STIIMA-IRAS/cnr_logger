@@ -582,11 +582,6 @@ bool configureLoggers(const std::string& logger_id,
 
     log4cxx::LogString _log_file_name;
     log4cxx::helpers::Transcoder::decode(log_file_name,_log_file_name);
-
-    
-  std::cerr<< __FUNCTION__ << ":" << __LINE__ << " !!!!!!!!!!!!!!!!!! JUST FOR DEBUG !!!!!!!!!!!!!!!!!!" << std::endl;
-  std::cerr<< __FUNCTION__ << ":" << __LINE__ << _log_file_name << std::endl;
-
     log4cxx::RollingFileAppenderPtr appender( new log4cxx::RollingFileAppender(layout, _log_file_name, append_to_file) );
     if(loggers.find(TraceLogger::AppenderType::FILE_STREAM) != loggers.end())
     {
@@ -878,10 +873,6 @@ bool TraceLogger::init(const std::string& logger_id, const std::string& path,
       }
     }
   }
-
-  std::cerr<< __FUNCTION__ << ":" << __LINE__ << " ???????????????????? JUST FOR DEBUG ????????????????????????" << std::endl;
-  std::cerr<< __FUNCTION__ << ":" << __LINE__ << log_file_name <<  std::endl;
-
 
   std::string default_message = default_message_;
   if(!extract(default_message, resource, "default_message", default_message_))

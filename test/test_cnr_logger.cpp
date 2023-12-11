@@ -182,6 +182,13 @@ void printTest(std::shared_ptr<cnr_logger::TraceLogger> l)
     CNR_FATAL(l, "Log fatal");
     CNR_TRACE(l, "Log trace");
 
+    CNR_INFO(l,  "%s", "Log info");
+    CNR_WARN(l,  "%s", "Log warn");
+    CNR_DEBUG(l, "%s", "Log debug");
+    CNR_ERROR(l, "%s", "Log error");
+    CNR_FATAL(l, "%s", "Log fatal");
+    CNR_TRACE(l, "%s", "Log trace");
+
     CNR_INFO_THROTTLE(l,  1.0, "Log info");
     CNR_WARN_THROTTLE(l, 1.0, "Log warn");
     CNR_DEBUG_THROTTLE(l, 1.0, "Log debug");
@@ -209,6 +216,13 @@ void printTest(std::shared_ptr<cnr_logger::TraceLogger> l)
     CNR_ERROR(*l, "Log error");
     CNR_FATAL(*l, "Log fatal");
     CNR_TRACE(*l, "Log trace");
+
+    CNR_INFO(*l,  "%s%s", "Log "," info");
+    CNR_WARN(*l,  "%s%s", "Log "," warn");
+    CNR_DEBUG(*l, "%s%s", "Log "," debug");
+    CNR_ERROR(*l, "%s%s", "Log "," error");
+    CNR_FATAL(*l, "%s%s", "Log "," fatal");
+    CNR_TRACE(*l, "%s%s", "Log "," trace");
 
     CNR_INFO_THROTTLE(*l,  1.0, "Log info");
     CNR_WARN_THROTTLE(*l, 1.0, "Log warn");
