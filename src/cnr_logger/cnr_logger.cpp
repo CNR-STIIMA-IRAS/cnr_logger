@@ -69,7 +69,7 @@
 #include <cstdlib>
 #include <boost/filesystem.hpp>
 
-#if !defined(Log4cxx_MAJOR_VERSION) 
+#if !defined(Log4cxx_MAJOR_VERSION)
   #error The Version of Log4cxx are not available. Add -DLog4cxx_MAJOR_VERSION to compile options
 #endif
 
@@ -204,7 +204,7 @@ void ColorPatternLayout::format(LogString &output, const spi::LoggingEventPtr &e
     switch (lvl->toInt())
     {
     case log4cxx::Level::FATAL_INT:
-        log4cxx::helpers::Transcoder::decode("\u001b[0;41m", _color);
+        log4cxx::helpers::Transcoder::decode("\u001b[1;31m", _color);
         break;
     case log4cxx::Level::ERROR_INT:
         log4cxx::helpers::Transcoder::decode("\u001b[0;31m", _color);
@@ -216,17 +216,17 @@ void ColorPatternLayout::format(LogString &output, const spi::LoggingEventPtr &e
         log4cxx::helpers::Transcoder::decode("\u001b[1m", _color);
         break;
     case log4cxx::Level::DEBUG_INT:
-        log4cxx::helpers::Transcoder::decode("\u001b[2;32m", _color);
+        log4cxx::helpers::Transcoder::decode("\u001b[0;32m", _color);
         break;
     case log4cxx::Level::TRACE_INT:
-        log4cxx::helpers::Transcoder::decode("\u001b[0;30m", _color);
+        log4cxx::helpers::Transcoder::decode("\u001b[0;34m", _color);
         break;
     default:
         break;
     }
     if(_color.size()>0)
     {
-      output.append(_color); 
+      output.append(_color);
     }
     output.append(tmp);
 
@@ -452,17 +452,17 @@ void setLoggers(const std::string& logger_id,
 
 
 
-void extractLayout(const std::string& ns, 
+void extractLayout(const std::string& ns,
                     const resource_t* res,
                       log4cxx::PatternLayoutPtr& layout,
                         std::vector<std::string>& warnings)
 {
   #if defined(__clang__) || defined(_MSC_VER)
-    const std::string default_pattern_layout = "[%5p][%d{HH:mm:ss,SSS}][%F:%L][%c] %m%n"; 
+    const std::string default_pattern_layout = "[%5p][%d{HH:mm:ss,SSS}][%F:%L][%c] %m%n";
   #else
     const std::string default_pattern_layout = "[%5p][%d{HH:mm:ss,SSS}][%M:%L][%c] %m%n";
   #endif
-  
+
   std::string pattern_layout;
   if(!extract(pattern_layout, res, "pattern_layout", default_pattern_layout))
   {
@@ -471,10 +471,10 @@ void extractLayout(const std::string& ns,
 
   log4cxx::LogString _pattern_layout;
   log4cxx::helpers::Transcoder::decode(pattern_layout, _pattern_layout);
-  
+
 #if !defined(_WIN32) && !defined(_WIN64)
   #if (Log4cxx_MAJOR_VERSION==0) && (Log4cxx_MINOR_VERSION > 10)
-    layout.reset( new log4cxx::ColorPatternLayout(_pattern_layout) );
+    layout.reset(new log4cxx::ColorPatternLayout(_pattern_layout) );
   #else
     layout = new log4cxx::ColorPatternLayout(_pattern_layout);
   #endif
@@ -563,13 +563,13 @@ std::string getLoggerStartString(const std::string& logger_id,
 
 
 bool configureLoggers(const std::string& logger_id,
-                        const std::string& log_file_name, 
+                        const std::string& log_file_name,
                           const bool& append_to_file,
-                            const log4cxx::PatternLayoutPtr& layout, 
+                            const log4cxx::PatternLayoutPtr& layout,
                                 std::map<TraceLogger::AppenderType, log4cxx::LoggerPtr>& loggers,
                                   std::vector<std::string>& warnings)
 {
-  std::string root_path; 
+  std::string root_path;
   if(!mkLogDir(root_path))
   {
     warnings.emplace_back("Logger ID: " + logger_id + ", Impossible to create/access the log directory");
@@ -603,7 +603,7 @@ bool configureLoggers(const std::string& logger_id,
   {
     log4cxx::LogString _logger_id_;
     log4cxx::helpers::Transcoder::decode(logger_id,_logger_id_);
-    log4cxx::ConsoleAppenderPtr appender(new log4cxx::ConsoleAppender(layout, _logger_id_) );
+    log4cxx::ConsoleAppenderPtr appender(new log4cxx::ConsoleAppender(layout, "System.out") );
     if(loggers.find(TraceLogger::AppenderType::CONSOLE_STREAM) != loggers.end())
     {
       loggers[TraceLogger::AppenderType::CONSOLE_STREAM]->addAppender(appender);
@@ -856,7 +856,7 @@ bool TraceLogger::init(const std::string& logger_id, const std::string& path,
   bool append_to_file;
   std::string log_file_name;
   bool ok = getFileName(path, resource, logger_id, log_file_name, append_to_file, warnings);
-           
+
   if(ok)
   {
     ok = configureLoggers(logger_id_, log_file_name, append_to_file, layout, loggers_, warnings);

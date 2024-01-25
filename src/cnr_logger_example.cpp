@@ -83,28 +83,52 @@ try
   for (size_t i = 0u; i < 10u; i++)
   {
     CNR_INFO(*logger , "Ciao-log-1-info"  << " and I can add whataver I prefer using the stream notation " << 3.14 << "!!");
+    CNR_WARN(*logger, "Ciao-log-1-debug" << " and I can add whataver I prefer using the stream notation " << 3.14 << "!!");
+    CNR_ERROR(*logger, "Ciao-log-1-debug" << " and I can add whataver I prefer using the stream notation " << 3.14 << "!!");
     CNR_DEBUG(*logger, "Ciao-log-1-debug" << " and I can add whataver I prefer using the stream notation " << 3.14 << "!!");
     CNR_FATAL(*logger, "Ciao-log-1-fatal" << " and I can add whataver I prefer using the stream notation " << 3.14 << "!!");
     CNR_TRACE(*logger, "Ciao-log-1-trace" << " and I can add whataver I prefer using the stream notation " << 3.14 << "!!");
 
     CNR_INFO(*logger, "Ciao-log-1-info %s%f%s", " and I can add whataver I prefer using the print notation ", 3.14, "!!");
+    CNR_WARN(*logger, "Ciao-log-1-info %s%f%s", " and I can add whataver I prefer using the print notation ", 3.14, "!!");
+    CNR_ERROR(*logger, "Ciao-log-1-info %s%f%s", " and I can add whataver I prefer using the print notation ", 3.14, "!!");
     CNR_DEBUG(*logger, "Ciao-log-1-debug %s%f%s", " and I can add whataver I prefer using the print notation ", 3.14, "!!");
     CNR_FATAL(*logger, "Ciao-log-1-fatal %s%f%s", " and I can add whataver I prefer using the print notation ", 3.14, "!!");
     CNR_TRACE(*logger, "Ciao-log-1-trace %s%f%s", " and I can add whataver I prefer using the print notation ", 3.14, "!!");
 
     CNR_INFO_THROTTLE(*logger,  1.0, "Ciao-log-1-info");
+    CNR_WARN_THROTTLE(*logger,  1.0, "Ciao-log-1-info");
+    CNR_ERROR_THROTTLE(*logger,  1.0, "Ciao-log-1-info");
     CNR_DEBUG_THROTTLE(*logger, 1.0, "Ciao-log-1-debug");
     CNR_FATAL_THROTTLE(*logger, 1.0, "Ciao-log-1-fatal");
     CNR_TRACE_THROTTLE(*logger, 1.0, "Ciao-log-1-trace");
 
     CNR_INFO_COND(*logger, true, "Ciao-log-1-info");
-    CNR_DEBUG_COND(*logger, false, "Ciao-log-1debug");
+    CNR_WARN_COND(*logger, true, "Ciao-log-1-info");
+    CNR_ERROR_COND(*logger, true, "Ciao-log-1-info");
+    CNR_DEBUG_COND(*logger, true, "Ciao-log-1debug");
     CNR_FATAL_COND(*logger, true, "Ciao-log-1fatal");
-    CNR_TRACE_COND(*logger, false, "Ciao-log-1trace");
+    CNR_TRACE_COND(*logger, true, "Ciao-log-1trace");
 
     CNR_INFO_COND_THROTTLE(*logger, true, 1.0, "Ciao-log-1-info");
-    CNR_DEBUG_COND_THROTTLE(*logger, false, 1.0, "Ciao-log-1-debug");
+    CNR_WARN_COND_THROTTLE(*logger, true, 1.0, "Ciao-log-1-info");
+    CNR_ERROR_COND_THROTTLE(*logger, true, 1.0, "Ciao-log-1-info");
+    CNR_DEBUG_COND_THROTTLE(*logger, true, 1.0, "Ciao-log-1-debug");
     CNR_FATAL_COND_THROTTLE(*logger, true, 1.0, "Ciao-log-1-fatal");
+    CNR_TRACE_COND_THROTTLE(*logger, true, 1.0, "Ciao-log-1-trace");
+
+    CNR_INFO_COND(*logger, false, "Ciao-log-1-info");
+    CNR_WARN_COND(*logger, false, "Ciao-log-1-info");
+    CNR_ERROR_COND(*logger, false, "Ciao-log-1-info");
+    CNR_DEBUG_COND(*logger, false, "Ciao-log-1debug");
+    CNR_FATAL_COND(*logger, false, "Ciao-log-1fatal");
+    CNR_TRACE_COND(*logger, false, "Ciao-log-1trace");
+
+    CNR_INFO_COND_THROTTLE(*logger, false, 1.0, "Ciao-log-1-info");
+    CNR_WARN_COND_THROTTLE(*logger, false, 1.0, "Ciao-log-1-info");
+    CNR_ERROR_COND_THROTTLE(*logger, false, 1.0, "Ciao-log-1-info");
+    CNR_DEBUG_COND_THROTTLE(*logger, false, 1.0, "Ciao-log-1-debug");
+    CNR_FATAL_COND_THROTTLE(*logger, false, 1.0, "Ciao-log-1-fatal");
     CNR_TRACE_COND_THROTTLE(*logger, false, 1.0, "Ciao-log-1-trace");
 
 #if defined(ROS1_NOT_AVAILABLE)
