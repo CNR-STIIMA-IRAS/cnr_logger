@@ -30,7 +30,7 @@ endmacro()
 #
 # cnr_set_flags
 #
-macro(cnr_set_flags)
+macro(cnr_set_flags) 
   if(CMAKE_CXX_FLAGS MATCHES "/W[0-4]")
     string(REGEX REPLACE "/W[0-4]" "/W3" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
   endif()
@@ -51,7 +51,7 @@ macro(cnr_set_flags)
 
   else()
 
-    set(LOCAL_CXX_STANDARD 14)
+    set(LOCAL_CXX_STANDARD 11)
     if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 
       add_compile_options(-Wall -Wextra -Wpedantic -D_TIME_BITS=64 -D_FILE_OFFSET_BITS=64)

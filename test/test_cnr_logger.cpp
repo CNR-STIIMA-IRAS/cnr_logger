@@ -85,7 +85,7 @@ namespace detail
   };
 }
 
-auto unwrap(std::exception_ptr pe)
+detail::unwrapper unwrap(std::exception_ptr pe)
 {
   return detail::unwrapper(pe);
 }
