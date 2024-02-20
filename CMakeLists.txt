@@ -228,6 +228,7 @@ else()
     DESTINATION include
   )
 
+  if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" GREATER 3.0)
   install(
     TARGETS cnr_logger
     EXPORT export_cnr_logger
@@ -259,6 +260,14 @@ else()
     DESTINATION "share/cnr_logger/cmake"
     FILE export_cnr_logger.cmake
     COMPONENT dev)
+  else()
+    install(
+      TARGETS cnr_logger
+      ARCHIVE DESTINATION lib
+      LIBRARY DESTINATION lib
+      RUNTIME DESTINATION bin
+    )
+  endif()
 
 endif()
 #############################
