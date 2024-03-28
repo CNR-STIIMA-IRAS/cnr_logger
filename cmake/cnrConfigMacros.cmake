@@ -175,7 +175,7 @@ macro(cnr_install_cmake_policy_gt_3_0_0 INCLUDE_INSTALL_DIR LIB_INSTALL_DIR BIN_
   set(TARGETS_EXPORT_NAME           "${PROJECT_NAME}Targets")
   set(VERSION_CONFIG                "${PROJECT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake")
   set(PROJECT_CONFIG_OUTPUT         "${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.cmake")
-  set(PROJECT_CONFIG_INPUT_TEMPLATE "${PROJECT_NAME}Config.cmake.in")
+  set(PROJECT_CONFIG_INPUT_TEMPLATE "cmake/cnrConfigTemplate.cmake.in")
 
   # Parameter template in the PROJECT_CONFIG_INPUT_TEMPLATE
   set(PACKAGE_INCLUDE_INSTALL_DIR "${INCLUDE_INSTALL_DIR}")

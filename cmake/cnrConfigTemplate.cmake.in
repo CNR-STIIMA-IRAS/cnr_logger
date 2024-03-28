@@ -11,17 +11,8 @@ include(CMakeFindDependencyMacro)
 find_dependency(Boost COMPONENTS date_time filesystem)
 find_dependency(PkgConfig)
 pkg_check_modules(Log4cxx liblog4cxx)
-
-if(USE_ROS1)
-  find_dependency(catkin COMPONENTS roscpp)
-else(USE_ROS1)
-
-  find_dependency(PkgConfig)
-  pkg_check_modules(YAML_CPP yaml-cpp)
-
-  find_dependency(Threads)
-endif(USE_ROS1)
-
+pkg_check_modules(YAML_CPP yaml-cpp)
+find_dependency(Threads)
 
 set_and_check(${PROJECT_NAME}_INCLUDE_DIRS "@PACKAGE_INCLUDE_INSTALL_DIR@")
 
