@@ -1,14 +1,34 @@
-# - Config file for the cnr_logger package
+# - Config file for the ${PROJECT_NAME} package
 # It defines the following variables
-#  cnr_logger_INCLUDE_DIRS - include directories for FooBar
-#  cnr_logger_LIBRARIES    - libraries to link against
-#  cnr_logger_EXECUTABLE   - the bar executable
+#  ${PROJECT_NAME}_INCLUDE_DIRS - include directories for FooBar
+#  ${PROJECT_NAME}_LIBRARIES    - libraries to link against
+#  ${PROJECT_NAME}_EXECUTABLE   - the bar executable
 
-set(cnr_logger_INCLUDE_DIRS "@CONF_INCLUDE_DIRS@")
+@PACKAGE_INIT@
+
+include(CMakeFindDependencyMacro)
+## common
+find_dependency(Boost COMPONENTS date_time filesystem)
+find_dependency(PkgConfig)
+pkg_check_modules(Log4cxx liblog4cxx)
+
+if(USE_ROS1)
+  find_dependency(catkin COMPONENTS roscpp)
+else(USE_ROS1)
+
+  find_dependency(PkgConfig)
+  pkg_check_modules(YAML_CPP yaml-cpp)
+
+  find_dependency(Threads)
+endif(USE_ROS1)
+
+
+set_and_check(${PROJECT_NAME}_INCLUDE_DIRS "@PACKAGE_INCLUDE_INSTALL_DIR@")
 
 # Our library dependencies (contains definitions for IMPORTED targets)
-include("${cnr_logger_DIR}/export_cnr_logger.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/@TARGETS_EXPORT_NAME@.cmake")
 
-# These are IMPORTED targets created by cnr_loggerTargets.cmake
-set(cnr_logger_LIBRARIES cnr_logger)
+# These are IMPORTED targets created by ${PROJECT_NAME}Targets.cmake
+set(${PROJECT_NAME}_LIBRARIES @EXPORTED_TARGET_LISTS@)
 
+check_required_components(${PROJECT_NAME})

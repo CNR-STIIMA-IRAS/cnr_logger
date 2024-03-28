@@ -145,3 +145,94 @@ else()
   set(${CNR_INSTALL_SHARE_DIR}      "${CMAKE_INSTALL_PREFIX}/share")
 endif()
 endmacro()
+
+macro(cnr_install_catkin_policy TARGETS_LIST)
+  install(TARGETS ${PROJECT_NAME}
+    ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+    LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+    RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+  )
+
+  install(DIRECTORY include/${PROJECT_NAME}/
+    DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+    FILES_MATCHING  PATTERN "*.h"
+                    PATTERN "*.hpp"
+                    PATTERN ".svn" EXCLUDE
+  )
+
+  install(DIRECTORY launch/
+    DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch
+    PATTERN ".svn" EXCLUDE)
+endmacro()
+
+#########################################
+#########################################
+
+macro(cnr_install_cmake_policy_gt_3_0_0 INCLUDE_INSTALL_DIR LIB_INSTALL_DIR BIN_INSTALL_DIR PROJECT_VERSION TARGETS_LIST)
+
+  set(CONFIG_INSTALL_DIR            "share/${PROJECT_NAME}/cmake")
+  set(CONFIG_NAMESPACE              "${PROJECT_NAME}::")
+  set(TARGETS_EXPORT_NAME           "${PROJECT_NAME}Targets")
+  set(VERSION_CONFIG                "${PROJECT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake")
+  set(PROJECT_CONFIG_OUTPUT         "${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.cmake")
+  set(PROJECT_CONFIG_INPUT_TEMPLATE "${PROJECT_NAME}Config.cmake.in")
+
+  # Parameter template in the PROJECT_CONFIG_INPUT_TEMPLATE
+  set(PACKAGE_INCLUDE_INSTALL_DIR "${INCLUDE_INSTALL_DIR}")
+  set(EXPORTED_TARGETS_LIST "${TARGETS_LIST}")
+
+  include(CMakePackageConfigHelpers)
+
+  # Create the ${PROJECT_NAME}ConfigVersion.cmake
+  write_basic_package_version_file(
+    "${VERSION_CONFIG}" 
+    VERSION ${PROJECT_VERSION} 
+    COMPATIBILITY SameMajorVersion)
+
+  # Create the ${PROJECT_NAME}Config.cmake using the template ${PROJECT_NAME}Config.cmake.in
+  configure_package_config_file(  
+    "${PROJECT_CONFIG_INPUT_TEMPLATE}"
+    "${PROJECT_CONFIG_OUTPUT}"   
+    INSTALL_DESTINATION  "${CONFIG_INSTALL_DIR}")
+
+  # Install cmake config files
+  install(
+      FILES "${PROJECT_CONFIG_OUTPUT}" "${VERSION_CONFIG}"
+      DESTINATION "${CONFIG_INSTALL_DIR}")
+
+  # Install cmake targets files
+  install(
+    EXPORT "${TARGETS_EXPORT_NAME}"
+    NAMESPACE "${CONFIG_NAMESPACE}"
+    DESTINATION "${CONFIG_INSTALL_DIR}")
+
+  install(
+    TARGETS ${TARGETS_LIST}
+    EXPORT ${TARGETS_EXPORT_NAME}
+    ARCHIVE DESTINATION ${LIB_INSTALL_DIR}
+    LIBRARY DESTINATION ${LIB_INSTALL_DIR}
+    RUNTIME DESTINATION ${BIN_INSTALL_DIR}
+  )
+
+endmacro()
+
+macro(cnr_install_cmake_policy INCLUDE_INSTALL_DIR LIB_INSTALL_DIR BIN_INSTALL_DIR PROJECT_VERSION TARGETS_LIST)
+
+  if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" GREATER 3.0)
+    cnr_install_cmake_policy_gt_3_0_0(${INCLUDE_INSTALL_DIR} ${LIB_INSTALL_DIR} ${BIN_INSTALL_DIR} ${PROJECT_VERSION} ${TARGETS_LIST})
+  else()
+    install(
+      TARGETS ${TARGETS_LIST}
+      ARCHIVE DESTINATION ${LIB_INSTALL_DIR}
+      LIBRARY DESTINATION ${LIB_INSTALL_DIR}
+      RUNTIME DESTINATION ${BIN_INSTALL_DIR}
+    )
+  endif()
+    
+  install(
+    DIRECTORY include/
+    DESTINATION ${INCLUDE_INSTALL_DIR}
+  )
+
+  
+endmacro()
