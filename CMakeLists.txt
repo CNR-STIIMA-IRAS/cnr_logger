@@ -202,7 +202,7 @@ endif()
 ## INSTALL                 ##
 #############################
 if(USE_ROS1)
-  cnr_install_catkin_policy()
+  cnr_install_catkin_policy(${TARGETS_LIST})
 else()
   set(PROJECT_VERSION 1.0.0)
   cnr_install_cmake_policy(
