@@ -61,8 +61,17 @@ add_definitions(-DLog4cxx_PATCH_VERSION=${Log4cxx_PATCH_VERSION})
 
 
 ### YAML-CPP
-find_package(PkgConfig REQUIRED)
-pkg_check_modules(yaml-cpp_pkg_config REQUIRED yaml-cpp IMPORTED_TARGET)
+# find_package(PkgConfig REQUIRED)
+# pkg_check_modules(yaml-cpp_pkg_config REQUIRED yaml-cpp IMPORTED_TARGET)
+
+find_package(yaml-cpp REQUIRED)
+if(yaml-cpp VERSION_LESS "0.8")
+  find_package(PkgConfig REQUIRED)
+  pkg_check_modules(YAML_CPP REQUIRED yaml-cpp IMPORTED_TARGET)
+
+  # pkg_check_modules(YAML_CPP REQUIRED yaml-cpp IMPORTED_TARGET GLOBAL)
+  add_library(yaml-cpp::yaml-cpp ALIAS PkgConfig::YAML_CPP)
+endif()
 
 ### Threads
 find_package(Threads REQUIRED)
@@ -114,7 +123,7 @@ add_library(${PROJECT_NAME} SHARED ${CNR_LOGGER_LIB_SRCS} )
 list(APPEND TARGETS_LIST ${PROJECT_NAME})
 target_link_libraries(${PROJECT_NAME}
   PUBLIC
-  PkgConfig::yaml-cpp_pkg_config
+  yaml-cpp::yaml-cpp
   PkgConfig::Log4cxx
   PUBLIC Boost::system
   PUBLIC Boost::filesystem
