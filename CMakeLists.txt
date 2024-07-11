@@ -67,7 +67,7 @@ add_definitions(-DLog4cxx_PATCH_VERSION=${Log4cxx_PATCH_VERSION})
 find_package(yaml-cpp REQUIRED)
 if(yaml-cpp VERSION_LESS "0.8")
   find_package(PkgConfig REQUIRED)
-  pkg_check_modules(YAML_CPP REQUIRED yaml-cpp IMPORTED_TARGET)
+  pkg_check_modules(YAML_CPP REQUIRED yaml-cpp IMPORTED_TARGET GLOBAL)
 
   # pkg_check_modules(YAML_CPP REQUIRED yaml-cpp IMPORTED_TARGET GLOBAL)
   add_library(yaml-cpp::yaml-cpp ALIAS PkgConfig::YAML_CPP)
