@@ -111,6 +111,8 @@ else()
                                 "$<INSTALL_INTERFACE:${INSTALL_INTERFACE_INCLUDE_DIRS}>" )
 endif()
 
+# Alias for library
+add_library("${PROJECT_NAME}::${PROJECT_NAME}" ALIAS ${PROJECT_NAME})
 
 cnr_target_compile_options(${PROJECT_NAME})
 
