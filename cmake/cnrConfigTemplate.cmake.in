@@ -14,12 +14,13 @@ pkg_check_modules(Log4cxx liblog4cxx)
 pkg_check_modules(YAML_CPP yaml-cpp)
 find_dependency(Threads)
 
-set_and_check(${PROJECT_NAME}_INCLUDE_DIRS "@PACKAGE_INCLUDE_INSTALL_DIR@")
+set_and_check(${PROJECT_NAME}_INCLUDE_DIRS "@PACKAGE_INCLUDE_INSTALL_DIR@" @CNR_LOGGER_TARGET_INCLUDE_DIRS@)
 
 # Our library dependencies (contains definitions for IMPORTED targets)
 include("${CMAKE_CURRENT_LIST_DIR}/@TARGETS_EXPORT_NAME@.cmake")
 
 # These are IMPORTED targets created by ${PROJECT_NAME}Targets.cmake
-set(${PROJECT_NAME}_LIBRARIES @EXPORTED_TARGET_LISTS@)
+set(${PROJECT_NAME}_LIBRARIES @PROJECT_NAME@ @CNR_LOGGER_TARGET_LINK_LIBRARIES@)
 
-check_required_components(${PROJECT_NAME})
+
+check_required_components(@PROJECT_NAME@)
