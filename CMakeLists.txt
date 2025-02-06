@@ -1,7 +1,7 @@
 #############################
 ## PRELIMINARIES           ##
 #############################
-cmake_minimum_required(VERSION 3.16.0)
+cmake_minimum_required(VERSION 2.8.12)
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/cnrConfigMacros.cmake)
 
@@ -22,7 +22,7 @@ cnr_set_flags()
 #############################
 ## OPTIONS                 ##
 #############################
-option(USE_ROS1                 "ROS SUPPORT" OFF)
+option(USE_ROS1                 "ROS SUPPORT" ON)
 option(ENABLE_TESTING           "ENABLE TESTING" OFF)
 option(ENABLE_COVERAGE_TESTING  "ENABLE COVERAGE TESTING" ON)
 option(COMPILE_EXAMPLE          "COMPILE THE EXAMPLE" OFF)
@@ -44,11 +44,11 @@ endif()
 #################
 
 ## common
-find_package(Boost REQUIRED COMPONENTS date_time filesystem system)
+find_package(Boost REQUIRED COMPONENTS date_time filesystem)
 
 ## common
 find_package(PkgConfig REQUIRED)
-pkg_check_modules(Log4cxx REQUIRED liblog4cxx IMPORTED_TARGET)
+pkg_check_modules(Log4cxx REQUIRED liblog4cxx)
 
 string(REPLACE "." ";" VERSION_LIST ${Log4cxx_VERSION})
 list(GET VERSION_LIST 0 Log4cxx_MAJOR_VERSION)
@@ -58,24 +58,6 @@ list(GET VERSION_LIST 2 Log4cxx_PATCH_VERSION)
 add_definitions(-DLog4cxx_MAJOR_VERSION=${Log4cxx_MAJOR_VERSION})
 add_definitions(-DLog4cxx_MINOR_VERSION=${Log4cxx_MINOR_VERSION})
 add_definitions(-DLog4cxx_PATCH_VERSION=${Log4cxx_PATCH_VERSION})
-
-
-### YAML-CPP
-# find_package(PkgConfig REQUIRED)
-# pkg_check_modules(yaml-cpp_pkg_config REQUIRED yaml-cpp IMPORTED_TARGET)
-
-find_package(yaml-cpp REQUIRED)
-if(yaml-cpp VERSION_LESS "0.8")
-  find_package(PkgConfig REQUIRED)
-  pkg_check_modules(YAML_CPP REQUIRED yaml-cpp IMPORTED_TARGET GLOBAL)
-
-  # pkg_check_modules(YAML_CPP REQUIRED yaml-cpp IMPORTED_TARGET GLOBAL)
-  add_library(yaml-cpp::yaml-cpp ALIAS PkgConfig::YAML_CPP)
-endif()
-
-### Threads
-find_package(Threads REQUIRED)
-
 
 if(USE_ROS1)
 
@@ -93,24 +75,23 @@ else(USE_ROS1)
 
   set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
+  ### YAML-CPP
+  find_package(PkgConfig REQUIRED)
+  pkg_check_modules(YAML_CPP REQUIRED yaml-cpp)
 
+  ### Threads
+  find_package(Threads REQUIRED)
 
   add_definitions(-DROS1_NOT_AVAILABLE)
 
-  set(CNR_LOGGER_TARGET_LINK_LIBRARIES  "")
-  set(CNR_LOGGER_TARGET_INCLUDE_DIRS    "")
+  set(CNR_LOGGER_TARGET_LINK_LIBRARIES  ${YAML_CPP_LIBRARIES} ${Log4cxx_LIBRARIES} ${Boost_LIBRARIES})
+  set(CNR_LOGGER_TARGET_INCLUDE_DIRS    ${YAML_CPP_INCLUDE_DIRS})
 
 endif(USE_ROS1)
 
 cnr_install_directories(USE_ROS1 
   CNR_LOGGER_INSTALL_INCLUDE_DIR CNR_LOGGER_INSTALL_LIB_DIR CNR_LOGGER_INSTALL_BIN_DIR CNR_LOGGER_INSTALL_SHARE_DIR)
 cnr_enable_testing(ENABLE_TESTING ENABLE_COVERAGE USE_ROS1)
-
-if (ENABLE_TESTING)
-  find_package(GTest REQUIRED)
-  include(GoogleTest)
-  include(CTest)
-endif()
 
 ##########################
 ## TARGETS              ##
@@ -121,17 +102,7 @@ set(CNR_LOGGER_LIB_SRCS src/${PROJECT_NAME}/cnr_logger.cpp)
 
 add_library(${PROJECT_NAME} SHARED ${CNR_LOGGER_LIB_SRCS} )
 list(APPEND TARGETS_LIST ${PROJECT_NAME})
-target_link_libraries(${PROJECT_NAME}
-  PUBLIC
-  yaml-cpp::yaml-cpp
-  PkgConfig::Log4cxx
-  PUBLIC Boost::system
-  PUBLIC Boost::filesystem
-  Threads::Threads
-  ${CNR_LOGGER_TARGET_LINK_LIBRARIES})
-add_library("${PROJECT_NAME}::${PROJECT_NAME}" ALIAS ${PROJECT_NAME})
-
-
+target_link_libraries(${PROJECT_NAME} PUBLIC ${CNR_LOGGER_TARGET_LINK_LIBRARIES})
 if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" LESS 3.0.2)
   include_directories("${BUILD_INTERFACE_INCLUDE_DIRS}")
 else()
@@ -140,12 +111,14 @@ else()
                                 "$<INSTALL_INTERFACE:${INSTALL_INTERFACE_INCLUDE_DIRS}>" )
 endif()
 
+# Alias for library
+add_library("${PROJECT_NAME}::${PROJECT_NAME}" ALIAS ${PROJECT_NAME})
 
 cnr_target_compile_options(${PROJECT_NAME})
 
 if(COMPILE_EXAMPLE)
   add_executable(${PROJECT_NAME}_example src/cnr_logger_example.cpp )
-  target_link_libraries(${PROJECT_NAME}_example "${PROJECT_NAME}::${PROJECT_NAME}")
+  target_link_libraries(${PROJECT_NAME}_example ${PROJECT_NAME})
   cnr_target_compile_options(${PROJECT_NAME}_example)
 
   list(APPEND TARGETS_LIST ${PROJECT_NAME}_example)
@@ -175,9 +148,9 @@ if(ENABLE_TESTING)
     include_directories(${GTEST_INCLUDE_DIRS})
     add_executable(${PROJECT_NAME}_test test/test_cnr_logger.cpp)
     if(${CMAKE_VERSION} VERSION_GREATER  "3.16.0")
-      target_link_libraries(${PROJECT_NAME}_test "${PROJECT_NAME}::${PROJECT_NAME}" GTest::gtest_main Threads::Threads)
+      target_link_libraries(${PROJECT_NAME}_test ${PROJECT_NAME} ${CNR_LOGGER_TARGET_LINK_LIBRARIES} gtest Threads::Threads)
     else()
-    target_link_libraries(${PROJECT_NAME}_test "${PROJECT_NAME}::${PROJECT_NAME}" GTest::gtest_main)
+    target_link_libraries(${PROJECT_NAME}_test ${PROJECT_NAME} ${CNR_LOGGER_TARGET_LINK_LIBRARIES} gtest)
       if(THREADS_HAVE_PTHREAD_ARG)
         target_compile_options(${PROJECT_NAME}_test PUBLIC "-pthread")
       endif()

@@ -33,6 +33,8 @@
  *  POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <log4cxx/file.h>
+#include <log4cxx/fileappender.h>
 #include <exception>
 #include <string>
 #include <vector>
@@ -40,11 +42,23 @@
 #include <cctype>
 #include <array>
 
+#if !defined(Log4cxx_MAJOR_VERSION)
+  #error The Version of Log4cxx are not available. Add -DLog4cxx_MAJOR_VERSION to compile options
+#endif
+
 #include <log4cxx/spi/location/locationinfo.h>
 #include <log4cxx/helpers/exception.h>
 #include <log4cxx/helpers/transcoder.h>
 
-#include <log4cxx/rollingfileappender.h>
+#if Log4cxx_MAJOR_VERSION < 1
+  #include <log4cxx/rollingfileappender.h>
+  using RollingFileAppender = log4cxx::RollingFileAppender;
+  using RollingFileAppenderPtr = log4cxx::RollingFileAppenderPtr;
+#else
+  #include <log4cxx/rolling/rollingfileappender.h>
+  using RollingFileAppender = log4cxx::rolling::RollingFileAppender;
+  using RollingFileAppenderPtr = log4cxx::rolling::RollingFileAppenderPtr;
+#endif
 #include <log4cxx/consoleappender.h>
 #include <log4cxx/patternlayout.h>
 
@@ -69,9 +83,6 @@
 #include <cstdlib>
 #include <boost/filesystem.hpp>
 
-#if !defined(Log4cxx_MAJOR_VERSION)
-  #error The Version of Log4cxx are not available. Add -DLog4cxx_MAJOR_VERSION to compile options
-#endif
 
 
 //========================================================
@@ -473,7 +484,9 @@ void extractLayout(const std::string& ns,
   log4cxx::helpers::Transcoder::decode(pattern_layout, _pattern_layout);
 
 #if !defined(_WIN32) && !defined(_WIN64)
-  #if (Log4cxx_MAJOR_VERSION==0) && (Log4cxx_MINOR_VERSION > 10)
+  #if (Log4cxx_MAJOR_VERSION==1) 
+    layout.reset(new log4cxx::ColorPatternLayout(_pattern_layout) );
+  #elif (Log4cxx_MAJOR_VERSION==0) && (Log4cxx_MINOR_VERSION > 10)
     layout.reset(new log4cxx::ColorPatternLayout(_pattern_layout) );
   #else
     layout = new log4cxx::ColorPatternLayout(_pattern_layout);
@@ -582,7 +595,15 @@ bool configureLoggers(const std::string& logger_id,
 
     log4cxx::LogString _log_file_name;
     log4cxx::helpers::Transcoder::decode(log_file_name,_log_file_name);
-    log4cxx::RollingFileAppenderPtr appender( new log4cxx::RollingFileAppender(layout, _log_file_name, append_to_file) );
+    
+    #if (Log4cxx_MAJOR_VERSION<1) 
+      RollingFileAppenderPtr appender( new RollingFileAppender(layout, _log_file_name, append_to_file) );
+    #else
+      RollingFileAppenderPtr appender(new RollingFileAppender());
+      appender->setLayout(layout);
+      appender->setName(_log_file_name);
+      appender->setAppend(append_to_file);
+    #endif
     if(loggers.find(TraceLogger::AppenderType::FILE_STREAM) != loggers.end())
     {
       loggers[ TraceLogger::AppenderType::FILE_STREAM ]->addAppender(appender);
