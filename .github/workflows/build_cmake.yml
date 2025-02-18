@@ -23,7 +23,7 @@ jobs:
             build_type: "Debug", cc: "gcc", cxx: "g++", cmake_version_used: "3.16.2"
           }
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v4
 
     - name: Install dependencies
       if: ${{ runner.os == 'Linux' }}
@@ -157,7 +157,7 @@ jobs:
         endif()
 
     - name: Upload test results
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       if: failure()
       with:
         name: test_results_xml
